@@ -7,6 +7,7 @@ import { AuthService } from "./auth.service";
 @Injectable({ providedIn: "root" })
 export class ClientService {
   private baseUrl = "http://localhost:5000/api/clients";
+  private adminUrl = 'http://localhost:5000/api/admin/users';
 
   constructor(private http: HttpClient, private auth: AuthService) {}
 
@@ -32,6 +33,6 @@ export class ClientService {
   }
 
   deleteClient(id: number) {
-    return this.http.delete(`${this.baseUrl}/${id}`, this.headers);
+    return this.http.delete(`${this.adminUrl}/${id}`, this.headers);
   }
 }

@@ -18,6 +18,11 @@
           <td>{{ user.id }}</td>
           <td>{{ user.email }}</td>
           <td>{{ user.role }}</td>
+          <td>
+            <button class="btn btn-danger btn-sm" (click)="deleteUser(user.id)">
+              Delete
+            </button>
+          </td>
         </tr>
       </tbody>
     </table>

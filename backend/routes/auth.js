@@ -26,4 +26,22 @@ router.get(
   }
 );
 
+router.delete(
+  "/admin/users/:id",
+  authenticateToken,
+  authorizeRoles("admin"),
+  async (req, res) => {
+    const userId = parseInt(req.params.id);
+    try {
+      await prisma.user.delete({
+        where: { id: userId },
+      });
+      res.status(204).send(); // מחיקה הצליחה, אין תוכן להחזיר
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      res.status(500).json({ error: "Error deleting user" });
+    }
+  }
+);
+
 module.exports = router;

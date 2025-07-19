@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const { authenticateToken } = require("../middleware/auth");
-
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 let clients = []; // לצורך הדגמה, אפשר להחליף ב־PostgreSQL מאוחר יותר
 let idCounter = 1;
 
@@ -30,9 +31,21 @@ router.put("/:id", authenticateToken, (req, res) => {
 });
 
 // Delete client
-router.delete("/:id", authenticateToken, (req, res) => {
-  clients = clients.filter((c) => c.id !== parseInt(req.params.id));
-  res.sendStatus(204);
+router.delete("/users/:id", async (req, res) => {
+  const userId = parseInt(req.params.id);
+  if (isNaN(userId)) {
+    return res.status(400).json({ error: "Invalid user ID" });
+  }
+
+  try {
+    const deletedUser = await prisma.user.delete({
+      where: { id: userId },
+    });
+    res.json({ message: "User deleted", user: deletedUser });
+  } catch (error) {
+    console.error("Delete user error:", error);
+    res.status(500).json({ error: "Could not delete user" });
+  }
 });
 
 module.exports = router;
