@@ -1,0 +1,31 @@
+<div class="card">
+  <div class="card-header d-flex justify-between items-center">
+    <h4>Clients</h4>
+    <button class="btn btn-primary" (click)="addClient()">+ Add Client</button>
+  </div>
+  <div class="card-body">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Company</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let client of clients">
+          <td>{{ client.name }}</td>
+          <td>{{ client.email }}</td>
+          <td>{{ client.phone }}</td>
+          <td>{{ client.company }}</td>
+          <td>
+            <button class="btn btn-sm btn-warning">Edit</button>
+            <button class="btn btn-sm btn-danger" (click)="deleteClient(client.id)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

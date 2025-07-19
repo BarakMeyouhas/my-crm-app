@@ -12,8 +12,14 @@ A full-stack CRM application built with:
 
 ## Getting Started
 
-### Frontend
+### Frontend & Backend
 ```bash
 cd frontend
 npm install
 ng serve
+
+cd backend
+npm install
+npm run dev
+
+
