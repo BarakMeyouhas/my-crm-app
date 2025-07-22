@@ -12,7 +12,11 @@ import { LoginComponent } from './auth/login/login.component';
 import { UnauthorizedComponent } from './pages/unauthorized/unauthorized.component';
 import { AdminUsersComponent } from './admin/admin-users/admin-users.component';
 import { ClientListComponent } from './client/client-list/client-list.component';
-
+import { MatOptionModule } from "@angular/material/core";
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select'; // אם יש Select
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @NgModule({
   imports: [
@@ -23,7 +27,11 @@ import { ClientListComponent } from './client/client-list/client-list.component'
     ComponentsModule,
     RouterModule,
     AppRoutingModule,
-  ],
+    MatFormFieldModule,
+    MatOptionModule,
+    FormsModule,
+    MatInputModule,
+],
   declarations: [
     AppComponent,
     AdminLayoutComponent,

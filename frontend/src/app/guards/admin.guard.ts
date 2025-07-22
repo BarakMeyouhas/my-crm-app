@@ -31,7 +31,7 @@ export class AdminGuard implements CanActivate {
 
     try {
       const decoded: any = jwtDecode(token);
-      if (decoded.role === "admin") {
+      if (decoded.role === "Admin") {
         return true;
       } else {
         this.router.navigate(["/dashboard"]);
@@ -41,6 +41,5 @@ export class AdminGuard implements CanActivate {
       this.router.navigate(["/login"]);
       return false;
     }
-    return true;
   }
 }

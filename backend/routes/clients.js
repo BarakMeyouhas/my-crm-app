@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { authenticateToken } = require("../middleware/auth");
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 let clients = []; // לצורך הדגמה, אפשר להחליף ב־PostgreSQL מאוחר יותר
 let idCounter = 1;
@@ -45,6 +45,17 @@ router.delete("/users/:id", async (req, res) => {
   } catch (error) {
     console.error("Delete user error:", error);
     res.status(500).json({ error: "Could not delete user" });
+  }
+});
+router.get("/companies", async (req, res) => {
+  try {
+    const companies = await prisma.company.findMany({
+      select: { id: true, name: true },
+    });
+    res.json(companies);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch companies" });
   }
 });
 

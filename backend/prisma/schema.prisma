@@ -4,6 +4,8 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+// schema.prisma
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,18 +15,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
-  password String
-  role     String @default("client")
+model Company {
+  id                 Int       @id @default(autoincrement())
+  name               String
+  contactEmail       String
+  contactPhone       String?
+  subscriptionPlan   String
+  subscriptionEndsAt DateTime?
+  createdAt          DateTime  @default(now())
+
+  users User[] @relation("CompanyUsers")
+
+  @@map("companies")
 }
 
-model Client {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  phone     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model User {
+  id           Int      @id @default(autoincrement())
+  companyId    Int
+  company      Company  @relation("CompanyUsers", fields: [companyId], references: [id])
+  firstName    String
+  lastName     String
+  email        String
+  passwordHash String
+  role         UserRole
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  @@unique([email]) // מייל ייחודי בתוך החברה בלבד
+  @@map("users")
+}
+
+enum UserRole {
+  Admin
+  Manager
+  Employee
 }

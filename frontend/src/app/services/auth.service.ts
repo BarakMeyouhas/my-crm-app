@@ -55,6 +55,10 @@ export class AuthService {
     return this.http.delete(`${this.adminUrl}/users/${userId}`, { headers });
   }
 
+  register(userData: any) {
+    return this.http.post("http://localhost:5000/api/auth/register", userData);
+  }
+
   logout() {
     localStorage.removeItem("token");
     this.userSubject.next(null);

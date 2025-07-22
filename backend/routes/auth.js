@@ -17,7 +17,7 @@ router.get("/profile", authenticateToken, async (req, res) => {
 router.get(
   "/admin/users",
   authenticateToken,
-  authorizeRoles("admin"),
+  authorizeRoles("Admin"),
   async (req, res) => {
     const users = await prisma.user.findMany({
       select: { id: true, email: true, role: true },

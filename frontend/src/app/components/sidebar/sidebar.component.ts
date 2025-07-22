@@ -58,7 +58,7 @@ export class SidebarComponent implements OnInit {
     if (token) {
       const helper = new JwtHelperService();
       const decodedToken = helper.decodeToken(token);
-      this.isAdmin = decodedToken?.role === "admin";
+      this.isAdmin = decodedToken?.role === "Admin";
     }
     this.menuItems = ROUTES.filter((menuItem) => {
       if (menuItem.onlyAdmin) {

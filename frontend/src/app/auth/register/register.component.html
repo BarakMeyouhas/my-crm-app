@@ -1,39 +1,76 @@
-<form (ngSubmit)="onSubmit()" #registerForm="ngForm">
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+  <h3>User Information</h3>
+
   <div>
-    <label for="email">Email:</label>
-    <input
-      type="email"
-      id="email"
-      name="email"
-      required
-      [(ngModel)]="email"
-      #emailInput="ngModel"
-    />
-    <div *ngIf="emailInput.invalid && emailInput.touched" style="color: red">
-      Email is required
-    </div>
+    <label>First Name:</label>
+    <input formControlName="firstName" type="text" />
   </div>
 
   <div>
-    <label for="password">Password:</label>
-    <input
-      type="password"
-      id="password"
-      name="password"
-      required
-      minlength="6"
-      [(ngModel)]="password"
-      #passwordInput="ngModel"
-    />
+    <label>Last Name:</label>
+    <input formControlName="lastName" type="text" />
+  </div>
+
+  <div>
+    <label>Email:</label>
+    <input formControlName="email" type="email" />
+  </div>
+
+  <div>
+    <label>Password:</label>
+    <input formControlName="password" type="password" />
+  </div>
+
+  <h3>Company Information</h3>
+  <div>
+    <label for="companyId">Company:</label>
+    <select formControlName="companyId">
+      <option value="" disabled>Select a company</option>
+      <option *ngFor="let company of companies" [value]="company.id">
+        {{ company.name }}
+      </option>
+    </select>
     <div
-      *ngIf="passwordInput.invalid && passwordInput.touched"
+      *ngIf="
+        registerForm.get('companyId')?.invalid &&
+        registerForm.get('companyId')?.touched
+      "
       style="color: red"
     >
-      Password is required (min 6 characters)
+      Please select a company
     </div>
   </div>
 
-  <button type="submit" [disabled]="registerForm.invalid">Register</button>
-</form>
+  <div>
+    <label>Company Email:</label>
+    <input formControlName="companyEmail" type="email" />
+  </div>
 
-<div *ngIf="message">{{ message }}</div>
+  <div>
+    <label>Company Phone:</label>
+    <input formControlName="companyPhone" type="text" />
+  </div>
+
+  <div>
+    <label>Subscription Plan:</label>
+    <select formControlName="subscriptionPlan">
+      <option value="Basic">Basic</option>
+      <option value="Pro">Pro</option>
+      <option value="Enterprise">Enterprise</option>
+    </select>
+  </div>
+
+  <div>
+    <label>Role:</label>
+    <select formControlName="role">
+      <option value="" disabled>Select role</option>
+      <option value="Admin">Admin</option>
+      <option value="Manager">Manager</option>
+      <option value="Employee">Employee</option>
+    </select>
+  </div>
+
+  <button type="submit">Register</button>
+
+  <p *ngIf="message">{{ message }}</p>
+</form>
