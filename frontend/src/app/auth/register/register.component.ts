@@ -8,6 +8,7 @@ import {
 } from "@angular/forms";
 // Make sure the following file exists: src/app/auth/auth.service.ts
 import { AuthService } from "../../services/auth.service";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-register",
@@ -29,7 +30,8 @@ export class RegisterComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   // תוודא שאתה טוען companies לפני הטופס, למשל ב-ngOnInit:
@@ -41,8 +43,6 @@ export class RegisterComponent implements OnInit {
       password: ["", [Validators.required, Validators.minLength(6)]],
       companyId: [null, Validators.required],
       role: [""],
-      companyEmail: ["", [Validators.required, Validators.email]],
-      companyPhone: [""],
       subscriptionPlan: ["Basic", Validators.required],
     });
     this.loadCompanies();
@@ -104,5 +104,9 @@ export class RegisterComponent implements OnInit {
         this.message = "Registration failed.";
       }
     );
+  }
+
+  goToLogin() {
+    this.router.navigate(["/login"]);
   }
 }

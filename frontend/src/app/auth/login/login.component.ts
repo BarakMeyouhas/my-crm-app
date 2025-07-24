@@ -41,5 +41,9 @@ export class LoginComponent implements OnInit {
 
   constructor(private http: HttpClient, private router: Router) {}
 
+  goToRegister() {
+    this.router.navigate(["/register"]);
+  }
+
   ngOnInit(): void {}
 }

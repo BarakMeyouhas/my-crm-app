@@ -1,76 +1,88 @@
-<form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
-  <h3>User Information</h3>
-
-  <div>
-    <label>First Name:</label>
-    <input formControlName="firstName" type="text" />
-  </div>
-
-  <div>
-    <label>Last Name:</label>
-    <input formControlName="lastName" type="text" />
-  </div>
-
-  <div>
-    <label>Email:</label>
-    <input formControlName="email" type="email" />
-  </div>
-
-  <div>
-    <label>Password:</label>
-    <input formControlName="password" type="password" />
-  </div>
-
-  <h3>Company Information</h3>
-  <div>
-    <label for="companyId">Company:</label>
-    <select formControlName="companyId">
-      <option value="" disabled>Select a company</option>
-      <option *ngFor="let company of companies" [value]="company.id">
-        {{ company.name }}
-      </option>
-    </select>
-    <div
-      *ngIf="
-        registerForm.get('companyId')?.invalid &&
-        registerForm.get('companyId')?.touched
-      "
-      style="color: red"
-    >
-      Please select a company
+<div class="register-page">
+  <div class="register-left">
+    <div class="register-tabs">
+      <button class="tab" (click)="goToLogin()">Sign In</button>
+      <button class="tab active">Sign Up</button>
+      <button class="tab">Password recovery</button>
     </div>
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-card">
+      <h2 class="register-title">Sign Up</h2>
+      <div class="register-fields">
+        <div class="input-group" [ngClass]="{'has-error': registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched}">
+          <span class="input-icon"><i class="material-icons">person</i></span>
+          <input formControlName="firstName" type="text" placeholder="First name" />
+          <div class="error-msg" *ngIf="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched">
+            First name is required
+          </div>
+        </div>
+        <div class="input-group" [ngClass]="{'has-error': registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched}">
+          <span class="input-icon"><i class="material-icons">person</i></span>
+          <input formControlName="lastName" type="text" placeholder="Last name" />
+          <div class="error-msg" *ngIf="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched">
+            Last name is required
+          </div>
+        </div>
+        <div class="input-group" [ngClass]="{'has-error': registerForm.get('email')?.invalid && registerForm.get('email')?.touched}">
+          <span class="input-icon"><i class="material-icons">email</i></span>
+          <input formControlName="email" type="email" placeholder="Email" />
+          <div class="error-msg" *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+            Invalid email format
+          </div>
+        </div>
+        <div class="input-group" [ngClass]="{'has-error': registerForm.get('password')?.invalid && registerForm.get('password')?.touched}">
+          <span class="input-icon"><i class="material-icons">lock</i></span>
+          <input formControlName="password" type="password" placeholder="Password" />
+          <div class="error-msg" *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+            Password must contain at least 6 symbols
+          </div>
+        </div>
+        <div class="input-group" [ngClass]="{'has-error': registerForm.get('role')?.invalid && registerForm.get('role')?.touched}">
+          <span class="input-icon"><i class="material-icons">assignment_ind</i></span>
+          <select formControlName="role">
+            <option value="" disabled>Select role</option>
+            <option value="Admin">Admin</option>
+            <option value="Manager">Manager</option>
+            <option value="Employee">Employee</option>
+          </select>
+          <div class="error-msg" *ngIf="registerForm.get('role')?.invalid && registerForm.get('role')?.touched">
+            Please select a role
+          </div>
+        </div>
+        <div class="input-group" [ngClass]="{'has-error': registerForm.get('companyId')?.invalid && registerForm.get('companyId')?.touched}">
+          <span class="input-icon"><i class="material-icons">business</i></span>
+          <select formControlName="companyId">
+            <option value="" disabled>Select a company</option>
+            <option *ngFor="let company of companies" [value]="company.id">
+              {{ company.name }}
+            </option>
+          </select>
+          <div class="error-msg" *ngIf="registerForm.get('companyId')?.invalid && registerForm.get('companyId')?.touched">
+            Please select a company
+          </div>
+        </div>
+        <div class="input-group">
+          <span class="input-icon"><i class="material-icons">star</i></span>
+          <select formControlName="subscriptionPlan">
+            <option value="Basic">Basic</option>
+            <option value="Pro">Pro</option>
+            <option value="Enterprise">Enterprise</option>
+          </select>
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="terms" />
+          <label for="terms">I agree to Ultimate Trade <a href="#">Terms of use</a></label>
+        </div>
+        <div class="recaptcha-row">
+          <!-- reCAPTCHA widget placeholder -->
+          <div class="recaptcha-placeholder">[reCAPTCHA]</div>
+        </div>
+        <button type="submit" class="register-btn">Sign Up</button>
+      </div>
+      <p *ngIf="message" class="register-message">{{ message }}</p>
+    </form>
   </div>
-
-  <div>
-    <label>Company Email:</label>
-    <input formControlName="companyEmail" type="email" />
+  <div class="register-right">
+    <img src="assets/img/Servix Logo.png" alt="Welcome" class="branding-img" />
+    <h3>Welcome to Servix, your best choice for your business</h3>
   </div>
-
-  <div>
-    <label>Company Phone:</label>
-    <input formControlName="companyPhone" type="text" />
-  </div>
-
-  <div>
-    <label>Subscription Plan:</label>
-    <select formControlName="subscriptionPlan">
-      <option value="Basic">Basic</option>
-      <option value="Pro">Pro</option>
-      <option value="Enterprise">Enterprise</option>
-    </select>
-  </div>
-
-  <div>
-    <label>Role:</label>
-    <select formControlName="role">
-      <option value="" disabled>Select role</option>
-      <option value="Admin">Admin</option>
-      <option value="Manager">Manager</option>
-      <option value="Employee">Employee</option>
-    </select>
-  </div>
-
-  <button type="submit">Register</button>
-
-  <p *ngIf="message">{{ message }}</p>
-</form>
+</div>

@@ -10,9 +10,31 @@ router.get("/profile", authenticateToken, async (req, res) => {
 
   const user = await prisma.user.findUnique({
     where: { id: req.user.userId },
-    select: { id: true, email: true, role: true },
+    select: {
+      id: true,
+      email: true,
+      role: true,
+      firstName: true,
+      lastName: true,
+      companyId: true, // <-- add this
+      company: {
+        select: { name: true }
+      }
+    },
   });
-  res.json(user);
+  if (user) {
+    res.json({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      companyId: user.companyId, // <-- add this
+      companyName: user.company.name
+    });
+  } else {
+    res.status(404).json({ error: "User not found" });
+  }
 });
 router.get(
   "/admin/users",

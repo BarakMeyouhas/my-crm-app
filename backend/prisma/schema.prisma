@@ -25,6 +25,7 @@ model Company {
   createdAt          DateTime  @default(now())
 
   users User[] @relation("CompanyUsers")
+  serviceRequests ServiceRequest[]
 
   @@map("companies")
 }
@@ -41,6 +42,8 @@ model User {
   isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())
 
+  createdServiceRequests ServiceRequest[] @relation("CreatedServiceRequests")
+
   @@unique([email]) // מייל ייחודי בתוך החברה בלבד
   @@map("users")
 }
@@ -49,4 +52,28 @@ enum UserRole {
   Admin
   Manager
   Employee
+}
+
+model ServiceRequest {
+  id             Int           @id @default(autoincrement())
+  title          String
+  description    String
+  status         RequestStatus @default(PENDING)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  dueDate        DateTime?
+
+  // Relations:
+  company        Company       @relation(fields: [companyId], references: [id])
+  companyId      Int
+
+  createdBy      User          @relation("CreatedServiceRequests", fields: [createdById], references: [id])
+  createdById    Int
+}
+
+enum RequestStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
 }

@@ -6,15 +6,21 @@ require("dotenv").config();
 const { authenticateToken, authorizeRoles } = require("./middleware/auth"); // ✅ שים לב לשורה הזו
 
 const app = express();
+app.use(cors()); // <--- Move this here, before any routes!
+app.use(express.json());
+
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 5000;
 
 const clientsRoute = require("./routes/clients");
 app.use("/api/clients", clientsRoute);
 
+const serviceRequestsRouter = require("./routes/serviceRequests");
+app.use("/api", serviceRequestsRouter);
+
 // Middleware
-app.use(cors());
-app.use(express.json());
+// app.use(cors()); // This line is now redundant as cors is moved to the top
+// app.use(express.json()); // This line is now redundant as express.json() is moved to the top
 
 // Register route
 app.post("/api/auth/register", async (req, res) => {

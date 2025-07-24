@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { AuthService } from "app/services/auth.service";
 import * as Chartist from "chartist";
+import { ServiceRequestService } from "../services/service-request.service";
 
 @Component({
   selector: "app-dashboard",
@@ -9,7 +10,12 @@ import * as Chartist from "chartist";
 })
 export class DashboardComponent implements OnInit {
   user: any;
-  constructor(private authService: AuthService) {}
+  userName: string = '';
+  companyName: string = '';
+  serviceRequests: any[] = [];
+  totalServiceRequests: number = 0;
+  latestServiceRequestTitle: string = '';
+  constructor(private authService: AuthService, private serviceRequestService: ServiceRequestService) {}
 
   users: any[] = [];
 
@@ -76,6 +82,33 @@ export class DashboardComponent implements OnInit {
     seq2 = 0;
   }
   ngOnInit() {
+    // Fetch user profile first to ensure user data is available
+    this.authService.fetchUserProfile().subscribe({
+      next: () => {
+        this.authService.currentUser.subscribe((user) => {
+          if (user) {
+            this.user = user;
+            this.userName = user.firstName ? user.firstName + (user.lastName ? ' ' + user.lastName : '') : (user.name || '');
+            this.companyName = user.companyName || '';
+            // Fetch service requests for this company only
+            this.serviceRequestService.getServiceRequestsByCompany(user.companyId).subscribe({
+              next: (requests) => {
+                this.serviceRequests = requests;
+                this.totalServiceRequests = requests.length;
+                this.latestServiceRequestTitle = requests.length > 0 ? requests[0].title : '';
+              },
+              error: (err) => {
+                console.error('Failed to load service requests', err);
+              }
+            });
+          }
+          console.log('User:', this.user);
+        });
+      },
+      error: (err) => {
+        console.error('Failed to fetch user profile', err);
+      }
+    });
     
     this.authService.getAllUsers().subscribe({
     next: (data) => {

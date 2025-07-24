@@ -1,7 +1,9 @@
 <div class="main-content">
+  <div class="dashboard-welcome" *ngIf="userName && companyName">
+    <h2>Welcome, {{ userName }} from {{ companyName }}!</h2>
+    <p>Here you can manage your company's data and services.</p>
+  </div>
   <div class="container-fluid">
-    
-
     <div class="row">
       <div class="col-lg-3 col-md-6 col-sm-6">
         <div class="card card-stats">
@@ -43,14 +45,15 @@
         <div class="card card-stats">
           <div class="card-header card-header-danger card-header-icon">
             <div class="card-icon">
-              <i class="material-icons">info_outline</i>
+              <i class="material-icons">assignment</i>
             </div>
-            <p class="card-category">Fixed Issues</p>
-            <h3 class="card-title">75</h3>
+            <p class="card-category">Service Requests</p>
+            <h3 class="card-title">{{ totalServiceRequests }}</h3>
           </div>
           <div class="card-footer">
             <div class="stats">
-              <i class="material-icons">local_offer</i> Tracked from Github
+              <i class="material-icons">info_outline</i>
+              Latest: {{ latestServiceRequestTitle || 'No requests yet' }}
             </div>
           </div>
         </div>

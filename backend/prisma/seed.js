@@ -36,51 +36,112 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var client_1 = require("@prisma/client");
-var prisma = new client_1.PrismaClient();
-function main() {
-    return __awaiter(this, void 0, void 0, function () {
-        var user, client;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    console.log('🌱 Starting seed...');
-                    return [4 /*yield*/, prisma.user.create({
-                            data: {
-                                email: 'admin@example.com',
-                                password: '123456', // אל תשכח להחליף בהשמטה אמיתית או bcrypt אם צריך
-                                role: 'admin',
-                            },
-                        })];
-                case 1:
-                    user = _a.sent();
-                    return [4 /*yield*/, prisma.client.create({
-                            data: {
-                                name: 'First Client',
-                                email: 'client@example.com',
-                                phone: '0501234567',
-                            },
-                        })];
-                case 2:
-                    client = _a.sent();
-                    console.log('✅ Seed complete:', { user: user, client: client });
-                    return [2 /*return*/];
-            }
-        });
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
+
+async function main() {
+  console.log('🌱 Starting seed...');
+
+  // Companies to seed
+  const companies = [
+    { name: "TechNova", contactEmail: "info@technova.com", contactPhone: "123-111-1111", subscriptionPlan: "Basic" },
+    { name: "GreenEdge Solutions", contactEmail: "info@greenedge.com", contactPhone: "123-222-2222", subscriptionPlan: "Basic" },
+    { name: "ByteBridge", contactEmail: "info@bytebridge.com", contactPhone: "123-333-3333", subscriptionPlan: "Basic" },
+    { name: "OmegaHealth", contactEmail: "info@omegahealth.com", contactPhone: "123-444-4444", subscriptionPlan: "Basic" },
+    { name: "Cloudify", contactEmail: "info@cloudify.com", contactPhone: "123-555-5555", subscriptionPlan: "Basic" },
+    { name: "SecureStack", contactEmail: "info@securestack.com", contactPhone: "123-666-6666", subscriptionPlan: "Basic" },
+    { name: "DataSpring", contactEmail: "info@dataspring.com", contactPhone: "123-777-7777", subscriptionPlan: "Basic" },
+    { name: "NextGen AI", contactEmail: "info@nextgenai.com", contactPhone: "123-888-8888", subscriptionPlan: "Basic" },
+  ];
+
+  // Seed companies and one admin user per company
+  for (const [i, company] of companies.entries()) {
+    const createdCompany = await prisma.company.create({
+      data: {
+        ...company,
+        // subscriptionEndsAt and createdAt are optional/default
+      },
     });
+
+    // Create an admin user for each company
+    const adminUser = await prisma.user.create({
+      data: {
+        companyId: createdCompany.id,
+        firstName: "Admin",
+        lastName: `User${i+1}`,
+        email: `admin${i+1}@${company.contactEmail.split('@')[1]}`,
+        passwordHash: "hashedpassword", // Replace with real hash in production
+        role: "Admin",
+        // isActive and createdAt are defaulted
+      },
+    });
+
+    // Create a ServiceRequest for this company, created by the admin user
+    await prisma.serviceRequest.create({
+      data: {
+        title: `Welcome Request for ${company.name}`,
+        description: `This is a sample service request for ${company.name}.`,
+        companyId: createdCompany.id,
+        createdById: adminUser.id,
+        status: "PENDING",
+        dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1 week from now
+        // createdAt and updatedAt are defaulted
+      },
+    });
+
+    // Add more sample ServiceRequests for this company
+    const moreRequests = [
+      {
+        title: `IT Support - Email Issues`,
+        description: `Employees of ${company.name} are experiencing issues with email delivery.`,
+        status: "IN_PROGRESS",
+        dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+      },
+      {
+        title: `Cloud Migration Consultation`,
+        description: `${company.name} is planning to migrate to the cloud and requests consultation.`,
+        status: "PENDING",
+        dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+      },
+      {
+        title: `Security Audit Request`,
+        description: `${company.name} would like a full audit of their systems for vulnerabilities.`,
+        status: "PENDING",
+        dueDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
+      },
+      {
+        title: `Bug Report - CRM not loading`,
+        description: `The internal CRM system used by ${company.name} fails to load for some users.`,
+        status: "IN_PROGRESS",
+        dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+      },
+      {
+        title: `Feature Request - Dark Mode`,
+        description: `${company.name} requested a dark mode feature in the dashboard.`,
+        status: "COMPLETED",
+        dueDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // already done
+      },
+    ];
+
+    for (const request of moreRequests) {
+      await prisma.serviceRequest.create({
+        data: {
+          ...request,
+          companyId: createdCompany.id,
+          createdById: adminUser.id,
+        },
+      });
+    }
+  }
+
+  console.log('✅ Seed complete!');
 }
+
 main()
-    .catch(function (e) {
+  .catch((e) => {
     console.error('❌ Seed failed:', e);
     process.exit(1);
-})
-    .finally(function () { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, prisma.$disconnect()];
-            case 1:
-                _a.sent();
-                return [2 /*return*/];
-        }
-    });
-}); });
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
