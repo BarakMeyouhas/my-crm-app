@@ -1,8 +1,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ComponentsModule } from '../../components/components.module';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { AdminLayoutComponent } from './admin-layout.component';
+import { AuthService } from '../../services/auth.service';
 
 describe('AdminLayoutComponent', () => {
   let component: AdminLayoutComponent;
@@ -10,8 +12,9 @@ describe('AdminLayoutComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule, ComponentsModule],
-      declarations: [ AdminLayoutComponent ]
+      imports: [RouterTestingModule, ComponentsModule, HttpClientTestingModule],
+      declarations: [ AdminLayoutComponent ],
+      providers: [AuthService]
     })
     .compileComponents();
   }));
