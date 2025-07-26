@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { ClientListComponent } from './client-list.component';
+import { ClientService } from '../../services/client.service';
+import { AuthService } from '../../services/auth.service';
 
 describe('ClientListComponent', () => {
   let component: ClientListComponent;
@@ -8,7 +11,9 @@ describe('ClientListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ClientListComponent ]
+      imports: [HttpClientTestingModule],
+      declarations: [ ClientListComponent ],
+      providers: [ClientService, AuthService]
     })
     .compileComponents();
 
