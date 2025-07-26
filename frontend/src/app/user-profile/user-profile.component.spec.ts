@@ -1,4 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 import { UserProfileComponent } from './user-profile.component';
 
@@ -8,6 +10,7 @@ describe('UserProfileComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [MatFormFieldModule, MatInputModule],
       declarations: [ UserProfileComponent ]
     })
     .compileComponents();
