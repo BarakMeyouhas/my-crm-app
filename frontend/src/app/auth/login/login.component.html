@@ -1,29 +1,81 @@
-<div class="register-page">
-  <div class="register-left">
-    <div class="register-tabs">
-      <button class="tab active">Sign In</button>
-      <button class="tab" (click)="goToRegister()">Sign Up</button>
-      <button class="tab">Password recovery</button>
+<div class="login-container">
+  <!-- Left Section - Informational -->
+  <div class="login-left">
+    <div class="brand-section">
+      <img src="assets/img/Servix Logo.png" alt="App Logo" class="brand-logo" />
+      <h1 class="hero-title">Let us help you run your freelance business.</h1>
+      <p class="hero-subtitle">Our login process is quick and easy, taking no more than 2 minutes to complete.</p>
     </div>
-    <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="register-card">
-      <h2 class="register-title">Sign In</h2>
-      <div class="register-fields">
-        <div class="input-group">
-          <span class="input-icon"><i class="material-icons">email</i></span>
-          <input type="email" name="email" [(ngModel)]="email" placeholder="Email" required />
+    
+    <div class="testimonial-card">
+      <div class="testimonial-content" [ngClass]="animationDirection">
+        <p class="testimonial-text">{{ testimonials[currentTestimonial].text }}</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">{{ testimonials[currentTestimonial].avatar }}</div>
+          <div class="author-info">
+            <div class="author-name">{{ testimonials[currentTestimonial].name }}</div>
+            <div class="author-title">{{ testimonials[currentTestimonial].title }}</div>
+          </div>
         </div>
-        <div class="input-group">
-          <span class="input-icon"><i class="material-icons">lock</i></span>
-          <input type="password" name="password" [(ngModel)]="password" placeholder="Password" required />
-        </div>
-        <button type="submit" class="register-btn">Login</button>
       </div>
-      <div *ngIf="errorMessage" class="error-msg" style="text-align:center">{{ errorMessage }}</div>
-    </form>
+    </div>
+    
+    <div class="testimonial-dots">
+      <span 
+        *ngFor="let t of testimonials; let i = index" 
+        class="dot" 
+        [class.active]="i === currentTestimonial" 
+        (click)="setTestimonial(i)"></span>
+    </div>
   </div>
-  <div class="register-right">
-    <img src="assets/img/Servix Logo.png" alt="Welcome" class="branding-img" />
-    <h3>Welcome back to Servix! Please sign in to continue.</h3>
+
+  <!-- Right Section - Login Form -->
+  <div class="login-right">
+    <div class="login-form-container">
+      <h2 class="form-title">Get started</h2>
+      <p class="form-subtitle">Sign in to your account now</p>
+      
+      <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="login-form">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input 
+            type="email" 
+            id="email"
+            name="email" 
+            [(ngModel)]="email" 
+            placeholder="alex@example.com" 
+            required 
+            class="form-input"
+          />
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="password-input-container">
+            <input 
+              type="password" 
+              id="password"
+              name="password" 
+              [(ngModel)]="password" 
+              placeholder="Enter your password" 
+              required 
+              class="form-input"
+            />
+          </div>
+        </div>
+        
+        <button type="submit" class="login-btn">Sign In</button>
+        
+        <div *ngIf="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </div>
+      </form>
+      
+      <div class="login-footer">
+        <span>Don't have an account? </span>
+        <a (click)="goToRegister()" class="login-link">Sign Up</a>
+      </div>
+    </div>
   </div>
 </div>
 

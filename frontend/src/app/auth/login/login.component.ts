@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { jwtDecode } from 'jwt-decode';
@@ -9,7 +9,45 @@ import { jwtDecode } from 'jwt-decode';
   templateUrl: "./login.component.html",
   styleUrls: ["./login.component.css"],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
+  testimonials = [
+    {
+      text: 'Impressed with the immediate results; I got clients and projects in the first week.',
+      name: 'Jonas Kim',
+      title: 'Product Designer',
+      avatar: '👤',
+    },
+    {
+      text: 'The onboarding was seamless and the support team is fantastic. My freelance business has grown so much!',
+      name: 'Maria Lopez',
+      title: 'Freelance Developer',
+      avatar: '👩‍💻',
+    },
+    {
+      text: 'A must-have tool for anyone looking to manage clients efficiently. Highly recommended!',
+      name: 'David Smith',
+      title: 'Consultant',
+      avatar: '🧑‍💼',
+    },
+  ];
+  currentTestimonial = 0;
+  private testimonialInterval: any;
+  animationDirection: 'left' | 'right' | 'auto' = 'right';
+
+  setTestimonial(index: number) {
+    this.animationDirection = index > this.currentTestimonial ? 'right' : 'left';
+    this.currentTestimonial = index;
+    
+    // Reset the interval
+    if (this.testimonialInterval) {
+      clearInterval(this.testimonialInterval);
+    }
+    this.testimonialInterval = setInterval(() => {
+      this.animationDirection = 'right';
+      this.currentTestimonial = (this.currentTestimonial + 1) % this.testimonials.length;
+    }, 4000);
+  }
+
   onSubmit() {
     this.http
       .post<any>("http://localhost:5000/api/auth/login", {
@@ -45,5 +83,16 @@ export class LoginComponent implements OnInit {
     this.router.navigate(["/register"]);
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.testimonialInterval = setInterval(() => {
+      this.animationDirection = 'auto';
+      this.currentTestimonial = (this.currentTestimonial + 1) % this.testimonials.length;
+    }, 4000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.testimonialInterval) {
+      clearInterval(this.testimonialInterval);
+    }
+  }
 }
