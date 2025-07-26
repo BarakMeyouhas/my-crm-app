@@ -7,6 +7,23 @@ describe('MapsComponent', () => {
   let fixture: ComponentFixture<MapsComponent>;
 
   beforeEach(async(() => {
+    // Mock Google Maps API
+    (window as any).google = {
+      maps: {
+        LatLng: function(lat: number, lng: number) {
+          return { lat, lng };
+        },
+        Map: function(element: any, options: any) {
+          return { element, options };
+        },
+        Marker: function(options: any) {
+          return {
+            setMap: function(map: any) {}
+          };
+        }
+      }
+    };
+
     TestBed.configureTestingModule({
       declarations: [ MapsComponent ]
     })
