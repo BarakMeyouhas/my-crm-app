@@ -117,3 +117,6 @@ app.use("/api", companiesRouter);
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+// Export app for testing
+module.exports = app;

@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:setup": "node setup-test-db.js",
+    "test:full": "npm run test:setup && npm test",
     "dev": "nodemon index.js",
     "start": "node index.js"
   },
@@ -25,8 +28,11 @@
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
+    "@types/jest": "^30.0.0",
     "@types/node": "^24.0.14",
+    "jest": "^30.0.5",
     "nodemon": "^3.1.10",
+    "supertest": "^7.1.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
