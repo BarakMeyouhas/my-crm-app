@@ -102,10 +102,10 @@ jobs:
     #     cd frontend
     #     npm run lint
     
-    - name: Run frontend tests with coverage
+    - name: Run frontend tests
       run: |
         cd frontend
-        npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
+        npm test -- --watch=false --browsers=ChromeHeadless
     
     - name: Run frontend security audit
       run: |
