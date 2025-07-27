@@ -1,0 +1,75 @@
+/* Chart.js Service Request Chart Styles */
+.card-chart canvas {
+  width: 100% !important;
+  height: 200px !important;
+  display: block !important;
+  background: transparent !important;
+}
+
+.card-chart .card-header {
+  padding: 0;
+  position: relative;
+  background: transparent !important;
+}
+
+.card-chart .card-header canvas {
+  border-radius: 12px 12px 0 0;
+  background: transparent !important;
+}
+
+/* Responsive chart container */
+.chart-container {
+  position: relative;
+  height: 200px;
+  width: 100%;
+  background: transparent !important;
+}
+
+/* Chart tooltip customization */
+.chartjs-tooltip {
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 12px;
+}
+
+/* Chart legend customization */
+.chart-legend {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  color: #666;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  margin-right: 5px;
+}
+
+/* Status-specific colors for legend */
+.legend-pending { background-color: #ff9800; }
+.legend-in-progress { background-color: #2196f3; }
+.legend-completed { background-color: #4caf50; }
+.legend-cancelled { background-color: #f44336; }
+
+/* Override any card header background that might interfere */
+.card-header-warning {
+  background: transparent !important;
+}
+
+/* Ensure canvas is visible */
+canvas#serviceRequestChart {
+  background: transparent !important;
+  border: none !important;
+}

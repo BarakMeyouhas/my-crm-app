@@ -1,25 +1,37 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from "@angular/core";
 import { AuthService } from "app/services/auth.service";
 import * as Chartist from "chartist";
 import { ServiceRequestService } from "../services/service-request.service";
+import { Chart, ChartConfiguration, ChartData, registerables } from 'chart.js';
+
+// Register all Chart.js components
+Chart.register(...registerables);
 
 @Component({
   selector: "app-dashboard",
   templateUrl: "./dashboard.component.html",
   styleUrls: ["./dashboard.component.css"],
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, AfterViewInit {
+  @ViewChild('serviceRequestChart', { static: true }) chartCanvas!: ElementRef;
+  
   user: any;
   userName: string = '';
   companyName: string = '';
   serviceRequests: any[] = [];
   totalServiceRequests: number = 0;
   latestServiceRequestTitle: string = '';
+  serviceRequestChart: Chart | null = null;
+  statusStats: { [key: string]: number } = {
+    PENDING: 0,
+    IN_PROGRESS: 0,
+    COMPLETED: 0,
+    CANCELLED: 0
+  };
+
   constructor(private authService: AuthService, private serviceRequestService: ServiceRequestService) {}
 
   users: any[] = [];
-
-
 
   startAnimationForLineChart(chart) {
     let seq: any, delays: any, durations: any;
@@ -58,6 +70,7 @@ export class DashboardComponent implements OnInit {
 
     seq = 0;
   }
+
   startAnimationForBarChart(chart) {
     let seq2: any, delays2: any, durations2: any;
 
@@ -81,6 +94,7 @@ export class DashboardComponent implements OnInit {
 
     seq2 = 0;
   }
+
   ngOnInit() {
     // Fetch user profile first to ensure user data is available
     this.authService.fetchUserProfile().subscribe({
@@ -96,17 +110,21 @@ export class DashboardComponent implements OnInit {
                 this.serviceRequests = requests;
                 this.totalServiceRequests = requests.length;
                 this.latestServiceRequestTitle = requests.length > 0 ? requests[0].title : '';
+                this.calculateStatusStats();
+                // Create chart after view is initialized
+                setTimeout(() => {
+                  this.createServiceRequestChart();
+                }, 100);
               },
               error: (err) => {
-                console.error('Failed to load service requests', err);
+                console.error('Error fetching service requests:', err);
               }
             });
           }
-          console.log('User:', this.user);
         });
       },
       error: (err) => {
-        console.error('Failed to fetch user profile', err);
+        console.error('Error fetching user profile:', err);
       }
     });
     
@@ -165,42 +183,121 @@ export class DashboardComponent implements OnInit {
 
     // start animation for the Completed Tasks Chart - Line Chart
     this.startAnimationForLineChart(completedTasksChart);
+  }
 
-    /* ----------==========     Emails Subscription Chart initialization    ==========---------- */
+  ngAfterViewInit() {
+    // Chart will be created after data is loaded
+  }
 
-    var datawebsiteViewsChart = {
-      labels: ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"],
-      series: [[542, 443, 320, 780, 553, 453, 326, 434, 568, 610, 756, 895]],
+  calculateStatusStats() {
+    // Reset stats
+    this.statusStats = {
+      PENDING: 0,
+      IN_PROGRESS: 0,
+      COMPLETED: 0,
+      CANCELLED: 0
     };
-    var optionswebsiteViewsChart = {
-      axisX: {
-        showGrid: false,
-      },
-      low: 0,
-      high: 1000,
-      chartPadding: { top: 0, right: 5, bottom: 0, left: 0 },
-    };
-    var responsiveOptions: any[] = [
-      [
-        "screen and (max-width: 640px)",
-        {
-          seriesBarDistance: 5,
-          axisX: {
-            labelInterpolationFnc: function (value) {
-              return value[0];
+
+    // Count requests by status
+    this.serviceRequests.forEach(request => {
+      if (this.statusStats.hasOwnProperty(request.status)) {
+        this.statusStats[request.status]++;
+      }
+    });
+    
+    console.log('Status Stats:', this.statusStats);
+  }
+
+  createServiceRequestChart() {
+    console.log('Creating service request chart...');
+    console.log('Chart canvas:', this.chartCanvas);
+    console.log('Chart canvas native element:', this.chartCanvas?.nativeElement);
+    
+    if (this.chartCanvas && this.chartCanvas.nativeElement) {
+      // Destroy existing chart if it exists
+      if (this.serviceRequestChart) {
+        this.serviceRequestChart.destroy();
+      }
+
+      const ctx = this.chartCanvas.nativeElement.getContext('2d');
+      console.log('Canvas context:', ctx);
+      
+      // Use actual data or fallback to sample data for testing
+      let data = [
+        this.statusStats.PENDING || 0,
+        this.statusStats.IN_PROGRESS || 0,
+        this.statusStats.COMPLETED || 0,
+        this.statusStats.CANCELLED || 0
+      ];
+      
+      // If all values are 0, use sample data for testing
+      if (data.every(val => val === 0)) {
+        console.log('No data available, using sample data for testing');
+        data = [5, 3, 8, 1]; // Sample data: Pending, In Progress, Completed, Cancelled
+      }
+      
+      const chartData: ChartData<'bar'> = {
+        labels: ['Pending', 'In Progress', 'Completed', 'Cancelled'],
+        datasets: [
+          {
+            label: 'Service Requests by Status',
+            data: data,
+            backgroundColor: [
+              '#ff9800', // Orange for Pending
+              '#2196f3', // Blue for In Progress
+              '#4caf50', // Green for Completed
+              '#f44336'  // Red for Cancelled
+            ],
+            borderColor: [
+              '#e68900',
+              '#1976d2',
+              '#388e3c',
+              '#d32f2f'
+            ],
+            borderWidth: 1
+          }
+        ]
+      };
+
+      console.log('Chart data:', chartData);
+
+      const config: ChartConfiguration<'bar'> = {
+        type: 'bar',
+        data: chartData,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
             },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return `${context.label}: ${context.parsed.y} requests`;
+                }
+              }
+            }
           },
-        },
-      ],
-    ];
-    var websiteViewsChart = new Chartist.Bar(
-      "#websiteViewsChart",
-      datawebsiteViewsChart,
-      optionswebsiteViewsChart,
-      responsiveOptions
-    );
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                stepSize: 1
+              }
+            }
+          }
+        }
+      };
 
-    //start animation for the Emails Subscription Chart
-    this.startAnimationForBarChart(websiteViewsChart);
+      try {
+        this.serviceRequestChart = new Chart(ctx, config);
+        console.log('Chart created successfully:', this.serviceRequestChart);
+      } catch (error) {
+        console.error('Error creating chart:', error);
+      }
+    } else {
+      console.error('Chart canvas not found');
+    }
   }
 }
