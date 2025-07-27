@@ -25,4 +25,8 @@ export class ServiceRequestService {
   getServiceRequestsByCompany(companyId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}?companyId=${companyId}`, this.headers);
   }
+
+  createServiceRequest(serviceRequest: any): Observable<any> {
+    return this.http.post<any>(this.baseUrl, serviceRequest, this.headers);
+  }
 } 

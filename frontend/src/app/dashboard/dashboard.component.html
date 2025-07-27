@@ -100,15 +100,33 @@
       <div class="col-md-4">
         <div class="card card-chart">
           <div class="card-header card-header-warning">
-            <div class="ct-chart" id="websiteViewsChart"></div>
+            <canvas #serviceRequestChart style="height: 200px;"></canvas>
           </div>
           <div class="card-body">
-            <h4 class="card-title">Email Subscriptions</h4>
-            <p class="card-category">Last Campaign Performance</p>
+            <h4 class="card-title">Service Request Status</h4>
+            <p class="card-category">Requests by Status</p>
+            <div class="chart-legend">
+              <div class="legend-item">
+                <div class="legend-color legend-pending"></div>
+                <span>Pending</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-color legend-in-progress"></div>
+                <span>In Progress</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-color legend-completed"></div>
+                <span>Completed</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-color legend-cancelled"></div>
+                <span>Cancelled</span>
+              </div>
+            </div>
           </div>
           <div class="card-footer">
             <div class="stats">
-              <i class="material-icons">access_time</i> campaign sent 2 days ago
+              <i class="material-icons">assignment</i> Total: {{ totalServiceRequests }} requests
             </div>
           </div>
         </div>
