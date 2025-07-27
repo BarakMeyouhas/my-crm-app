@@ -94,7 +94,7 @@ jobs:
     - name: Install frontend dependencies
       run: |
         cd frontend
-        npm install
+        npm install --legacy-peer-deps
     
     # TODO: Fix frontend linting - ESLint configuration needs to be updated for Angular 14
     # - name: Run frontend linting
