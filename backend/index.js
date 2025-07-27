@@ -18,9 +18,7 @@ app.use("/api/clients", clientsRoute);
 const serviceRequestsRouter = require("./routes/serviceRequests");
 app.use("/api", serviceRequestsRouter);
 
-// Middleware
-// app.use(cors()); // This line is now redundant as cors is moved to the top
-// app.use(express.json()); // This line is now redundant as express.json() is moved to the top
+
 
 // Register route
 app.post("/api/auth/register", async (req, res) => {

@@ -25,4 +25,45 @@ router.get("/service-requests", async (req, res) => {
   }
 });
 
+// Create a new service request
+router.post("/service-requests", async (req, res) => {
+  try {
+    const {
+      title,
+      description,
+      status = "PENDING",
+      dueDate,
+      companyId,
+      createdById
+    } = req.body;
+
+    // Validate required fields
+    if (!title || !description || !companyId || !createdById) {
+      return res.status(400).json({ 
+        message: "Missing required fields: title, description, companyId, and createdById are required" 
+      });
+    }
+
+    const serviceRequest = await prisma.serviceRequest.create({
+      data: {
+        title,
+        description,
+        status,
+        dueDate: dueDate ? new Date(dueDate) : null,
+        companyId: Number(companyId),
+        createdById: Number(createdById)
+      },
+      include: {
+        company: true,
+        createdBy: true
+      }
+    });
+
+    res.status(201).json(serviceRequest);
+  } catch (err) {
+    console.error("Error creating service request:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 module.exports = router; 
