@@ -5,6 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { AppRoutingModule } from './app.routing';
 import { ComponentsModule } from './components/components.module';
+import { LandingModule } from './landing/landing.module';
 import { AppComponent } from './app.component';
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 import { RegisterComponent } from './auth/register/register.component';
@@ -12,6 +13,7 @@ import { LoginComponent } from './auth/login/login.component';
 import { UnauthorizedComponent } from './pages/unauthorized/unauthorized.component';
 import { AdminUsersComponent } from './admin/admin-users/admin-users.component';
 import { ClientListComponent } from './client/client-list/client-list.component';
+
 import { MatOptionModule } from "@angular/material/core";
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -27,11 +29,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     ComponentsModule,
     RouterModule,
     AppRoutingModule,
+    LandingModule,
     MatFormFieldModule,
     MatOptionModule,
     FormsModule,
     MatInputModule,
-],
+  ],
   declarations: [
     AppComponent,
     AdminLayoutComponent,
@@ -40,7 +43,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     UnauthorizedComponent,
     AdminUsersComponent,
     ClientListComponent,
-
   ],
   providers: [],
   bootstrap: [AppComponent]

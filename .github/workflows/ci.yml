@@ -37,12 +37,24 @@ jobs:
         cd backend
         npx prisma generate
     
-    # - name: Run backend tests
-    #   run: |
-    #     cd backend
-    #     npm test
-    #   env:
-    #     DATABASE_URL: postgresql://postgres:postgres@localhost:5433/servix_db
+    - name: Test database migrations
+      run: |
+        cd backend
+        npx prisma migrate deploy
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5433/servix_db
+    
+    - name: Run backend tests
+      run: |
+        cd backend
+        npm test
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5433/servix_db
+    
+    - name: Run backend security audit
+      run: |
+        cd backend
+        npm audit --audit-level=moderate
 
   frontend:
     runs-on: ubuntu-latest
@@ -69,20 +81,48 @@ jobs:
         cd frontend
         npm install
     
-    # - name: Run frontend linting
-    #   run: |
-    #     cd frontend
-    #     npm run lint
-    
-    - name: Run frontend tests
+    - name: Run frontend linting
       run: |
         cd frontend
-        npm test -- --watch=false --browsers=ChromeHeadless
+        npm run lint
+    
+    - name: Run frontend tests with coverage
+      run: |
+        cd frontend
+        npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
+    
+    - name: Run frontend security audit
+      run: |
+        cd frontend
+        npm audit --audit-level=moderate
     
     - name: Build frontend
       run: |
         cd frontend
         npm run build --prod
+
+  e2e:
+    runs-on: ubuntu-latest
+    name: E2E Tests
+    needs: [frontend]
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+    
+    - name: Install frontend dependencies
+      run: |
+        cd frontend
+        npm install
+    
+    - name: Run E2E tests
+      run: |
+        cd frontend
+        npm run e2e
 
   build:
     needs: [backend, frontend]
