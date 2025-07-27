@@ -1,88 +1,153 @@
-<div class="register-page">
+<div class="register-container">
+  <!-- Left Section - Informational -->
   <div class="register-left">
-    <div class="register-tabs">
-      <button class="tab" (click)="goToLogin()">Sign In</button>
-      <button class="tab active">Sign Up</button>
-      <button class="tab">Password recovery</button>
+    <div class="brand-section">
+      <img src="assets/img/Servix Logo.png" alt="App Logo" class="brand-logo" />
+      <h1 class="hero-title">Join our community of successful freelancers.</h1>
+      <p class="hero-subtitle">Create your account in just a few minutes and start managing your business efficiently.</p>
     </div>
-    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-card">
-      <h2 class="register-title">Sign Up</h2>
-      <div class="register-fields">
-        <div class="input-group" [ngClass]="{'has-error': registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched}">
-          <span class="input-icon"><i class="material-icons">person</i></span>
-          <input formControlName="firstName" type="text" placeholder="First name" />
-          <div class="error-msg" *ngIf="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched">
+    
+    <div class="testimonial-card">
+      <div class="testimonial-content" [ngClass]="animationDirection">
+        <p class="testimonial-text">{{ testimonials[currentTestimonial].text }}</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">{{ testimonials[currentTestimonial].avatar }}</div>
+          <div class="author-info">
+            <div class="author-name">{{ testimonials[currentTestimonial].name }}</div>
+            <div class="author-title">{{ testimonials[currentTestimonial].title }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="testimonial-dots">
+      <span 
+        *ngFor="let t of testimonials; let i = index" 
+        class="dot" 
+        [class.active]="i === currentTestimonial" 
+        (click)="setTestimonial(i)"></span>
+    </div>
+  </div>
+
+  <!-- Right Section - Register Form -->
+  <div class="register-right">
+    <div class="register-form-container">
+      <h2 class="form-title">Create Account</h2>
+      <p class="form-subtitle">Join thousands of successful freelancers</p>
+      
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+        <div class="form-group">
+          <label for="firstName">First Name</label>
+          <input 
+            formControlName="firstName" 
+            type="text" 
+            id="firstName"
+            placeholder="Enter your first name" 
+            class="form-input"
+          />
+          <div class="error-message" *ngIf="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched">
             First name is required
           </div>
         </div>
-        <div class="input-group" [ngClass]="{'has-error': registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched}">
-          <span class="input-icon"><i class="material-icons">person</i></span>
-          <input formControlName="lastName" type="text" placeholder="Last name" />
-          <div class="error-msg" *ngIf="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched">
+        
+        <div class="form-group">
+          <label for="lastName">Last Name</label>
+          <input 
+            formControlName="lastName" 
+            type="text" 
+            id="lastName"
+            placeholder="Enter your last name" 
+            class="form-input"
+          />
+          <div class="error-message" *ngIf="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched">
             Last name is required
           </div>
         </div>
-        <div class="input-group" [ngClass]="{'has-error': registerForm.get('email')?.invalid && registerForm.get('email')?.touched}">
-          <span class="input-icon"><i class="material-icons">email</i></span>
-          <input formControlName="email" type="email" placeholder="Email" />
-          <div class="error-msg" *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
-            Invalid email format
+        
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input 
+            formControlName="email" 
+            type="email" 
+            id="email"
+            placeholder="alex@example.com" 
+            class="form-input"
+          />
+          <div class="error-message" *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+            Please enter a valid email address
           </div>
         </div>
-        <div class="input-group" [ngClass]="{'has-error': registerForm.get('password')?.invalid && registerForm.get('password')?.touched}">
-          <span class="input-icon"><i class="material-icons">lock</i></span>
-          <input formControlName="password" type="password" placeholder="Password" />
-          <div class="error-msg" *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
-            Password must contain at least 6 symbols
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="password-input-container">
+            <input 
+              formControlName="password" 
+              type="password" 
+              id="password"
+              placeholder="Create a strong password" 
+              class="form-input"
+            />
+          </div>
+          <div class="error-message" *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+            Password must be at least 6 characters
           </div>
         </div>
-        <div class="input-group" [ngClass]="{'has-error': registerForm.get('role')?.invalid && registerForm.get('role')?.touched}">
-          <span class="input-icon"><i class="material-icons">assignment_ind</i></span>
-          <select formControlName="role">
-            <option value="" disabled>Select role</option>
+        
+        <div class="form-group">
+          <label for="role">Role</label>
+          <select formControlName="role" id="role" class="form-input">
+            <option value="" disabled>Select your role</option>
             <option value="Admin">Admin</option>
             <option value="Manager">Manager</option>
             <option value="Employee">Employee</option>
           </select>
-          <div class="error-msg" *ngIf="registerForm.get('role')?.invalid && registerForm.get('role')?.touched">
+          <div class="error-message" *ngIf="registerForm.get('role')?.invalid && registerForm.get('role')?.touched">
             Please select a role
           </div>
         </div>
-        <div class="input-group" [ngClass]="{'has-error': registerForm.get('companyId')?.invalid && registerForm.get('companyId')?.touched}">
-          <span class="input-icon"><i class="material-icons">business</i></span>
-          <select formControlName="companyId">
-            <option value="" disabled>Select a company</option>
+        
+        <div class="form-group">
+          <label for="companyId">Company</label>
+          <select formControlName="companyId" id="companyId" class="form-input">
+            <option value="" disabled>Select your company</option>
             <option *ngFor="let company of companies" [value]="company.id">
               {{ company.name }}
             </option>
           </select>
-          <div class="error-msg" *ngIf="registerForm.get('companyId')?.invalid && registerForm.get('companyId')?.touched">
+          <div class="error-message" *ngIf="registerForm.get('companyId')?.invalid && registerForm.get('companyId')?.touched">
             Please select a company
           </div>
         </div>
-        <div class="input-group">
-          <span class="input-icon"><i class="material-icons">star</i></span>
-          <select formControlName="subscriptionPlan">
+        
+        <div class="form-group">
+          <label for="subscriptionPlan">Subscription Plan</label>
+          <select formControlName="subscriptionPlan" id="subscriptionPlan" class="form-input">
             <option value="Basic">Basic</option>
             <option value="Pro">Pro</option>
             <option value="Enterprise">Enterprise</option>
           </select>
         </div>
-        <div class="checkbox-row">
-          <input type="checkbox" id="terms" />
-          <label for="terms">I agree to Ultimate Trade <a href="#">Terms of use</a></label>
+        
+        <div class="checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="terms" required />
+            <span class="checkmark"></span>
+            I agree to the <a href="#" class="terms-link">Terms of Service</a> and <a href="#" class="terms-link">Privacy Policy</a>
+          </label>
         </div>
-        <div class="recaptcha-row">
-          <!-- reCAPTCHA widget placeholder -->
-          <div class="recaptcha-placeholder">[reCAPTCHA]</div>
+        
+        <button type="submit" class="register-btn" [disabled]="registerForm.invalid">Create Account</button>
+        
+        <div *ngIf="message" class="success-message">
+          {{ message }}
         </div>
-        <button type="submit" class="register-btn">Sign Up</button>
+      </form>
+      
+      <div class="register-footer">
+        <span>Already have an account? </span>
+        <a (click)="goToLogin()" class="register-link">Sign In</a>
       </div>
-      <p *ngIf="message" class="register-message">{{ message }}</p>
-    </form>
-  </div>
-  <div class="register-right">
-    <img src="assets/img/Servix Logo.png" alt="Welcome" class="branding-img" />
-    <h3>Welcome to Servix, your best choice for your business</h3>
+    </div>
   </div>
 </div>

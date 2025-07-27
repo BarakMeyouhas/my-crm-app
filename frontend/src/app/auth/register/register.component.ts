@@ -1,5 +1,5 @@
 import { HttpClient } from "@angular/common/http";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import {
   FormGroup,
   FormBuilder,
@@ -15,7 +15,7 @@ import { Router } from "@angular/router";
   templateUrl: "./register.component.html",
   styleUrls: ["./register.component.css"],
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent implements OnInit, OnDestroy {
   firstName: string = "";
   lastName: string = "";
   email: string = "";
@@ -27,12 +27,51 @@ export class RegisterComponent implements OnInit {
   selectedCompanyId!: number;
   registerForm!: FormGroup;
 
+  // Testimonials functionality
+  testimonials = [
+    {
+      text: 'Servix helped me streamline my client management and increased my productivity by 40%.',
+      name: 'Sarah Johnson',
+      title: 'Freelance Designer',
+      avatar: '👩‍🎨',
+    },
+    {
+      text: 'The best CRM solution I\'ve used. Simple, powerful, and gets the job done.',
+      name: 'Michael Chen',
+      title: 'Digital Consultant',
+      avatar: '👨‍💼',
+    },
+    {
+      text: 'From managing 5 clients to 50+ - Servix scaled with my business perfectly.',
+      name: 'Emma Rodriguez',
+      title: 'Marketing Specialist',
+      avatar: '👩‍💻',
+    },
+  ];
+  currentTestimonial = 0;
+  private testimonialInterval: any;
+  animationDirection: 'left' | 'right' | 'auto' = 'right';
+
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
     private authService: AuthService,
     private router: Router
   ) {}
+
+  setTestimonial(index: number) {
+    this.animationDirection = index > this.currentTestimonial ? 'right' : 'left';
+    this.currentTestimonial = index;
+    
+    // Reset the interval
+    if (this.testimonialInterval) {
+      clearInterval(this.testimonialInterval);
+    }
+    this.testimonialInterval = setInterval(() => {
+      this.animationDirection = 'right';
+      this.currentTestimonial = (this.currentTestimonial + 1) % this.testimonials.length;
+    }, 4000);
+  }
 
   // תוודא שאתה טוען companies לפני הטופס, למשל ב-ngOnInit:
   ngOnInit() {
@@ -46,6 +85,18 @@ export class RegisterComponent implements OnInit {
       subscriptionPlan: ["Basic", Validators.required],
     });
     this.loadCompanies();
+    
+    // Start testimonial rotation
+    this.testimonialInterval = setInterval(() => {
+      this.animationDirection = 'auto';
+      this.currentTestimonial = (this.currentTestimonial + 1) % this.testimonials.length;
+    }, 4000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.testimonialInterval) {
+      clearInterval(this.testimonialInterval);
+    }
   }
 
   loadCompanies() {
