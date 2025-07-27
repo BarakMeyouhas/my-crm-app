@@ -1,0 +1,313 @@
+<div class="service-request-container">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header card-header-primary">
+            <h4 class="card-title">
+              <i class="material-icons">assignment</i>
+              Create Service Request
+            </h4>
+            <p class="card-category">
+              Submit a new service request for your company
+            </p>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="serviceRequestForm" (ngSubmit)="onSubmit()">
+              <div class="row">
+                <div class="col-md-12">
+                  <mat-form-field class="example-full-width">
+                    <mat-label>Request Title</mat-label>
+                    <input
+                      matInput
+                      formControlName="title"
+                      placeholder="Enter a descriptive title"
+                    />
+                    <mat-error
+                      *ngIf="
+                        serviceRequestForm.get('title')?.hasError('required')
+                      "
+                    >
+                      Title is required
+                    </mat-error>
+                    <mat-error
+                      *ngIf="
+                        serviceRequestForm.get('title')?.hasError('minlength')
+                      "
+                    >
+                      Title must be at least 5 characters
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <mat-form-field class="example-full-width">
+                    <mat-label>Category</mat-label>
+                    <mat-select formControlName="category">
+                      <mat-option value="Technical Support"
+                        >Technical Support</mat-option
+                      >
+                      <mat-option value="Feature Request"
+                        >Feature Request</mat-option
+                      >
+                      <mat-option value="Bug Report">Bug Report</mat-option>
+                      <mat-option value="Training">Training</mat-option>
+                      <mat-option value="Consultation">Consultation</mat-option>
+                      <mat-option value="Other">Other</mat-option>
+                    </mat-select>
+                    <mat-error
+                      *ngIf="
+                        serviceRequestForm.get('category')?.hasError('required')
+                      "
+                    >
+                      Category is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-6">
+                  <mat-form-field class="example-full-width">
+                    <mat-label>Priority</mat-label>
+                    <mat-select formControlName="priority">
+                      <mat-option value="Low">Low</mat-option>
+                      <mat-option value="Medium">Medium</mat-option>
+                      <mat-option value="High">High</mat-option>
+                      <mat-option value="Critical">Critical</mat-option>
+                    </mat-select>
+                    <mat-error
+                      *ngIf="
+                        serviceRequestForm.get('priority')?.hasError('required')
+                      "
+                    >
+                      Priority is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <mat-form-field class="example-full-width">
+                    <mat-label>Estimated Hours</mat-label>
+                    <input
+                      matInput
+                      type="number"
+                      formControlName="estimatedHours"
+                      placeholder="1-1000"
+                    />
+                    <mat-error
+                      *ngIf="
+                        serviceRequestForm
+                          .get('estimatedHours')
+                          ?.hasError('required')
+                      "
+                    >
+                      Estimated hours is required
+                    </mat-error>
+                    <mat-error
+                      *ngIf="
+                        serviceRequestForm
+                          .get('estimatedHours')
+                          ?.hasError('min')
+                      "
+                    >
+                      Minimum 1 hour
+                    </mat-error>
+                    <mat-error
+                      *ngIf="
+                        serviceRequestForm
+                          .get('estimatedHours')
+                          ?.hasError('max')
+                      "
+                    >
+                      Maximum 1000 hours
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-6">
+                  <mat-form-field class="example-full-width">
+                    <mat-label>Deadline</mat-label>
+                    <input matInput type="date" formControlName="deadline" />
+                    <mat-error
+                      *ngIf="
+                        serviceRequestForm.get('deadline')?.hasError('required')
+                      "
+                    >
+                      Deadline is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-12">
+                  <mat-form-field class="example-full-width">
+                    <mat-label>Description</mat-label>
+                    <textarea
+                      matInput
+                      formControlName="description"
+                      rows="4"
+                      placeholder="Provide detailed description of your service request..."
+                    ></textarea>
+                    <mat-error
+                      *ngIf="
+                        serviceRequestForm
+                          .get('description')
+                          ?.hasError('required')
+                      "
+                    >
+                      Description is required
+                    </mat-error>
+                    <mat-error
+                      *ngIf="
+                        serviceRequestForm
+                          .get('description')
+                          ?.hasError('minlength')
+                      "
+                    >
+                      Description must be at least 20 characters
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="file-upload-section">
+                    <label class="file-upload-label">
+                      <i class="material-icons">attach_file</i>
+                      Attach Files (Optional)
+                    </label>
+                    <input
+                      type="file"
+                      multiple
+                      (change)="onFileChange($event)"
+                      accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
+                      class="file-input"
+                    />
+                    <small class="file-help"
+                      >Supported formats: PDF, DOC, DOCX, TXT, JPG, PNG (Max
+                      10MB each)</small
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-actions">
+                    <button
+                      mat-raised-button
+                      type="submit"
+                      [disabled]="serviceRequestForm.invalid || isLoading"
+                      class="btn btn-primary"
+                    >
+                      <i class="material-icons" *ngIf="!isLoading">send</i>
+                      <span *ngIf="isLoading">Creating...</span>
+                      <span *ngIf="!isLoading">Submit Request</span>
+                    </button>
+                    <button
+                      mat-button
+                      type="button"
+                      (click)="serviceRequestForm.reset()"
+                      class="btn btn-secondary"
+                    >
+                      <i class="material-icons">refresh</i>
+                      Reset Form
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row" *ngIf="message">
+                <div class="col-md-12">
+                  <div
+                    class="alert"
+                    [ngClass]="{
+                      'alert-success': message.includes('success'),
+                      'alert-danger': !message.includes('success')
+                    }"
+                  >
+                    {{ message }}
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card card-info">
+          <div class="card-header card-header-info">
+            <h4 class="card-title">
+              <i class="material-icons">info</i>
+              Request Guidelines
+            </h4>
+          </div>
+          <div class="card-body">
+            <div class="guideline-item">
+              <h6><i class="material-icons">check_circle</i> Be Specific</h6>
+              <p>
+                Provide clear, detailed descriptions to help us understand your
+                needs.
+              </p>
+            </div>
+            <div class="guideline-item">
+              <h6>
+                <i class="material-icons">schedule</i> Set Realistic Deadlines
+              </h6>
+              <p>
+                Consider the complexity of your request when setting deadlines.
+              </p>
+            </div>
+            <div class="guideline-item">
+              <h6>
+                <i class="material-icons">priority_high</i> Choose Priority
+                Wisely
+              </h6>
+              <p>
+                High priority requests are processed first. Use Critical only
+                for urgent issues.
+              </p>
+            </div>
+            <div class="guideline-item">
+              <h6>
+                <i class="material-icons">attach_file</i> Attach Relevant Files
+              </h6>
+              <p>
+                Include screenshots, documents, or examples to help clarify your
+                request.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card card-profile" *ngIf="userCompany">
+          <div class="card-header card-header-success">
+            <h4 class="card-title">
+              <i class="material-icons">business</i>
+              Company Information
+            </h4>
+          </div>
+          <div class="card-body">
+            <h6 class="card-category text-gray">
+              {{ userCompany.companyName }}
+            </h6>
+            <p class="card-description">
+              Your service requests will be associated with your company
+              account.
+            </p>
+            <div class="company-stats">
+              <div class="stat-item">
+                <span class="stat-label">Company ID:</span>
+                <span class="stat-value">{{ userCompany.companyId }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
