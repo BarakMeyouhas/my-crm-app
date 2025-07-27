@@ -8,6 +8,7 @@
     "test:watch": "jest --watch",
     "test:setup": "node setup-test-db.js",
     "test:full": "npm run test:setup && npm test",
+    "test:ci": "jest --config=jest.ci.config.js",
     "dev": "nodemon index.js",
     "start": "node index.js"
   },

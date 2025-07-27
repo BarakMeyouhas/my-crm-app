@@ -2,6 +2,21 @@ const request = require('supertest');
 const app = require('../index');
 
 describe('API Structure Tests', () => {
+  let server;
+
+  beforeAll(() => {
+    // Store the server instance for cleanup
+    server = app.listen(0); // Use random port
+  });
+
+  afterAll((done) => {
+    if (server) {
+      server.close(done);
+    } else {
+      done();
+    }
+  });
+
   describe('Server Setup', () => {
     it('should have CORS middleware enabled', async () => {
       const response = await request(app)

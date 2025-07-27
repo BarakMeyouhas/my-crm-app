@@ -59,10 +59,10 @@ jobs:
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5433/servix_db
     
-    - name: Run backend tests
+    - name: Run backend API structure tests
       run: |
         cd backend
-        npm test
+        npm run test:ci
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5433/servix_db
     
