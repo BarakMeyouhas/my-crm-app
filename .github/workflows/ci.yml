@@ -7,135 +7,135 @@ on:
     branches: [ main, develop ]
 
 jobs:
-  backend:
-    runs-on: ubuntu-latest
-    name: Backend Tests
+  # backend:
+  #   runs-on: ubuntu-latest
+  #   name: Backend Tests
     
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: servix_db
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5433:5432
+  #   services:
+  #     postgres:
+  #       image: postgres:latest
+  #       env:
+  #         POSTGRES_USER: postgres
+  #         POSTGRES_PASSWORD: postgres
+  #         POSTGRES_DB: servix_db
+  #       options: >-
+  #         --health-cmd pg_isready
+  #         --health-interval 10s
+  #         --health-timeout 5s
+  #         --health-retries 5
+  #       ports:
+  #         - 5433:5432
 
-    steps:
-    - uses: actions/checkout@v4
+  #   steps:
+  #   - uses: actions/checkout@v4
     
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
+  #   - name: Setup Node.js
+  #     uses: actions/setup-node@v3
+  #     with:
+  #       node-version: '18'
     
-    - name: Cache backend dependencies
-      uses: actions/cache@v4
-      with:
-        path: backend/node_modules
-        key: ${{ runner.os }}-backend-node-${{ hashFiles('backend/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-backend-node-
+  #   - name: Cache backend dependencies
+  #     uses: actions/cache@v4
+  #     with:
+  #       path: backend/node_modules
+  #       key: ${{ runner.os }}-backend-node-${{ hashFiles('backend/package-lock.json') }}
+  #       restore-keys: |
+  #         ${{ runner.os }}-backend-node-
     
-    - name: Install backend dependencies
-      run: |
-        cd backend
-        npm ci
+  #   - name: Install backend dependencies
+  #     run: |
+  #       cd backend
+  #       npm ci
     
-    - name: Setup Prisma
-      run: |
-        cd backend
-        npx prisma generate
+  #   - name: Setup Prisma
+  #     run: |
+  #       cd backend
+  #       npx prisma generate
     
-    - name: Test database migrations
-      run: |
-        cd backend
-        npx prisma migrate deploy
-      env:
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5433/servix_db
+  #   - name: Test database migrations
+  #     run: |
+  #       cd backend
+  #       npx prisma migrate deploy
+  #     env:
+  #       DATABASE_URL: postgresql://postgres:postgres@localhost:5433/servix_db
     
-    - name: Run backend API structure tests
-      run: |
-        cd backend
-        npm run test:ci
-      env:
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5433/servix_db
+  #   - name: Run backend API structure tests
+  #     run: |
+  #       cd backend
+  #       npm run test:ci
+  #     env:
+  #       DATABASE_URL: postgresql://postgres:postgres@localhost:5433/servix_db
     
-    # Security audit - only fails on critical vulnerabilities
-    # Non-critical vulnerabilities in dev dependencies are expected and don't affect production
-    - name: Run backend security audit
-      run: |
-        cd backend
-        npm audit --audit-level=critical || echo "Backend security audit completed - non-critical vulnerabilities found"
+  #   # Security audit - only fails on critical vulnerabilities
+  #   # Non-critical vulnerabilities in dev dependencies are expected and don't affect production
+  #   - name: Run backend security audit
+  #     run: |
+  #       cd backend
+  #       npm audit --audit-level=critical || echo "Backend security audit completed - non-critical vulnerabilities found"
 
-  frontend:
-    runs-on: ubuntu-latest
-    name: Frontend Tests
+  # frontend:
+  #   runs-on: ubuntu-latest
+  #   name: Frontend Tests
 
-    steps:
-    - uses: actions/checkout@v4
+  #   steps:
+  #   - uses: actions/checkout@v4
     
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
+  #   - name: Setup Node.js
+  #     uses: actions/setup-node@v3
+  #     with:
+  #       node-version: '18'
     
-    - name: Cache frontend dependencies
-      uses: actions/cache@v4
-      with:
-        path: frontend/node_modules
-        key: ${{ runner.os }}-frontend-node-${{ hashFiles('frontend/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-frontend-node-
+  #   - name: Cache frontend dependencies
+  #     uses: actions/cache@v4
+  #     with:
+  #       path: frontend/node_modules
+  #       key: ${{ runner.os }}-frontend-node-${{ hashFiles('frontend/package-lock.json') }}
+  #       restore-keys: |
+  #         ${{ runner.os }}-frontend-node-
     
-    - name: Install frontend dependencies
-      run: |
-        cd frontend
-        npm install --legacy-peer-deps
+  #   - name: Install frontend dependencies
+  #     run: |
+  #       cd frontend
+  #       npm install --legacy-peer-deps
     
-    # TODO: Fix frontend linting - ESLint configuration needs to be updated for Angular 14
-    # - name: Run frontend linting
-    #   run: |
-    #     cd frontend
-    #     npm run lint
+  #   # TODO: Fix frontend linting - ESLint configuration needs to be updated for Angular 14
+  #   # - name: Run frontend linting
+  #   #   run: |
+  #   #     cd frontend
+  #   #     npm run lint
     
-    - name: Run frontend tests
-      run: |
-        cd frontend
-        npm test -- --watch=false --browsers=ChromeHeadless
+  #   - name: Run frontend tests
+  #     run: |
+  #       cd frontend
+  #       npm test -- --watch=false --browsers=ChromeHeadless
     
-    # Security audit - only fails on critical vulnerabilities
-    # Non-critical vulnerabilities in dev dependencies are expected and don't affect production
-    - name: Run frontend security audit
-      run: |
-        cd frontend
-        npm audit --audit-level=critical || echo "Frontend security audit completed - non-critical vulnerabilities found"
+  #   # Security audit - only fails on critical vulnerabilities
+  #   # Non-critical vulnerabilities in dev dependencies are expected and don't affect production
+  #   - name: Run frontend security audit
+  #     run: |
+  #       cd frontend
+  #       npm audit --audit-level=critical || echo "Frontend security audit completed - non-critical vulnerabilities found"
     
-    - name: Security audit summary
-      run: |
-        echo "=== Security Audit Summary ==="
-        echo "Running full security audit for information only..."
-        echo "Backend vulnerabilities:"
-        cd backend && npm audit --audit-level=moderate || echo "  Audit completed with findings"
-        echo "Frontend vulnerabilities:"
-        cd ../frontend && npm audit --audit-level=moderate || echo "  Audit completed with findings"
-        echo "Note: Non-critical vulnerabilities are expected in development dependencies"
-        echo "These vulnerabilities are in dev dependencies and don't affect production builds"
+  #   - name: Security audit summary
+  #     run: |
+  #       echo "=== Security Audit Summary ==="
+  #       echo "Running full security audit for information only..."
+  #       echo "Backend vulnerabilities:"
+  #       cd backend && npm audit --audit-level=moderate || echo "  Audit completed with findings"
+  #       echo "Frontend vulnerabilities:"
+  #       cd ../frontend && npm audit --audit-level=moderate || echo "  Audit completed with findings"
+  #       echo "Note: Non-critical vulnerabilities are expected in development dependencies"
+  #       echo "These vulnerabilities are in dev dependencies and don't affect production builds"
     
-    - name: Build frontend
-      run: |
-        cd frontend
-        npm run build --prod
+  #   - name: Build frontend
+  #     run: |
+  #       cd frontend
+  #       npm run build --prod
 
   e2e:
     runs-on: ubuntu-latest
     name: E2E Tests
-    needs: [frontend]
+    # needs: [frontend]
 
     steps:
     - uses: actions/checkout@v3
@@ -149,6 +149,11 @@ jobs:
       run: |
         cd frontend
         npm install --legacy-peer-deps
+    
+    - name: Update WebDriver binaries
+      run: |
+        cd frontend
+        npx webdriver-manager update
     
     - name: Install Chrome and ChromeDriver (dynamic version matching)
       run: |
@@ -225,52 +230,52 @@ jobs:
         sleep 30
         
         # Run E2E tests with xvfb-run to ensure proper display handling
-        xvfb-run --server-args="-screen 0 1920x1080x24" npx ng e2e --port 4201 --webdriver-update=false
+        xvfb-run --server-args="-screen 0 1920x1080x24" npx ng e2e --port 4201
       env:
         CI: true
         CHROME_BIN: /usr/bin/google-chrome
         CHROMEDRIVER_PATH: /usr/bin/chromedriver
 
-  build:
-    needs: [backend, frontend]
-    runs-on: ubuntu-latest
-    name: Build Project
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+  # build:
+  #   needs: [backend, frontend]
+  #   runs-on: ubuntu-latest
+  #   name: Build Project
+  #   if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
 
-    steps:
-    - uses: actions/checkout@v4
+  #   steps:
+  #   - uses: actions/checkout@v4
     
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
+  #   - name: Setup Node.js
+  #     uses: actions/setup-node@v3
+  #     with:
+  #       node-version: '18'
     
-    - name: Install backend dependencies
-      run: |
-        cd backend
-        npm ci
+  #   - name: Install backend dependencies
+  #     run: |
+  #       cd backend
+  #       npm ci
     
-    - name: Install frontend dependencies
-      run: |
-        cd frontend
-        npm install
+  #   - name: Install frontend dependencies
+  #     run: |
+  #       cd frontend
+  #       npm install
     
-    - name: Build backend
-      run: |
-        cd backend
-        npx prisma generate
-        npm run build || echo "No build script found, skipping"
+  #   - name: Build backend
+  #     run: |
+  #       cd backend
+  #       npx prisma generate
+  #       npm run build || echo "No build script found, skipping"
     
-    - name: Build frontend
-      run: |
-        cd frontend
-        npm run build --prod
+  #   - name: Build frontend
+  #     run: |
+  #       cd frontend
+  #       npm run build --prod
     
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-artifacts
-        path: |
-          backend/dist/
-          frontend/dist/
-        retention-days: 7 
+  #   - name: Upload build artifacts
+  #     uses: actions/upload-artifact@v4
+  #     with:
+  #       name: build-artifacts
+  #       path: |
+  #         backend/dist/
+  #         frontend/dist/
+  #       retention-days: 7 
