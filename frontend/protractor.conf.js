@@ -26,8 +26,16 @@ exports.config = {
         '--disable-backgrounding-occluded-windows',
         '--disable-renderer-backgrounding',
         '--disable-ipc-flooding-protection',
-        '--user-data-dir=/tmp/chrome-user-data-dir',
-        '--incognito'
+        '--user-data-dir=/tmp/chrome-user-data-dir-$$',
+        '--incognito',
+        '--disable-background-networking',
+        '--disable-default-apps',
+        '--disable-sync',
+        '--disable-translate',
+        '--hide-scrollbars',
+        '--mute-audio',
+        '--no-first-run',
+        '--safebrowsing-disable-auto-update'
       ]
     }
   },

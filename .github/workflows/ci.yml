@@ -194,6 +194,13 @@ jobs:
       run: |
         cd frontend
         
+        # Kill any existing Chrome processes
+        pkill -f chrome || true
+        pkill -f chromedriver || true
+        
+        # Clean up any existing user data directories
+        rm -rf /tmp/chrome-user-data-dir* || true
+        
         # Start Angular dev server in background
         npx ng serve --port 4201 --host 0.0.0.0 &
         sleep 30
