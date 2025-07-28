@@ -16,23 +16,24 @@ describe("material-dashboard-angular App", () => {
     await browser.sleep(5000);
     console.log('Waited 5 seconds');
     
-    // Check if we can get the page title
+    // Check if we can get the page title using pure WebDriver
     const pageTitle = await browser.getTitle();
     console.log('Page title:', pageTitle);
     
-    // Check if we can find any element on the page
+    // Check if we can find any element on the page using pure WebDriver
     try {
-      const bodyText = await element(by.tagName('body')).getText();
+      const bodyElement = await browser.findElement(by.tagName('body'));
+      const bodyText = await bodyElement.getText();
       console.log('Body text length:', bodyText.length);
       console.log('Body text preview:', bodyText.substring(0, 200));
     } catch (error) {
       console.log('Error getting body text:', error.message);
     }
     
-    // Try to find any element that might exist
+    // Try to find any element that might exist using pure WebDriver
     try {
-      const anyElement = await element(by.css('*')).isPresent();
-      console.log('Any element present:', anyElement);
+      const anyElement = await browser.findElement(by.css('*'));
+      console.log('Any element found:', !!anyElement);
     } catch (error) {
       console.log('Error checking for elements:', error.message);
     }
@@ -48,9 +49,10 @@ describe("material-dashboard-angular App", () => {
     await browser.sleep(5000);
     console.log('Waited 5 seconds');
     
-    // Try to find the hero title without waiting for Angular
+    // Try to find the hero title using pure WebDriver
     try {
-      const heroTitle = await element(by.css('h1.hero-title')).getText();
+      const heroElement = await browser.findElement(by.css('h1.hero-title'));
+      const heroTitle = await heroElement.getText();
       console.log('Hero title found:', heroTitle);
       expect(heroTitle).toContain("Transform Your Business");
     } catch (error) {
