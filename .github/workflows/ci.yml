@@ -182,6 +182,10 @@ jobs:
         # Skip webdriver-manager update since we're using Chrome for Testing
         # The ChromeDriver is already installed and ready to use
         echo "ChromeDriver installed successfully, skipping webdriver-manager update"
+        
+        # Verify ChromeDriver version
+        CHROMEDRIVER_VERSION_ACTUAL=$(chromedriver --version)
+        echo "Installed ChromeDriver version: $CHROMEDRIVER_VERSION_ACTUAL"
     
     - name: Start Angular dev server and run E2E tests
       run: |
@@ -191,10 +195,12 @@ jobs:
         npx ng serve --port 4201 --host 0.0.0.0 &
         sleep 30
         
-        # Run E2E tests
-        npx ng e2e --port 4201
+        # Run E2E tests with specific ChromeDriver path and Chrome flags
+        npx ng e2e --port 4201 --webdriver-update=false
       env:
         CI: true
+        CHROME_BIN: /usr/local/bin/google-chrome
+        CHROMEDRIVER_PATH: /usr/local/bin/chromedriver
 
   build:
     needs: [backend, frontend]
