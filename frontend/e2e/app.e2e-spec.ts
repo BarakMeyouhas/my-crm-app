@@ -9,6 +9,7 @@ describe("material-dashboard-angular App", () => {
 
   it("should display message saying app works", async () => {
     await page.navigateTo();
-    await expectAsync(page.getParagraphText()).toBeResolvedTo("app works!");
+    const text = await page.getParagraphText();
+    expect(text).toEqual("app works!");
   });
 });
