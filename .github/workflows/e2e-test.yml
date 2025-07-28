@@ -1,0 +1,65 @@
+name: E2E Test Only
+
+on:
+  workflow_dispatch:  # Allows manual triggering
+  push:
+    branches: [ test-e2e-workflow, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    name: E2E Tests
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+    
+    - name: Install frontend dependencies
+      run: |
+        cd frontend
+        npm install --legacy-peer-deps
+    
+    - name: Install Chrome and ChromeDriver (stable version)
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y unzip wget curl xvfb
+
+        # Install Chrome stable (117) – change version as needed
+        wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+        sudo apt install -y ./google-chrome-stable_current_amd64.deb
+
+        # Get major version
+        CHROME_MAJOR=$(google-chrome --version | grep -oP '\d+' | head -1)
+        echo "Chrome major version: $CHROME_MAJOR"
+
+        # Download matching ChromeDriver
+        CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_MAJOR")
+        echo "ChromeDriver version: $CHROMEDRIVER_VERSION"
+
+        wget -O /tmp/chromedriver.zip "https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
+        unzip -o /tmp/chromedriver.zip -d /tmp/
+        chmod +x /tmp/chromedriver
+        sudo mv /tmp/chromedriver /usr/local/bin/
+        
+        # Update webdriver-manager to use the installed ChromeDriver
+        cd frontend
+        npx webdriver-manager update --versions.chrome $CHROMEDRIVER_VERSION
+    
+    - name: Start Angular dev server and run E2E tests
+      run: |
+        cd frontend
+        
+        # Start Angular dev server in background
+        npx ng serve --port 4201 --host 0.0.0.0 &
+        sleep 30
+        
+        # Run E2E tests
+        npx ng e2e --port 4201
+      env:
+        CI: true 
