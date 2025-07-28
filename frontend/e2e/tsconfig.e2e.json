@@ -5,10 +5,10 @@
     "module": "CommonJS",
     "moduleResolution": "node",
     "lib": ["ES2020"],
-    "types": ["node"],
+    "types": ["node", "jasmine"],
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "outDir": "dist"
   },
-  "include": ["prisma/**/*", "src/**/*"]
+  "include": ["**/*.ts"]
 }

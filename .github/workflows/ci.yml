@@ -224,8 +224,8 @@ jobs:
         npx ng serve --port 4201 --host 0.0.0.0 &
         sleep 30
         
-        # Run E2E tests with specific ChromeDriver path and Chrome flags
-        npx ng e2e --port 4201 --webdriver-update=false
+        # Run E2E tests with xvfb-run to ensure proper display handling
+        xvfb-run --server-args="-screen 0 1920x1080x24" npx ng e2e --port 4201 --webdriver-update=false
       env:
         CI: true
         CHROME_BIN: /usr/bin/google-chrome
