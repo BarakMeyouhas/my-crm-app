@@ -156,13 +156,16 @@ jobs:
         unzip -o chromedriver-linux64.zip
         sudo mv -f chromedriver-linux64/chromedriver /usr/bin/chromedriver
         sudo chmod +x /usr/bin/chromedriver
+        echo "ChromeDriver version:"
         chromedriver --version
+        echo "ChromeDriver location:"
+        which chromedriver
 
     - name: Install Chrome and ChromeDriver (dynamic version matching)
       run: |
         sudo apt-get update
         sudo apt-get install -y unzip wget curl xvfb
-        
+
         # Use system-installed Chrome and ChromeDriver for better compatibility
         # Install Chrome from Google's repository
         wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
@@ -228,11 +231,19 @@ jobs:
         # Wait a moment for processes to fully terminate
         sleep 5
         
+        # Verify we're using the correct ChromeDriver version
+        echo "=== ChromeDriver Verification ==="
+        chromedriver --version
+        echo "ChromeDriver path: $(which chromedriver)"
+        echo "================================"
+        
         # Start Angular dev server in background
         npx ng serve --port 4201 --host 0.0.0.0 &
         sleep 30
         
         # Run E2E tests with xvfb-run to ensure proper display handling
+        # Explicitly set ChromeDriver path to use our downloaded version
+        export CHROMEDRIVER_PATH=/usr/bin/chromedriver
         xvfb-run --server-args="-screen 0 1920x1080x24" npx ng e2e --port 4201
       env:
         CI: true
