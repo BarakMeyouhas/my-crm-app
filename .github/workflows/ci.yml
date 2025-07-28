@@ -158,22 +158,19 @@ jobs:
         chmod +x /tmp/chromedriver
         sudo mv /tmp/chromedriver /usr/local/bin/
     
-    - name: Start webdriver-manager server
+    - name: Start services and run E2E tests
       run: |
         cd frontend
-        npx webdriver-manager start --detach
-    
-    - name: Start Angular dev server
-      run: |
-        cd frontend
+        
+        # Start webdriver-manager server in background
+        npx webdriver-manager start --detach &
+        sleep 15
+        
+        # Start Angular dev server in background
         npx ng serve --port 4201 --host 0.0.0.0 &
         sleep 30
-      env:
-        CI: true
-    
-    - name: Run E2E tests
-      run: |
-        cd frontend
+        
+        # Run E2E tests
         npx ng e2e --port 4201
       env:
         CI: true
