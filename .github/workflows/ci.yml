@@ -153,15 +153,16 @@ jobs:
     - name: Download ChromeDriver 138 for Testing
       run: |
         wget -O chromedriver-linux64.zip https://storage.googleapis.com/chrome-for-testing-public/138.0.7204.168/linux64/chromedriver-linux64.zip
-        unzip chromedriver-linux64.zip
-        sudo mv chromedriver-linux64/chromedriver /usr/bin/chromedriver
+        unzip -o chromedriver-linux64.zip
+        sudo mv -f chromedriver-linux64/chromedriver /usr/bin/chromedriver
         sudo chmod +x /usr/bin/chromedriver
+        chromedriver --version
 
     - name: Install Chrome and ChromeDriver (dynamic version matching)
       run: |
         sudo apt-get update
-        sudo apt-get install -y unzip wget curl xvfb chromium-chromedriver
-
+        sudo apt-get install -y unzip wget curl xvfb
+        
         # Use system-installed Chrome and ChromeDriver for better compatibility
         # Install Chrome from Google's repository
         wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
