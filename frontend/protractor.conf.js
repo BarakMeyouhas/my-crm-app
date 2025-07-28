@@ -30,6 +30,7 @@ exports.config = {
       ]
     }
   },
+  chromeDriver: '/usr/local/bin/chromedriver',
   directConnect: true,
   baseUrl: 'http://localhost:4201/',
   framework: 'jasmine',

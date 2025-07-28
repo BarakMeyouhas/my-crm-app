@@ -186,6 +186,9 @@ jobs:
         # Verify ChromeDriver version
         CHROMEDRIVER_VERSION_ACTUAL=$(chromedriver --version)
         echo "Installed ChromeDriver version: $CHROMEDRIVER_VERSION_ACTUAL"
+        
+        # Skip webdriver-manager update since we're specifying ChromeDriver path directly
+        echo "Using system ChromeDriver at /usr/local/bin/chromedriver"
     
     - name: Start Angular dev server and run E2E tests
       run: |
