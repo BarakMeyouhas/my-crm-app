@@ -59,7 +59,7 @@ exports.config = {
       ]
     }
   },
-  chromeDriver: '/usr/local/bin/chromedriver',
+  chromeDriver: '/usr/bin/chromedriver',
   directConnect: true,
   baseUrl: 'http://localhost:4201/',
   framework: 'jasmine',

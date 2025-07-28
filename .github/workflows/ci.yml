@@ -153,42 +153,25 @@ jobs:
     - name: Install Chrome and ChromeDriver (dynamic version matching)
       run: |
         sudo apt-get update
-        sudo apt-get install -y unzip wget curl xvfb
+        sudo apt-get install -y unzip wget curl xvfb chromium-chromedriver
 
-        # Use Chrome for Testing which provides guaranteed version compatibility
-        # Based on https://googlechromelabs.github.io/chrome-for-testing/
-        # Chrome 138.0.7204.168 has a matching ChromeDriver at the same version
-        
-        # Install Chrome for Testing (version 138.0.7204.168)
-        wget -O /tmp/chrome-linux64.zip "https://storage.googleapis.com/chrome-for-testing-public/138.0.7204.168/linux64/chrome-linux64.zip"
-        unzip -o /tmp/chrome-linux64.zip -d /tmp/
-        sudo mv /tmp/chrome-linux64/chrome /usr/local/bin/google-chrome
-        sudo chmod +x /usr/local/bin/google-chrome
+        # Use system-installed Chrome and ChromeDriver for better compatibility
+        # Install Chrome from Google's repository
+        wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+        echo "deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable
         
         # Verify Chrome version
         CHROME_VERSION=$(google-chrome --version)
         echo "Installed Chrome version: $CHROME_VERSION"
         
-        # Use the matching ChromeDriver version (same as Chrome version)
-        CHROMEDRIVER_VERSION="138.0.7204.168"
-        echo "Using ChromeDriver version: $CHROMEDRIVER_VERSION"
-        
-        # Download and install ChromeDriver from Chrome for Testing
-        wget -O /tmp/chromedriver.zip "https://storage.googleapis.com/chrome-for-testing-public/138.0.7204.168/linux64/chromedriver-linux64.zip"
-        unzip -o /tmp/chromedriver.zip -d /tmp/
-        chmod +x /tmp/chromedriver-linux64/chromedriver
-        sudo mv /tmp/chromedriver-linux64/chromedriver /usr/local/bin/
-        
-        # Skip webdriver-manager update since we're using Chrome for Testing
-        # The ChromeDriver is already installed and ready to use
-        echo "ChromeDriver installed successfully, skipping webdriver-manager update"
+        # Use system-installed ChromeDriver
+        echo "Using system ChromeDriver at /usr/bin/chromedriver"
         
         # Verify ChromeDriver version
         CHROMEDRIVER_VERSION_ACTUAL=$(chromedriver --version)
         echo "Installed ChromeDriver version: $CHROMEDRIVER_VERSION_ACTUAL"
-        
-        # Skip webdriver-manager update since we're specifying ChromeDriver path directly
-        echo "Using system ChromeDriver at /usr/local/bin/chromedriver"
     
     - name: Start Angular dev server and run E2E tests
       run: |
@@ -245,8 +228,8 @@ jobs:
         npx ng e2e --port 4201 --webdriver-update=false
       env:
         CI: true
-        CHROME_BIN: /usr/local/bin/google-chrome
-        CHROMEDRIVER_PATH: /usr/local/bin/chromedriver
+        CHROME_BIN: /usr/bin/google-chrome
+        CHROMEDRIVER_PATH: /usr/bin/chromedriver
 
   build:
     needs: [backend, frontend]
