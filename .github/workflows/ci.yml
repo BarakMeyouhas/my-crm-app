@@ -179,9 +179,9 @@ jobs:
         chmod +x /tmp/chromedriver-linux64/chromedriver
         sudo mv /tmp/chromedriver-linux64/chromedriver /usr/local/bin/
         
-        # Update webdriver-manager to use the installed ChromeDriver
-        cd frontend
-        npx webdriver-manager update --versions.chrome $CHROMEDRIVER_VERSION
+        # Skip webdriver-manager update since we're using Chrome for Testing
+        # The ChromeDriver is already installed and ready to use
+        echo "ChromeDriver installed successfully, skipping webdriver-manager update"
     
     - name: Start Angular dev server and run E2E tests
       run: |
