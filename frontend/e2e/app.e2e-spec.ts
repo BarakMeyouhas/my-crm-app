@@ -9,7 +9,9 @@ describe("material-dashboard-angular App", () => {
 
   it("should display message saying app works", async () => {
     await page.navigateTo();
+    console.log('Navigated to page');
     const text = await page.getParagraphText();
-    expect(text).toEqual("app works!");
+    console.log('Paragraph text:', text);
+    expect(text).toEqual("Welcome to My CRM!");
   });
 });
