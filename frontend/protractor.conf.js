@@ -25,8 +25,9 @@ exports.config = {
         '--disable-background-timer-throttling',
         '--disable-backgrounding-occluded-windows',
         '--disable-renderer-backgrounding',
-        '--disable-field-trial-config',
-        '--disable-ipc-flooding-protection'
+        '--disable-ipc-flooding-protection',
+        '--user-data-dir=/tmp/chrome-user-data-dir',
+        '--incognito'
       ]
     }
   },
