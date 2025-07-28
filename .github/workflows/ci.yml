@@ -176,8 +176,8 @@ jobs:
         # Download and install ChromeDriver from Chrome for Testing
         wget -O /tmp/chromedriver.zip "https://storage.googleapis.com/chrome-for-testing-public/138.0.7204.168/linux64/chromedriver-linux64.zip"
         unzip -o /tmp/chromedriver.zip -d /tmp/
-        chmod +x /tmp/chromedriver
-        sudo mv /tmp/chromedriver /usr/local/bin/
+        chmod +x /tmp/chromedriver-linux64/chromedriver
+        sudo mv /tmp/chromedriver-linux64/chromedriver /usr/local/bin/
         
         # Update webdriver-manager to use the installed ChromeDriver
         cd frontend
