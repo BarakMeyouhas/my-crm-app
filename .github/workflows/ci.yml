@@ -160,6 +160,11 @@ jobs:
         chromedriver --version
         echo "ChromeDriver location:"
         which chromedriver
+        
+        # Clean up webdriver-manager's ChromeDriver to prevent conflicts
+        echo "Cleaning up webdriver-manager ChromeDriver..."
+        rm -rf node_modules/webdriver-manager/selenium/chromedriver* || true
+        echo "Webdriver-manager ChromeDriver cleaned up"
 
     - name: Install Chrome and ChromeDriver (dynamic version matching)
       run: |
