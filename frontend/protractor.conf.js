@@ -38,7 +38,26 @@ exports.config = {
         '--safebrowsing-disable-auto-update',
         '--disable-dev-shm-usage',
         '--disable-web-security',
-        '--disable-features=VizDisplayCompositor'
+        '--disable-features=VizDisplayCompositor',
+        '--disable-blink-features=AutomationControlled',
+        '--disable-infobars',
+        '--disable-notifications',
+        '--disable-popup-blocking',
+        '--disable-prompt-on-repost',
+        '--disable-save-password-bubble',
+        '--disable-single-click-autofill',
+        '--disable-translate-script-url',
+        '--disable-web-resources',
+        '--force-device-scale-factor=1',
+        '--force-color-profile=srgb',
+        '--metrics-recording-only',
+        '--no-default-browser-check',
+        '--no-pings',
+        '--no-zygote',
+        '--password-store=basic',
+        '--use-mock-keychain',
+        '--use-gl=swiftshader',
+        '--use-angle=swiftshader'
       ]
     }
   },
