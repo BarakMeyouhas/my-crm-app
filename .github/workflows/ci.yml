@@ -165,10 +165,11 @@ jobs:
         CHROME_VERSION=$(google-chrome --version)
         echo "Installed Chrome version: $CHROME_VERSION"
 
-        # Use a known working ChromeDriver version that matches most Chrome versions
+        # Use a known working ChromeDriver version - NO DYNAMIC DETECTION
         CHROMEDRIVER_VERSION="114.0.5735.90"
         echo "Using ChromeDriver version: $CHROMEDRIVER_VERSION"
 
+        # Download and install ChromeDriver
         wget -O /tmp/chromedriver.zip "https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
         unzip -o /tmp/chromedriver.zip -d /tmp/
         chmod +x /tmp/chromedriver
