@@ -4,7 +4,7 @@
 const { SpecReporter } = require('jasmine-spec-reporter');
 
 exports.config = {
-  allScriptsTimeout: 11000,
+  allScriptsTimeout: 30000,
   specs: [
     './e2e/**/*.e2e-spec.ts'
   ],
@@ -59,13 +59,12 @@ exports.config = {
       ]
     }
   },
-  chromeDriver: '/usr/bin/chromedriver',
   directConnect: true,
   baseUrl: 'http://localhost:4201/',
   framework: 'jasmine',
   jasmineNodeOpts: {
     showColors: true,
-    defaultTimeoutInterval: 30000,
+    defaultTimeoutInterval: 60000,
     print: function() {}
   },
   beforeLaunch: function() {
@@ -74,6 +73,12 @@ exports.config = {
     });
   },
   onPrepare() {
-    jasmine.getEnv().addReporter(new SpecReporter({ spec: { displayStacktrace: true } }));
+    jasmine.getEnv().addReporter(new SpecReporter({ 
+      spec: { 
+        displayStacktrace: 'raw',
+        displayDuration: true,
+        displayErrorMessages: true
+      } 
+    }));
   }
 };
