@@ -173,9 +173,19 @@ jobs:
         CHROME_MAJOR_VERSION=$(echo $CHROME_VERSION | cut -d. -f1)
         echo "Chrome major version: $CHROME_MAJOR_VERSION"
         
-        # Download and install ChromeDriver that matches Chrome version
-        wget -O /tmp/chromedriver.zip "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_MAJOR_VERSION"
-        CHROMEDRIVER_VERSION=$(cat /tmp/chromedriver.zip)
+        # Try to get the latest ChromeDriver for this major version, fallback to a stable version
+        CHROMEDRIVER_VERSION=""
+        
+        # Try to get the latest release for this major version
+        if wget -q -O /tmp/chromedriver_version "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_MAJOR_VERSION"; then
+          CHROMEDRIVER_VERSION=$(cat /tmp/chromedriver_version)
+          echo "Found ChromeDriver version: $CHROMEDRIVER_VERSION"
+        else
+          # Fallback to a known stable version that works with recent Chrome versions
+          echo "No specific ChromeDriver found for Chrome $CHROME_MAJOR_VERSION, using fallback version"
+          CHROMEDRIVER_VERSION="120.0.6099.109"
+        fi
+        
         echo "Using ChromeDriver version: $CHROMEDRIVER_VERSION"
         
         wget -O /tmp/chromedriver.zip "https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
