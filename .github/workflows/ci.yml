@@ -155,17 +155,19 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y unzip wget curl xvfb
 
-        # Install Chrome stable (117) – change version as needed
-        wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-        sudo apt install -y ./google-chrome-stable_current_amd64.deb
+        # Install Chrome stable from Google's repository
+        wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+        echo "deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable
 
-        # Get major version
-        CHROME_MAJOR=$(google-chrome --version | grep -oP '\d+' | head -1)
-        echo "Chrome major version: $CHROME_MAJOR"
+        # Verify Chrome version
+        CHROME_VERSION=$(google-chrome --version)
+        echo "Installed Chrome version: $CHROME_VERSION"
 
-        # Download matching ChromeDriver
-        CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_MAJOR")
-        echo "ChromeDriver version: $CHROMEDRIVER_VERSION"
+        # Use a known working ChromeDriver version that matches most Chrome versions
+        CHROMEDRIVER_VERSION="114.0.5735.90"
+        echo "Using ChromeDriver version: $CHROMEDRIVER_VERSION"
 
         wget -O /tmp/chromedriver.zip "https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
         unzip -o /tmp/chromedriver.zip -d /tmp/
