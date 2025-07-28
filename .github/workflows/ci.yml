@@ -198,6 +198,13 @@ jobs:
         pkill -f chrome || true
         pkill -f chromedriver || true
         pkill -f google-chrome || true
+        pkill -f chromium || true
+        
+        # Force kill any remaining processes
+        pkill -9 -f chrome || true
+        pkill -9 -f chromedriver || true
+        pkill -9 -f google-chrome || true
+        pkill -9 -f chromium || true
         
         # Clean up any existing user data directories and Chrome cache
         rm -rf /tmp/chrome-user-data-dir* || true
@@ -205,9 +212,17 @@ jobs:
         rm -rf /tmp/.org.chromium.Chromium* || true
         rm -rf ~/.config/google-chrome || true
         rm -rf ~/.cache/google-chrome || true
+        rm -rf /tmp/.org.chromium.Chromium* || true
+        rm -rf /tmp/.com.google.Chrome* || true
+        rm -rf /tmp/chrome_* || true
+        rm -rf /tmp/chromium_* || true
+        
+        # Clean up any Chrome temporary files
+        find /tmp -name "*chrome*" -type d -exec rm -rf {} + 2>/dev/null || true
+        find /tmp -name "*chromium*" -type d -exec rm -rf {} + 2>/dev/null || true
         
         # Wait a moment for processes to fully terminate
-        sleep 2
+        sleep 3
         
         # Start Angular dev server in background
         npx ng serve --port 4201 --host 0.0.0.0 &
