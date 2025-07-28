@@ -221,8 +221,21 @@ jobs:
         find /tmp -name "*chrome*" -type d -exec rm -rf {} + 2>/dev/null || true
         find /tmp -name "*chromium*" -type d -exec rm -rf {} + 2>/dev/null || true
         
+        # Additional cleanup based on Selenium GitHub issue #15327
+        rm -rf /tmp/.org.chromium.Chromium* || true
+        rm -rf /tmp/.com.google.Chrome* || true
+        rm -rf /tmp/chrome_* || true
+        rm -rf /tmp/chromium_* || true
+        rm -rf /tmp/selenium_* || true
+        
+        # Kill any remaining Chrome processes with different signals
+        pkill -TERM -f chrome || true
+        pkill -TERM -f chromedriver || true
+        pkill -TERM -f google-chrome || true
+        pkill -TERM -f chromium || true
+        
         # Wait a moment for processes to fully terminate
-        sleep 3
+        sleep 5
         
         # Start Angular dev server in background
         npx ng serve --port 4201 --host 0.0.0.0 &
