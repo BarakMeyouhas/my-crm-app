@@ -150,6 +150,12 @@ jobs:
         cd frontend
         npm install --legacy-peer-deps
     
+    - name: Update ChromeDriver
+      run: |
+        cd frontend
+        npx webdriver-manager update
+        npx webdriver-manager start --detach
+    
     - name: Start Angular dev server
       run: |
         cd frontend

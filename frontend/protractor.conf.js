@@ -16,11 +16,14 @@ exports.config = {
         '--no-sandbox',
         '--disable-dev-shm-usage',
         '--disable-gpu',
-        '--window-size=1920,1080'
+        '--window-size=1920,1080',
+        '--disable-web-security',
+        '--disable-features=VizDisplayCompositor'
       ]
     }
   },
-  directConnect: true,
+  directConnect: false,
+  seleniumAddress: 'http://localhost:4444/wd/hub',
   baseUrl: 'http://localhost:4201/',
   framework: 'jasmine',
   jasmineNodeOpts: {
