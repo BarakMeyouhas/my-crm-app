@@ -26,7 +26,7 @@ exports.config = {
         '--disable-backgrounding-occluded-windows',
         '--disable-renderer-backgrounding',
         '--disable-ipc-flooding-protection',
-        '--user-data-dir=/tmp/chrome-user-data-dir-$$',
+        '--user-data-dir=/tmp/chrome_profile_e2e_' + Math.random().toString(36).substring(7),
         '--incognito',
         '--disable-background-networking',
         '--disable-default-apps',
@@ -35,7 +35,10 @@ exports.config = {
         '--hide-scrollbars',
         '--mute-audio',
         '--no-first-run',
-        '--safebrowsing-disable-auto-update'
+        '--safebrowsing-disable-auto-update',
+        '--disable-dev-shm-usage',
+        '--disable-web-security',
+        '--disable-features=VizDisplayCompositor'
       ]
     }
   },
