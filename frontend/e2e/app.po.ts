@@ -5,6 +5,10 @@ export class MaterialDashboardAngularPage {
     return browser.get('/');
   }
 
+  navigateToLanding() {
+    return browser.get('/landing');
+  }
+
   getParagraphText() {
     return element(by.css('h2.section-title')).getText();
   }
