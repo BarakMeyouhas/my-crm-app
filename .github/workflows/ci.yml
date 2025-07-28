@@ -244,7 +244,20 @@ jobs:
         
         # Start Angular dev server in background
         npx ng serve --port 4201 --host 0.0.0.0 &
-        sleep 30
+        
+        # Wait for Angular dev server to be ready
+        echo "Waiting for Angular dev server to start..."
+        sleep 10
+        
+        # Check if the server is responding
+        for i in {1..30}; do
+          if curl -s http://localhost:4201 > /dev/null; then
+            echo "Angular dev server is ready!"
+            break
+          fi
+          echo "Waiting for server... (attempt $i/30)"
+          sleep 2
+        done
         
         # Run E2E tests with xvfb-run to ensure proper display handling
         # Explicitly set ChromeDriver path to use our downloaded version
