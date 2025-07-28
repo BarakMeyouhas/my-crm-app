@@ -169,26 +169,14 @@ jobs:
         CHROME_VERSION=$(google-chrome --version | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
         echo "Chrome version: $CHROME_VERSION"
         
-        # Try multiple ChromeDriver versions to find one that works
-        CHROMEDRIVER_VERSIONS=("120.0.6099.71" "119.0.6045.105" "118.0.5993.70" "117.0.5938.149" "116.0.5845.96")
+        # Use a ChromeDriver version that's compatible with recent Chrome versions
+        # Based on the Selenium issue #14758, we need a more recent ChromeDriver
+        # Try to get the latest available ChromeDriver version
+        LATEST_VERSION=$(curl -s https://chromedriver.storage.googleapis.com/LATEST_RELEASE)
+        echo "Latest ChromeDriver version available: $LATEST_VERSION"
         
-        CHROMEDRIVER_VERSION=""
-        for version in "${CHROMEDRIVER_VERSIONS[@]}"; do
-          echo "Trying ChromeDriver version: $version"
-          if wget -q --spider "https://chromedriver.storage.googleapis.com/$version/chromedriver_linux64.zip"; then
-            CHROMEDRIVER_VERSION=$version
-            echo "Found working ChromeDriver version: $CHROMEDRIVER_VERSION"
-            break
-          else
-            echo "ChromeDriver version $version not available, trying next..."
-          fi
-        done
-        
-        if [ -z "$CHROMEDRIVER_VERSION" ]; then
-          echo "No compatible ChromeDriver found, using fallback version"
-          CHROMEDRIVER_VERSION="114.0.5735.90"
-        fi
-        
+        # Use the latest available version, which should be compatible with recent Chrome
+        CHROMEDRIVER_VERSION="$LATEST_VERSION"
         echo "Using ChromeDriver version: $CHROMEDRIVER_VERSION"
         
         # Download and install ChromeDriver
