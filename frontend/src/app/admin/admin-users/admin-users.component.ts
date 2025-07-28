@@ -13,7 +13,7 @@ export class AdminUsersComponent implements OnInit {
   constructor(private http: HttpClient, private auth: AuthService) {}
 
   ngOnInit(): void {
-    console.log("ngOnInit called in AdminUsersComponent");
+    console.log("ngOnInit called in AdminUsersComponent!");
     const token = localStorage.getItem("token");
     if (!token) {
       console.error("No token found in localStorage");
