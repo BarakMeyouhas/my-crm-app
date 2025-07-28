@@ -165,9 +165,30 @@ jobs:
         CHROME_VERSION=$(google-chrome --version)
         echo "Installed Chrome version: $CHROME_VERSION"
 
-        # Use a stable ChromeDriver version that works with recent Chrome versions
-        # ChromeDriver 114.0.5735.90 is known to work with Chrome 114+
-        CHROMEDRIVER_VERSION="114.0.5735.90"
+        # Get Chrome version and find a compatible ChromeDriver
+        CHROME_VERSION=$(google-chrome --version | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+        echo "Chrome version: $CHROME_VERSION"
+        
+        # Try multiple ChromeDriver versions to find one that works
+        CHROMEDRIVER_VERSIONS=("120.0.6099.71" "119.0.6045.105" "118.0.5993.70" "117.0.5938.149" "116.0.5845.96")
+        
+        CHROMEDRIVER_VERSION=""
+        for version in "${CHROMEDRIVER_VERSIONS[@]}"; do
+          echo "Trying ChromeDriver version: $version"
+          if wget -q --spider "https://chromedriver.storage.googleapis.com/$version/chromedriver_linux64.zip"; then
+            CHROMEDRIVER_VERSION=$version
+            echo "Found working ChromeDriver version: $CHROMEDRIVER_VERSION"
+            break
+          else
+            echo "ChromeDriver version $version not available, trying next..."
+          fi
+        done
+        
+        if [ -z "$CHROMEDRIVER_VERSION" ]; then
+          echo "No compatible ChromeDriver found, using fallback version"
+          CHROMEDRIVER_VERSION="114.0.5735.90"
+        fi
+        
         echo "Using ChromeDriver version: $CHROMEDRIVER_VERSION"
         
         # Download and install ChromeDriver
