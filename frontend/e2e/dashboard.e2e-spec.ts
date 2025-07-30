@@ -18,8 +18,18 @@ describe('Dashboard E2E Tests', () => {
     
     // Check if backend is running
     try {
-      const response = await fetch(`${apiUrl}/companies`);
-      if (!response.ok) {
+      const http = require('http');
+      const response = await new Promise<any>((resolve, reject) => {
+        const req = http.get(`${apiUrl}/companies`, (res) => {
+          resolve(res);
+        });
+        req.on('error', reject);
+        req.setTimeout(5000, () => {
+          req.destroy();
+          reject(new Error('Request timeout'));
+        });
+      });
+      if (response.statusCode !== 200) {
         throw new Error('Backend not ready');
       }
       console.log('Backend is ready for dashboard tests');

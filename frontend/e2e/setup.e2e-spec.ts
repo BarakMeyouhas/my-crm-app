@@ -16,8 +16,18 @@ describe('E2E Test Setup and Environment', () => {
   describe('Environment Setup', () => {
     it('should verify backend is running and accessible', async () => {
       try {
-        const response = await fetch(`${apiUrl}/companies`);
-        expect(response.ok).toBe(true);
+        const http = require('http');
+        const response = await new Promise<any>((resolve, reject) => {
+          const req = http.get(`${apiUrl}/companies`, (res) => {
+            resolve(res);
+          });
+          req.on('error', reject);
+          req.setTimeout(5000, () => {
+            req.destroy();
+            reject(new Error('Request timeout'));
+          });
+        });
+        expect(response.statusCode).toBe(200);
         console.log('✅ Backend is running and accessible');
       } catch (error) {
         console.log('❌ Backend is not accessible:', error.message);
@@ -36,9 +46,23 @@ describe('E2E Test Setup and Environment', () => {
 
     it('should verify database connection through API', async () => {
       try {
-        const response = await fetch(`${apiUrl}/companies`);
-        const companies = await response.json();
-        expect(Array.isArray(companies)).toBe(true);
+        const http = require('http');
+        const response = await new Promise<any>((resolve, reject) => {
+          const req = http.get(`${apiUrl}/companies`, (res) => {
+            let data = '';
+            res.on('data', chunk => data += chunk);
+            res.on('end', () => {
+              resolve({ statusCode: res.statusCode, data: JSON.parse(data) });
+            });
+          });
+          req.on('error', reject);
+          req.setTimeout(5000, () => {
+            req.destroy();
+            reject(new Error('Request timeout'));
+          });
+        });
+        expect(response.statusCode).toBe(200);
+        expect(Array.isArray(response.data)).toBe(true);
         console.log('✅ Database connection verified through API');
       } catch (error) {
         console.log('❌ Database connection failed:', error.message);
@@ -165,14 +189,33 @@ describe('E2E Test Setup and Environment', () => {
     it('should verify authentication endpoints', async () => {
       try {
         // Test companies endpoint (public)
-        const companiesResponse = await fetch(`${apiUrl}/companies`);
-        expect(companiesResponse.ok).toBe(true);
+        const http = require('http');
+        const companiesResponse = await new Promise<any>((resolve, reject) => {
+          const req = http.get(`${apiUrl}/companies`, (res) => {
+            resolve(res);
+          });
+          req.on('error', reject);
+          req.setTimeout(5000, () => {
+            req.destroy();
+            reject(new Error('Request timeout'));
+          });
+        });
+        expect(companiesResponse.statusCode).toBe(200);
         console.log('✅ Companies endpoint accessible');
         
         // Test auth endpoints (should exist but may require auth)
-        const authResponse = await fetch(`${apiUrl}/auth/profile`);
+        const authResponse = await new Promise<any>((resolve, reject) => {
+          const req = http.get(`${apiUrl}/auth/profile`, (res) => {
+            resolve(res);
+          });
+          req.on('error', reject);
+          req.setTimeout(5000, () => {
+            req.destroy();
+            reject(new Error('Request timeout'));
+          });
+        });
         // This should return 401 (unauthorized) but not 404 (not found)
-        expect(authResponse.status).not.toBe(404);
+        expect(authResponse.statusCode).not.toBe(404);
         console.log('✅ Auth endpoints exist');
       } catch (error) {
         console.log('❌ API endpoint verification failed:', error.message);
@@ -181,9 +224,19 @@ describe('E2E Test Setup and Environment', () => {
 
     it('should verify client endpoints', async () => {
       try {
-        const clientsResponse = await fetch(`${apiUrl}/clients`);
+        const http = require('http');
+        const clientsResponse = await new Promise<any>((resolve, reject) => {
+          const req = http.get(`${apiUrl}/clients`, (res) => {
+            resolve(res);
+          });
+          req.on('error', reject);
+          req.setTimeout(5000, () => {
+            req.destroy();
+            reject(new Error('Request timeout'));
+          });
+        });
         // This should return 401 (unauthorized) but not 404 (not found)
-        expect(clientsResponse.status).not.toBe(404);
+        expect(clientsResponse.statusCode).not.toBe(404);
         console.log('✅ Client endpoints exist');
       } catch (error) {
         console.log('❌ Client endpoint verification failed:', error.message);
@@ -192,9 +245,19 @@ describe('E2E Test Setup and Environment', () => {
 
     it('should verify service request endpoints', async () => {
       try {
-        const serviceRequestsResponse = await fetch(`${apiUrl}/service-requests`);
+        const http = require('http');
+        const serviceRequestsResponse = await new Promise<any>((resolve, reject) => {
+          const req = http.get(`${apiUrl}/service-requests`, (res) => {
+            resolve(res);
+          });
+          req.on('error', reject);
+          req.setTimeout(5000, () => {
+            req.destroy();
+            reject(new Error('Request timeout'));
+          });
+        });
         // This should return 401 (unauthorized) but not 404 (not found)
-        expect(serviceRequestsResponse.status).not.toBe(404);
+        expect(serviceRequestsResponse.statusCode).not.toBe(404);
         console.log('✅ Service request endpoints exist');
       } catch (error) {
         console.log('❌ Service request endpoint verification failed:', error.message);
