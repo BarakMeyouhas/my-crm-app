@@ -18,13 +18,16 @@ postman/
 ### 1. Install Newman (Postman CLI)
 
 ```bash
-# Install Newman globally
-npm install -g newman
+# Install Newman globally with compatible versions
+npm install -g newman@5.3.2
+npm install -g newman-reporter-html@1.0.5
 
 # Or install locally in this directory
 cd postman
-npm install
+npm install --legacy-peer-deps
 ```
+
+> **Note:** We use Newman v5.3.2 and `--legacy-peer-deps` to resolve dependency conflicts with the HTML reporter.
 
 ### 2. Start Your Backend Server
 
