@@ -1,0 +1,497 @@
+{
+  "info": {
+    "name": "CRM App API",
+    "description": "Complete API collection for the CRM application including authentication, companies, clients, service requests, and admin operations",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"company\": {\n    \"companyId\": \"{{companyId}}\"\n  },\n  \"user\": {\n    \"email\": \"{{userEmail}}\",\n    \"firstName\": \"{{userFirstName}}\",\n    \"lastName\": \"{{userLastName}}\",\n    \"password\": \"{{userPassword}}\",\n    \"role\": \"{{userRole}}\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            },
+            "description": "Register a new user with company association"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Registration response is valid\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([201, 400]);",
+                  "    if (pm.response.code === 201) {",
+                  "        const responseJson = pm.response.json();",
+                  "        pm.expect(responseJson).to.have.property('message');",
+                  "        pm.expect(responseJson.message).to.equal('User registered successfully');",
+                  "    } else if (pm.response.code === 400) {",
+                  "        const responseJson = pm.response.json();",
+                  "        pm.expect(responseJson).to.have.property('message');",
+                  "    }",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{userEmail}}\",\n  \"password\": \"{{userPassword}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Login user and get JWT token"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Login response is valid\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 401]);",
+                  "    if (pm.response.code === 200) {",
+                  "        const responseJson = pm.response.json();",
+                  "        pm.expect(responseJson).to.have.property('token');",
+                  "        pm.expect(responseJson).to.have.property('role');",
+                  "        pm.expect(responseJson).to.have.property('message');",
+                  "        pm.expect(responseJson.message).to.equal('Login successful');",
+                  "        ",
+                  "        // Store the token for subsequent requests",
+                  "        if (responseJson.token) {",
+                  "            pm.environment.set('authToken', responseJson.token);",
+                  "        }",
+                  "    } else if (pm.response.code === 401) {",
+                  "        const responseJson = pm.response.json();",
+                  "        pm.expect(responseJson).to.have.property('message');",
+                  "    }",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get User Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "profile"]
+            },
+            "description": "Get current user profile information"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Profile response is valid\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 401]);",
+                  "    if (pm.response.code === 200) {",
+                  "        const responseJson = pm.response.json();",
+                  "        pm.expect(responseJson).to.have.property('email');",
+                  "        pm.expect(responseJson).to.have.property('role');",
+                  "        pm.expect(responseJson).to.have.property('firstName');",
+                  "        pm.expect(responseJson).to.have.property('lastName');",
+                  "    } else if (pm.response.code === 401) {",
+                  "        const responseJson = pm.response.json();",
+                  "        pm.expect(responseJson).to.have.property('message');",
+                  "    }",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "description": "Authentication endpoints for user registration, login, and profile management"
+    },
+    {
+      "name": "Companies",
+      "item": [
+        {
+          "name": "Get All Companies",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/companies",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "companies"]
+            },
+            "description": "Get list of all companies"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Companies response is valid\", function () {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.be.an('array');",
+                  "    ",
+                  "    // Store first company ID for other tests",
+                  "    if (responseJson.length > 0) {",
+                  "        pm.environment.set('companyId', responseJson[0].id);",
+                  "        pm.environment.set('companyName', responseJson[0].name);",
+                  "    }",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "description": "Company management endpoints"
+    },
+    {
+      "name": "Clients",
+      "item": [
+        {
+          "name": "Get All Clients",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/clients",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "clients"]
+            },
+            "description": "Get all clients (requires authentication)"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Clients response is valid\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 401]);",
+                  "    if (pm.response.code === 200) {",
+                  "        const responseJson = pm.response.json();",
+                  "        pm.expect(responseJson).to.be.an('array');",
+                  "    } else if (pm.response.code === 401) {",
+                  "        const responseJson = pm.response.json();",
+                  "        pm.expect(responseJson).to.have.property('message');",
+                  "    }",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Client",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"{{clientName}}\",\n  \"email\": \"{{clientEmail}}\",\n  \"phone\": \"{{clientPhone}}\",\n  \"company\": \"{{clientCompany}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/clients",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "clients"]
+            },
+            "description": "Create a new client"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Client",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"{{clientName}}\",\n  \"email\": \"{{clientEmail}}\",\n  \"phone\": \"{{clientPhone}}\",\n  \"company\": \"{{clientCompany}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/clients/{{clientId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "clients", "{{clientId}}"]
+            },
+            "description": "Update an existing client"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Client",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/clients/{{clientId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "clients", "{{clientId}}"]
+            },
+            "description": "Delete a client"
+          },
+          "response": []
+        }
+      ],
+      "description": "Client management endpoints"
+    },
+    {
+      "name": "Service Requests",
+      "item": [
+        {
+          "name": "Get All Service Requests",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/service-requests",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "service-requests"]
+            },
+            "description": "Get all service requests"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Service requests response is valid\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 401]);",
+                  "    if (pm.response.code === 200) {",
+                  "        const responseJson = pm.response.json();",
+                  "        pm.expect(responseJson).to.be.an('array');",
+                  "    } else if (pm.response.code === 401) {",
+                  "        const responseJson = pm.response.json();",
+                  "        pm.expect(responseJson).to.have.property('error');",
+                  "    }",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Service Requests by Company",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/service-requests?companyId={{companyId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "service-requests"],
+              "query": [
+                {
+                  "key": "companyId",
+                  "value": "{{companyId}}"
+                }
+              ]
+            },
+            "description": "Get service requests filtered by company ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Service Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"{{serviceRequestTitle}}\",\n  \"description\": \"{{serviceRequestDescription}}\",\n  \"priority\": \"{{serviceRequestPriority}}\",\n  \"status\": \"{{serviceRequestStatus}}\",\n  \"companyId\": {{companyId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/service-requests",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "service-requests"]
+            },
+            "description": "Create a new service request"
+          },
+          "response": []
+        }
+      ],
+      "description": "Service request management endpoints"
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Get All Users (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "users"]
+            },
+            "description": "Get all users (Admin only)"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Admin users response is valid\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 401, 403]);",
+                  "    if (pm.response.code === 200) {",
+                  "        const responseJson = pm.response.json();",
+                  "        pm.expect(responseJson).to.be.an('array');",
+                  "    } else if (pm.response.code === 401 || pm.response.code === 403) {",
+                  "        pm.expect(pm.response.json()).to.have.property('message');",
+                  "    }",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete User (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "users", "{{userId}}"]
+            },
+            "description": "Delete a user (Admin only)"
+          },
+          "response": []
+        }
+      ],
+      "description": "Admin-only endpoints for user management"
+    }
+  ],
+  "event": [
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+                  "exec": [
+            "// Global test script for the collection",
+            "pm.test(\"Response time is less than 2000ms\", function () {",
+            "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+            "});"
+          ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    }
+  ]
+} 

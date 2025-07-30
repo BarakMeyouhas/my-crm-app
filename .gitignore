@@ -3,6 +3,11 @@ backend/node_modules/
 backend/dist/
 backend/.env
 
+# Postman
+postman/node_modules/
+postman/test-results.json
+postman/test-report.html
+
 # Angular
 frontend/node_modules/
 frontend/dist/

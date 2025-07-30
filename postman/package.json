@@ -1,0 +1,41 @@
+{
+  "name": "crm-app-postman-tests",
+  "version": "1.0.0",
+  "description": "Postman CLI tests for CRM App API",
+  "main": "test-scripts.js",
+  "scripts": {
+    "test": "newman run ./CRM-App-API.postman_collection.json -e ./CRM-App-Develop.postman_environment.json --reporters cli,json --reporter-json-export ./test-results.json",
+    "test:auth": "newman run ./CRM-App-API.postman_collection.json -e ./CRM-App-Develop.postman_environment.json --folder \"Authentication\" --reporters cli,json",
+    "test:companies": "newman run ./CRM-App-API.postman_collection.json -e ./CRM-App-Develop.postman_environment.json --folder \"Companies\" --reporters cli,json",
+    "test:clients": "newman run ./CRM-App-API.postman_collection.json -e ./CRM-App-Develop.postman_environment.json --folder \"Clients\" --reporters cli,json",
+    "test:service-requests": "newman run ./CRM-App-API.postman_collection.json -e ./CRM-App-Develop.postman_environment.json --folder \"Service Requests\" --reporters cli,json",
+    "test:admin": "newman run ./CRM-App-API.postman_collection.json -e ./CRM-App-Develop.postman_environment.json --folder \"Admin\" --reporters cli,json",
+    "test:verbose": "newman run ./CRM-App-API.postman_collection.json -e ./CRM-App-Develop.postman_environment.json --reporters cli,json --reporter-json-export ./test-results.json --verbose",
+    "test:iteration": "newman run ./CRM-App-API.postman_collection.json -e ./CRM-App-Develop.postman_environment.json --iteration-count 3 --delay-request 1000 --reporters cli,json",
+    "install:newman": "npm install -g newman",
+    "install:newman-reporter": "npm install -g newman-reporter-html",
+    "generate:html": "newman run ./CRM-App-API.postman_collection.json -e ./CRM-App-Develop.postman_environment.json --reporters html --reporter-html-export ./test-report.html"
+  },
+  "keywords": [
+    "postman",
+    "newman",
+    "api",
+    "testing",
+    "crm",
+    "automation"
+  ],
+  "author": "CRM App Team",
+  "license": "MIT",
+  "devDependencies": {
+    "newman": "^6.0.0",
+    "newman-reporter-html": "^1.0.5",
+    "newman-reporter-json": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BarakMeyouhas/my-crm-app.git"
+  }
+} 
