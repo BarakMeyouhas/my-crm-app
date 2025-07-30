@@ -45,10 +45,10 @@ describe('Client Management E2E Tests', () => {
       const currentUrl = await browser.getCurrentUrl();
       expect(currentUrl).toContain('/login');
       
-      // Check for login form elements
-      const emailInput = element(by.css('input[type="email"], input[name="email"], input[formControlName="email"]'));
-      const passwordInput = element(by.css('input[type="password"]'));
-      const submitButton = element(by.css('button[type="submit"], input[type="submit"]'));
+      // Check for login form elements that actually exist
+      const emailInput = element(by.css('input[name="email"]'));
+      const passwordInput = element(by.css('input[name="password"]'));
+      const submitButton = element(by.css('button[type="submit"]'));
       
       try {
         await browser.wait(EC.presenceOf(emailInput), 5000);

@@ -23,7 +23,7 @@ describe('Authentication E2E Tests', () => {
     it('should load landing page and navigate to login', async () => {
       await browser.get(`${baseUrl}/landing`);
       
-      const loginLink = element(by.css('a[routerLink="/login"], a[href*="login"], .login-link'));
+      const loginLink = element(by.css('a[routerLink="/login"]'));
       await browser.wait(EC.elementToBeClickable(loginLink), 5000);
       await loginLink.click();
       
@@ -35,7 +35,7 @@ describe('Authentication E2E Tests', () => {
     it('should load landing page and navigate to register', async () => {
       await browser.get(`${baseUrl}/landing`);
       
-      const registerLink = element(by.css('a[routerLink="/register"], a[href*="register"], .register-link'));
+      const registerLink = element(by.css('a[routerLink="/register"]'));
       await browser.wait(EC.elementToBeClickable(registerLink), 5000);
       await registerLink.click();
       
@@ -49,14 +49,21 @@ describe('Authentication E2E Tests', () => {
     it('should display registration form', async () => {
       await browser.get(`${baseUrl}/register`);
       
-      const emailInput = element(by.css('input[type="email"], input[name="email"], input[formControlName="email"]'));
-      const passwordInput = element(by.css('input[type="password"]'));
-      const submitButton = element(by.css('button[type="submit"], input[type="submit"]'));
+      // Check for form elements that actually exist in the register component
+      const firstNameInput = element(by.css('input[formControlName="firstName"]'));
+      const lastNameInput = element(by.css('input[formControlName="lastName"]'));
+      const emailInput = element(by.css('input[formControlName="email"]'));
+      const passwordInput = element(by.css('input[formControlName="password"]'));
+      const submitButton = element(by.css('button[type="submit"]'));
       
+      await browser.wait(EC.presenceOf(firstNameInput), 5000);
+      await browser.wait(EC.presenceOf(lastNameInput), 5000);
       await browser.wait(EC.presenceOf(emailInput), 5000);
       await browser.wait(EC.presenceOf(passwordInput), 5000);
       await browser.wait(EC.elementToBeClickable(submitButton), 5000);
       
+      expect(await firstNameInput.isPresent()).toBe(true);
+      expect(await lastNameInput.isPresent()).toBe(true);
       expect(await emailInput.isPresent()).toBe(true);
       expect(await passwordInput.isPresent()).toBe(true);
       expect(await submitButton.isPresent()).toBe(true);
@@ -67,7 +74,7 @@ describe('Authentication E2E Tests', () => {
     it('should handle form validation', async () => {
       await browser.get(`${baseUrl}/register`);
       
-      const submitButton = element(by.css('button[type="submit"], input[type="submit"]'));
+      const submitButton = element(by.css('button[type="submit"]'));
       await browser.wait(EC.elementToBeClickable(submitButton), 5000);
       
       // Try to submit empty form
@@ -85,9 +92,10 @@ describe('Authentication E2E Tests', () => {
     it('should display login form', async () => {
       await browser.get(`${baseUrl}/login`);
       
-      const emailInput = element(by.css('input[type="email"], input[name="email"], input[formControlName="email"]'));
-      const passwordInput = element(by.css('input[type="password"]'));
-      const loginSubmitButton = element(by.css('button[type="submit"], input[type="submit"]'));
+      // Check for form elements that actually exist in the login component
+      const emailInput = element(by.css('input[name="email"]'));
+      const passwordInput = element(by.css('input[name="password"]'));
+      const loginSubmitButton = element(by.css('button[type="submit"]'));
       
       await browser.wait(EC.presenceOf(emailInput), 5000);
       await browser.wait(EC.presenceOf(passwordInput), 5000);
@@ -103,7 +111,7 @@ describe('Authentication E2E Tests', () => {
     it('should handle login form validation', async () => {
       await browser.get(`${baseUrl}/login`);
       
-      const loginSubmitButton = element(by.css('button[type="submit"], input[type="submit"]'));
+      const loginSubmitButton = element(by.css('button[type="submit"]'));
       await browser.wait(EC.elementToBeClickable(loginSubmitButton), 5000);
       
       // Try to submit empty form

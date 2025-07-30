@@ -16,8 +16,8 @@ describe("CRM Application E2E Tests", () => {
       const pageTitle = await browser.getTitle();
       expect(pageTitle).toBeTruthy();
       
-      // Check for key elements
-      const heroTitle = element(by.css('h1, h2, .hero-title, .title'));
+      // Check for key elements that actually exist
+      const heroTitle = element(by.css('.hero-title'));
       await browser.wait(EC.presenceOf(heroTitle), 5000);
       const titleText = await heroTitle.getText();
       expect(titleText).toBeTruthy();
@@ -28,40 +28,44 @@ describe("CRM Application E2E Tests", () => {
     it("should display all required landing page elements", async () => {
       await browser.get(`${baseUrl}/landing`);
       
-      // Check for brand logo
-      const brandLogo = element(by.css('img[src*="Servix"], img[src*="logo"], .logo'));
+      // Check for brand logo (actual selector from HTML)
+      const brandLogo = element(by.css('img[src*="Servix Logo"]'));
       try {
         await browser.wait(EC.presenceOf(brandLogo), 5000);
         expect(await brandLogo.isPresent()).toBe(true);
+        console.log('✅ Brand logo found');
       } catch (error) {
-        console.log('Brand logo not found');
+        console.log('⚠️ Brand logo not found');
       }
       
-      // Check for hero subtitle
-      const heroSubtitle = element(by.css('.hero-subtitle, .subtitle, p'));
+      // Check for hero subtitle (actual selector from HTML)
+      const heroSubtitle = element(by.css('.hero-subtitle'));
       try {
         await browser.wait(EC.presenceOf(heroSubtitle), 5000);
         expect(await heroSubtitle.isPresent()).toBe(true);
+        console.log('✅ Hero subtitle found');
       } catch (error) {
-        console.log('Hero subtitle not found');
+        console.log('⚠️ Hero subtitle not found');
       }
       
-      // Check for navigation links
-      const loginLink = element(by.css('a[routerLink="/login"], a[href*="login"], .login-link'));
-      const registerLink = element(by.css('a[routerLink="/register"], a[href*="register"], .register-link'));
+      // Check for navigation links (actual selectors from HTML)
+      const loginLink = element(by.css('a[routerLink="/login"]'));
+      const registerLink = element(by.css('a[routerLink="/register"]'));
       
       try {
         await browser.wait(EC.elementToBeClickable(loginLink), 5000);
         expect(await loginLink.isPresent()).toBe(true);
+        console.log('✅ Login link found');
       } catch (error) {
-        console.log('Login link not found');
+        console.log('⚠️ Login link not found');
       }
       
       try {
         await browser.wait(EC.elementToBeClickable(registerLink), 5000);
         expect(await registerLink.isPresent()).toBe(true);
+        console.log('✅ Register link found');
       } catch (error) {
-        console.log('Register link not found');
+        console.log('⚠️ Register link not found');
       }
       
       console.log('✅ Landing page elements verified');
@@ -70,7 +74,7 @@ describe("CRM Application E2E Tests", () => {
     it("should navigate to login page from landing", async () => {
       await browser.get(`${baseUrl}/landing`);
       
-      const loginLink = element(by.css('a[routerLink="/login"], a[href*="login"], .login-link'));
+      const loginLink = element(by.css('a[routerLink="/login"]'));
       await browser.wait(EC.elementToBeClickable(loginLink), 5000);
       await loginLink.click();
       
@@ -82,7 +86,7 @@ describe("CRM Application E2E Tests", () => {
     it("should navigate to register page from landing", async () => {
       await browser.get(`${baseUrl}/landing`);
       
-      const registerLink = element(by.css('a[routerLink="/register"], a[href*="register"], .register-link'));
+      const registerLink = element(by.css('a[routerLink="/register"]'));
       await browser.wait(EC.elementToBeClickable(registerLink), 5000);
       await registerLink.click();
       
@@ -144,7 +148,7 @@ describe("CRM Application E2E Tests", () => {
       const startTime = Date.now();
       
       await browser.get(`${baseUrl}/landing`);
-      await browser.wait(EC.presenceOf(element(by.css('h1, h2'))), 5000);
+      await browser.wait(EC.presenceOf(element(by.css('.hero-title'))), 5000);
       
       const loadTime = Date.now() - startTime;
       expect(loadTime).toBeLessThan(5000); // 5 seconds max
