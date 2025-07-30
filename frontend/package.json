@@ -9,6 +9,13 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
+    "e2e:all": "node e2e/run-e2e-tests.js",
+    "e2e:auth": "ng e2e --specs=./e2e/auth.e2e-spec.ts",
+    "e2e:clients": "ng e2e --specs=./e2e/client-management.e2e-spec.ts",
+    "e2e:service-requests": "ng e2e --specs=./e2e/service-requests.e2e-spec.ts",
+    "e2e:dashboard": "ng e2e --specs=./e2e/dashboard.e2e-spec.ts",
+    "e2e:setup": "ng e2e --specs=./e2e/setup.e2e-spec.ts",
+    "e2e:ci": "ng e2e --watch=false --browsers=ChromeHeadless",
     "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm install && ng serve -o"
   },
   "engines": {

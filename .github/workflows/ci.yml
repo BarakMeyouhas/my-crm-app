@@ -251,6 +251,21 @@ jobs:
     runs-on: ubuntu-latest
     name: E2E Tests
     needs: [frontend]
+    
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: servix_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5433:5432
 
     steps:
     - uses: actions/checkout@v3
@@ -264,6 +279,34 @@ jobs:
       run: |
         cd frontend
         npm install --legacy-peer-deps
+
+    - name: Setup backend for E2E tests
+      run: |
+        cd backend
+        npm ci
+        npx prisma generate
+        npx prisma migrate deploy
+        npx prisma db seed
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5433/servix_db
+
+    - name: Start backend server
+      run: |
+        cd backend
+        npm start &
+        sleep 10
+        # Wait for server to be ready
+        for i in {1..30}; do
+          if curl -s http://localhost:5000/api/companies > /dev/null; then
+            echo "Backend server is ready!"
+            break
+          fi
+          echo "Waiting for server... (attempt $i/30)"
+          sleep 2
+        done
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5433/servix_db
+        JWT_SECRET: test-secret-key
 
     - name: Download ChromeDriver 138 for Testing
       run: |
