@@ -113,10 +113,13 @@ app.use("/api", authRoutes); // ⬅️ כל הראוטים שב-auth.js נגיש
 const companiesRouter = require("./routes/companies");
 app.use("/api", companiesRouter);
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// Start server only if not in test environment
+let server;
+if (process.env.NODE_ENV !== 'test') {
+  server = app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
 
 // Export app for testing
 module.exports = app;

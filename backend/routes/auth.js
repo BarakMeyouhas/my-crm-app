@@ -51,7 +51,7 @@ router.get(
 router.delete(
   "/admin/users/:id",
   authenticateToken,
-  authorizeRoles("admin"),
+  authorizeRoles("Admin"),
   async (req, res) => {
     const userId = parseInt(req.params.id);
     try {

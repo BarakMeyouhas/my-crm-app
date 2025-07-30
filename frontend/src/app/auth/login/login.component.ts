@@ -73,9 +73,9 @@ export class LoginComponent implements OnInit, OnDestroy {
         },
       });
   }
-  email: any;
-  password: any;
-  errorMessage: any;
+  email: string = '';
+  password: string = '';
+  errorMessage: string = '';
 
   constructor(private http: HttpClient, private router: Router) {}
 

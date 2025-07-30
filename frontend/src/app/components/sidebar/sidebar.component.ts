@@ -51,14 +51,18 @@ export class SidebarComponent implements OnInit {
 
   menuItems: any[];
 
-  constructor() {}
+  constructor(private jwtHelper: JwtHelperService) {}
 
   ngOnInit() {
     const token = localStorage.getItem("token");
     if (token) {
-      const helper = new JwtHelperService();
-      const decodedToken = helper.decodeToken(token);
-      this.isAdmin = decodedToken?.role === "Admin";
+      try {
+        const decodedToken = this.jwtHelper.decodeToken(token);
+        this.isAdmin = decodedToken?.role === "Admin";
+      } catch (error) {
+        console.warn('Invalid token in localStorage:', error);
+        this.isAdmin = false;
+      }
     }
     this.menuItems = ROUTES.filter((menuItem) => {
       if (menuItem.onlyAdmin) {

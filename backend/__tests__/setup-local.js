@@ -1,7 +1,7 @@
-// Test setup file
+// Test setup file for LOCAL PostgreSQL (no Docker)
 process.env.NODE_ENV = 'test';
 process.env.JWT_SECRET = 'test-secret-key';
-// Use the same database as Docker setup, but with test suffix
+// Use local PostgreSQL installation on port 5433
 process.env.DATABASE_URL = 'postgresql://postgres:postgres@localhost:5433/servix_db_test';
 
 // Increase timeout for database operations

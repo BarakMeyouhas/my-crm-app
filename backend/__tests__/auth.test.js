@@ -15,7 +15,9 @@ describe('Auth API', () => {
     await prisma.company.create({
       data: {
         name: 'Test Company',
-        industry: 'Technology'
+        contactEmail: 'test@company.com',
+        contactPhone: '123-456-7890',
+        subscriptionPlan: 'Basic'
       }
     });
   });

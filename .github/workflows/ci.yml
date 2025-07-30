@@ -202,7 +202,27 @@ jobs:
     - name: Run frontend tests
       run: |
         cd frontend
-        npm test -- --watch=false --browsers=ChromeHeadless
+        npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
+      env:
+        CI: true
+        CHROME_BIN: /usr/bin/google-chrome
+        CHROMEDRIVER_PATH: /usr/bin/chromedriver
+    
+    - name: Upload frontend test coverage
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: frontend-test-coverage
+        path: frontend/coverage/
+        retention-days: 7
+    
+    - name: Upload frontend test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: frontend-test-results
+        path: frontend/test-results/
+        retention-days: 7
     
     # Security audit - only fails on critical vulnerabilities
     # Non-critical vulnerabilities in dev dependencies are expected and don't affect production
