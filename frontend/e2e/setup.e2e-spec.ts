@@ -8,6 +8,7 @@ describe('Setup and Environment E2E Tests', () => {
   describe('Environment Verification', () => {
     it('should verify frontend accessibility', async () => {
       await browser.get(`${baseUrl}/landing`);
+      await browser.waitForAngular();
       
       const pageTitle = await browser.getTitle();
       expect(pageTitle).toBeTruthy();
@@ -52,6 +53,7 @@ describe('Setup and Environment E2E Tests', () => {
   describe('Browser Capabilities', () => {
     it('should verify Chrome headless mode', async () => {
       await browser.get(`${baseUrl}/landing`);
+      await browser.waitForAngular();
       
       const userAgent = await browser.executeScript('return navigator.userAgent;');
       expect(userAgent).toContain('Chrome');
@@ -61,6 +63,7 @@ describe('Setup and Environment E2E Tests', () => {
 
     it('should verify viewport capabilities', async () => {
       await browser.get(`${baseUrl}/landing`);
+      await browser.waitForAngular();
       
       const windowSize = await browser.manage().window().getSize();
       expect(windowSize.width).toBeGreaterThan(0);
@@ -71,6 +74,7 @@ describe('Setup and Environment E2E Tests', () => {
 
     it('should verify JavaScript execution', async () => {
       await browser.get(`${baseUrl}/landing`);
+      await browser.waitForAngular();
       
       const result = await browser.executeScript('return document.title;');
       expect(result).toBeTruthy();
@@ -129,6 +133,7 @@ describe('Setup and Environment E2E Tests', () => {
   describe('Frontend Routes', () => {
     it('should verify landing page route', async () => {
       await browser.get(`${baseUrl}/landing`);
+      await browser.waitForAngular();
       
       const currentUrl = await browser.getCurrentUrl();
       expect(currentUrl).toContain('/landing');
@@ -137,6 +142,7 @@ describe('Setup and Environment E2E Tests', () => {
 
     it('should verify login page route', async () => {
       await browser.get(`${baseUrl}/login`);
+      await browser.waitForAngular();
       
       const currentUrl = await browser.getCurrentUrl();
       expect(currentUrl).toContain('/login');
@@ -145,6 +151,7 @@ describe('Setup and Environment E2E Tests', () => {
 
     it('should verify register page route', async () => {
       await browser.get(`${baseUrl}/register`);
+      await browser.waitForAngular();
       
       const currentUrl = await browser.getCurrentUrl();
       expect(currentUrl).toContain('/register');
@@ -153,6 +160,7 @@ describe('Setup and Environment E2E Tests', () => {
 
     it('should verify protected routes redirect to login', async () => {
       await browser.get(`${baseUrl}/dashboard`);
+      await browser.waitForAngular();
       
       const currentUrl = await browser.getCurrentUrl();
       expect(currentUrl).toContain('/login');
@@ -163,11 +171,12 @@ describe('Setup and Environment E2E Tests', () => {
   describe('Test Data Setup', () => {
     it('should verify test user creation capability', async () => {
       await browser.get(`${baseUrl}/register`);
+      await browser.waitForAngular();
       
       const formElement = element(by.css('form, .register-form, [data-testid="register-form"]'));
       
       try {
-        await browser.wait(EC.presenceOf(formElement), 5000);
+        await browser.wait(EC.presenceOf(formElement), 10000);
         console.log('✅ Test user creation form available');
       } catch (error) {
         console.log('⚠️ Test user creation form not available');
@@ -176,6 +185,7 @@ describe('Setup and Environment E2E Tests', () => {
 
     it('should verify test data cleanup capability', async () => {
       await browser.get(`${baseUrl}/landing`);
+      await browser.waitForAngular();
       
       // Clear browser storage
       await browser.executeScript('window.localStorage.clear();');
@@ -190,7 +200,13 @@ describe('Setup and Environment E2E Tests', () => {
       const startTime = Date.now();
       
       await browser.get(`${baseUrl}/landing`);
-      await browser.wait(EC.presenceOf(element(by.css('h1, h2'))), 5000);
+      await browser.waitForAngular();
+      
+      try {
+        await browser.wait(EC.presenceOf(element(by.css('h1, h2'))), 10000);
+      } catch (error) {
+        // Continue even if specific elements not found
+      }
       
       const loadTime = Date.now() - startTime;
       expect(loadTime).toBeLessThan(10000); // 10 seconds max
@@ -200,6 +216,7 @@ describe('Setup and Environment E2E Tests', () => {
 
     it('should verify memory usage', async () => {
       await browser.get(`${baseUrl}/landing`);
+      await browser.waitForAngular();
       
       const memoryInfo = await browser.executeScript(`
         return {

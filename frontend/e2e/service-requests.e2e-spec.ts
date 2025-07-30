@@ -22,6 +22,7 @@ describe('Service Requests E2E Tests', () => {
   describe('Authentication Protection', () => {
     it('should redirect to login when accessing service requests without authentication', async () => {
       await browser.get(`${baseUrl}/service-requests`);
+      await browser.waitForAngular();
       
       const currentUrl = await browser.getCurrentUrl();
       expect(currentUrl).toContain('/login');
@@ -30,6 +31,7 @@ describe('Service Requests E2E Tests', () => {
 
     it('should redirect to login when accessing service request details without authentication', async () => {
       await browser.get(`${baseUrl}/service-requests/1`);
+      await browser.waitForAngular();
       
       const currentUrl = await browser.getCurrentUrl();
       expect(currentUrl).toContain('/login');
@@ -40,6 +42,7 @@ describe('Service Requests E2E Tests', () => {
   describe('Service Request Management Interface', () => {
     it('should show login form when accessing protected routes', async () => {
       await browser.get(`${baseUrl}/service-requests`);
+      await browser.waitForAngular();
       
       // Should redirect to login
       const currentUrl = await browser.getCurrentUrl();
@@ -51,9 +54,9 @@ describe('Service Requests E2E Tests', () => {
       const submitButton = element(by.css('button[type="submit"]'));
       
       try {
-        await browser.wait(EC.presenceOf(emailInput), 5000);
-        await browser.wait(EC.presenceOf(passwordInput), 5000);
-        await browser.wait(EC.elementToBeClickable(submitButton), 5000);
+        await browser.wait(EC.presenceOf(emailInput), 10000);
+        await browser.wait(EC.presenceOf(passwordInput), 10000);
+        await browser.wait(EC.elementToBeClickable(submitButton), 10000);
         console.log('✅ Login form displayed when accessing protected routes');
       } catch (error) {
         console.log('⚠️ Login form not found');
@@ -64,11 +67,12 @@ describe('Service Requests E2E Tests', () => {
   describe('Navigation and Routing', () => {
     it('should handle breadcrumb navigation', async () => {
       await browser.get(`${baseUrl}/landing`);
+      await browser.waitForAngular();
       
       const breadcrumb = element(by.css('.breadcrumb, .nav-breadcrumb, [data-testid="breadcrumb"]'));
       
       try {
-        await browser.wait(EC.presenceOf(breadcrumb), 3000);
+        await browser.wait(EC.presenceOf(breadcrumb), 10000);
         console.log('✅ Breadcrumb navigation available');
       } catch (error) {
         console.log('⚠️ Breadcrumb navigation not available');

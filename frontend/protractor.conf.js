@@ -2,9 +2,12 @@
 // https://github.com/angular/protractor/blob/master/lib/config.ts
 
 const { SpecReporter } = require('jasmine-spec-reporter');
+const path = require('path');
 
 exports.config = {
-  allScriptsTimeout: 120000,
+  allScriptsTimeout: 180000, // Increased from 120000
+  getPageTimeout: 60000, // Added page timeout
+  SELENIUM_PROMISE_MANAGER: false, // Disable control flow manager
   specs: [
     './e2e/**/*.e2e-spec.ts'
   ],
@@ -55,23 +58,38 @@ exports.config = {
         '--use-gl=swiftshader',
         '--use-angle=swiftshader',
         '--disable-setuid-sandbox',
-        '--disable-features=TranslateUI'
+        '--disable-features=TranslateUI',
+        '--disable-hang-monitor',
+        '--disable-prompt-on-repost',
+        '--disable-client-side-phishing-detection',
+        '--disable-component-extensions-with-background-pages',
+        '--disable-default-apps',
+        '--disable-domain-reliability',
+        '--disable-features=TranslateUI',
+        '--disable-ipc-flooding-protection',
+        '--no-sandbox',
+        '--disable-dev-shm-usage'
       ]
     }
   },
-  chromeDriver: process.env.CHROMEDRIVER_PATH || '/usr/bin/chromedriver',
+  // Use manually downloaded ChromeDriver 138
+  chromeDriver: process.env.CHROMEDRIVER_PATH || path.join(__dirname, 'chromedriver.exe'),
   directConnect: true,
   baseUrl: 'http://localhost:4201/',
   framework: 'jasmine',
   jasmineNodeOpts: {
     showColors: true,
-    defaultTimeoutInterval: 180000,
+    defaultTimeoutInterval: 180000, // Increased from 180000
     print: function() {}
   },
   beforeLaunch: function() {
     require('ts-node').register({
       project: 'e2e/tsconfig.e2e.json'
     });
+    
+    // Disable webdriver-manager updates to prevent conflicts
+    process.env.WEBDRIVER_MANAGER_GECKODRIVER = 'false';
+    process.env.WEBDRIVER_MANAGER_CHROMEDRIVER = 'false';
   },
   onPrepare() {
     jasmine.getEnv().addReporter(new SpecReporter({ 
@@ -81,5 +99,19 @@ exports.config = {
         displayErrorMessages: true
       } 
     }));
+    
+    // Add global error handling
+    global.console.log = function(msg) {
+      if (typeof msg === 'string' && msg.includes('ERROR')) {
+        console.error(msg);
+      } else {
+        console.log(msg);
+      }
+    };
+  },
+  // Add better error handling
+  onComplete: function() {
+    // Clean up any remaining processes
+    browser.quit();
   }
 };
