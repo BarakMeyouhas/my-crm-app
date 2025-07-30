@@ -115,16 +115,18 @@ exports.config = {
       } 
     }));
     
-    // Add global error handling
-    global.console.log = function(msg) {
-      if (typeof msg === 'string' && msg.includes('ERROR')) {
-        console.error(msg);
-      } else {
-        console.log(msg);
-      }
-    };
+    // Add debug logging
+    console.log('🔧 Protractor onPrepare started');
+    console.log(`🌐 Base URL: ${exports.config.baseUrl}`);
+    console.log(`🔧 ChromeDriver path: ${exports.config.chromeDriver}`);
+    console.log(`📱 Platform: ${os.platform()}`);
+    
+    // Log browser capabilities
+    browser.getCapabilities().then(function(caps) {
+      console.log('📱 Browser capabilities:', caps);
+    });
   },
-  // Add better error handling
+  // Add global error handling
   onComplete: function() {
     // Clean up any remaining processes
     browser.quit();

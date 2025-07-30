@@ -462,8 +462,19 @@ jobs:
         echo "WebDriver manager disabled: $WEBDRIVER_MANAGER_CHROMEDRIVER"
         echo "Base URL: $BASE_URL"
         
+        # Debug environment
+        echo "=== Debug Environment ==="
+        echo "Current directory: $(pwd)"
+        echo "Files in e2e directory:"
+        ls -la e2e/
+        echo "ChromeDriver version:"
+        chromedriver --version
+        echo "Chrome version:"
+        google-chrome --version
+        echo "========================"
+        
         # Use --webdriver-update=false to prevent webdriver-manager interference
-        timeout 300 xvfb-run --server-args="-screen 0 1920x1080x24" npx ng e2e --webdriver-update=false --port 4201 --specs=./e2e/minimal-test.e2e-spec.ts
+        timeout 120 xvfb-run --server-args="-screen 0 1920x1080x24" npx ng e2e --webdriver-update=false --port 4201 --specs=./e2e/minimal-test.e2e-spec.ts
       env:
         CI: true
         CHROME_BIN: /usr/bin/google-chrome
