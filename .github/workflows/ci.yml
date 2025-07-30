@@ -412,17 +412,17 @@ jobs:
         # Check if the server is responding with proper verification
         echo "=== Checking server availability ==="
         for i in {1..30}; do
-          echo "Attempt $i/30: Checking http://127.0.0.1:4201/landing"
-          if curl -s http://127.0.0.1:4201/landing > /dev/null; then
+          echo "Attempt $i/30: Checking http://127.0.0.1:4201/"
+          if curl -s http://127.0.0.1:4201/ > /dev/null; then
             echo "✅ Angular dev server is ready!"
             break
           fi
-          echo "⏳ Waiting for landing page... (attempt $i/30)"
+          echo "⏳ Waiting for server... (attempt $i/30)"
           sleep 3  # Increased sleep time
         done
         
         # Final verification that server is responding
-        if ! curl -s http://127.0.0.1:4201/landing > /dev/null; then
+        if ! curl -s http://127.0.0.1:4201/ > /dev/null; then
           echo "❌ Angular dev server is not responding!"
           echo "🔍 Debugging server status..."
           echo "=== Server Process Check ==="
@@ -430,18 +430,18 @@ jobs:
           echo "=== Port Check ==="
           netstat -tlnp | grep 4201 || echo "Port 4201 not listening"
           echo "=== Curl Test ==="
-          curl -v http://127.0.0.1:4201/landing || echo "Curl failed"
+          curl -v http://127.0.0.1:4201/ || echo "Curl failed"
           exit 1
         fi
         
         # Additional verification
         echo "=== Server Verification ==="
-        curl -s http://127.0.0.1:4201/landing | head -20
+        curl -s http://127.0.0.1:4201/ | head -20
         echo "=========================="
         
         # Test server response
         echo "=== Testing Server Response ==="
-        SERVER_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:4201/landing)
+        SERVER_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:4201/)
         echo "Server response code: $SERVER_RESPONSE"
         if [ "$SERVER_RESPONSE" = "200" ]; then
           echo "✅ Server is responding with HTTP 200"

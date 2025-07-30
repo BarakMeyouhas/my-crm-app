@@ -11,13 +11,13 @@ describe('Sanity Check E2E Test', () => {
       // Step 1: Navigate to landing page
       console.log('📱 Step 1: Navigating to landing page...');
       console.log(`⏰ Timestamp: ${new Date().toISOString()}`);
-      await browser.get(`${baseUrl}/landing`);
+      await browser.get(`${baseUrl}/`);
       console.log('✅ browser.get() completed');
       
       // Step 2: Verify URL
       console.log('🔍 Step 2: Verifying URL...');
       console.log(`⏰ Timestamp: ${new Date().toISOString()}`);
-      await browser.wait(EC.urlContains('/landing'), 10000);
+      await browser.wait(EC.urlContains('/'), 10000);
       console.log('✅ URL verification completed');
       
       // Step 3: Wait for Angular

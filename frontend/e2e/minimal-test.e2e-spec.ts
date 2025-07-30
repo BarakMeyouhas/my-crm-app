@@ -12,7 +12,7 @@ describe('Minimal E2E Test', () => {
       // Step 1: Navigate to page
       console.log('📱 Step 1: Navigating to page...');
       console.log(`⏰ Timestamp: ${new Date().toISOString()}`);
-      await browser.get(`${baseUrl}/landing`);
+      await browser.get(`${baseUrl}/`);
       console.log('✅ browser.get() completed');
       
       // Step 2: Get page title
