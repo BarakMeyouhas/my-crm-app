@@ -136,11 +136,11 @@ describe('Setup E2E Tests', () => {
 
   describe('Frontend Routes', () => {
     it('should verify landing page route', async () => {
-      await browser.get(`${baseUrl}/landing`);
+      await browser.get(`${baseUrl}/#/landing`);
       await browser.waitForAngular();
       
       const currentUrl = await browser.getCurrentUrl();
-      expect(currentUrl).toContain('/landing');
+      expect(currentUrl).toContain('#/landing');
       console.log('✅ Landing page route accessible');
     });
 
@@ -154,11 +154,11 @@ describe('Setup E2E Tests', () => {
     });
 
     it('should verify register page route', async () => {
-      await browser.get(`${baseUrl}/register`);
+      await browser.get(`${baseUrl}/#/register`);
       await browser.waitForAngular();
       
       const currentUrl = await browser.getCurrentUrl();
-      expect(currentUrl).toContain('/register');
+      expect(currentUrl).toContain('#/register');
       console.log('✅ Register page route accessible');
     });
 

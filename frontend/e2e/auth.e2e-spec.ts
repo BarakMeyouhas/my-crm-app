@@ -25,8 +25,8 @@ describe('Authentication E2E Tests', () => {
 
   describe('Landing Page Navigation', () => {
     it('should load landing page and navigate to login', async () => {
-      await browser.get(`${baseUrl}/landing`);
-      await browser.waitForAngular();
+      await browser.get(`${baseUrl}/#/landing`);
+      await browser.wait(EC.urlContains('#/landing'), 10000);
       
       const loginLink = element(by.css('a[routerLink="/login"]'));
       await browser.wait(EC.elementToBeClickable(loginLink), 10000);
@@ -39,8 +39,8 @@ describe('Authentication E2E Tests', () => {
     });
 
     it('should load landing page and navigate to register', async () => {
-      await browser.get(`${baseUrl}/landing`);
-      await browser.waitForAngular();
+      await browser.get(`${baseUrl}/#/landing`);
+      await browser.wait(EC.urlContains('#/landing'), 10000);
       
       const registerLink = element(by.css('a[routerLink="/register"]'));
       await browser.wait(EC.elementToBeClickable(registerLink), 10000);
@@ -55,8 +55,8 @@ describe('Authentication E2E Tests', () => {
 
   describe('User Registration', () => {
     it('should register a new user successfully', async () => {
-      await browser.get(`${baseUrl}/register`);
-      await browser.waitForAngular();
+      await browser.get(`${baseUrl}/#/register`);
+      await browser.wait(EC.urlContains('#/register'), 10000);
       
       // Try multiple possible form control selectors for reactive forms
       const firstNameSelectors = [
@@ -174,8 +174,8 @@ describe('Authentication E2E Tests', () => {
     });
 
     it('should handle form validation', async () => {
-      await browser.get(`${baseUrl}/register`);
-      await browser.waitForAngular();
+      await browser.get(`${baseUrl}/#/register`);
+      await browser.wait(EC.urlContains('#/register'), 10000);
       
       const submitButton = element(by.css('button[type="submit"]'));
       
@@ -198,8 +198,8 @@ describe('Authentication E2E Tests', () => {
 
   describe('User Login', () => {
     it('should display login form', async () => {
-      await browser.get(`${baseUrl}/login`);
-      await browser.waitForAngular();
+      await browser.get(`${baseUrl}/#/login`);
+      await browser.wait(EC.urlContains('#/login'), 10000);
       
       // Check for form elements that actually exist in the login component
       const emailInput = element(by.css('input[name="email"]'));
@@ -226,8 +226,8 @@ describe('Authentication E2E Tests', () => {
     });
 
     it('should handle login form validation', async () => {
-      await browser.get(`${baseUrl}/login`);
-      await browser.waitForAngular();
+      await browser.get(`${baseUrl}/#/login`);
+      await browser.wait(EC.urlContains('#/login'), 10000);
       
       const loginSubmitButton = element(by.css('button[type="submit"]'));
       
@@ -250,7 +250,7 @@ describe('Authentication E2E Tests', () => {
 
   describe('Dashboard Access', () => {
     it('should redirect to login when accessing dashboard without auth', async () => {
-      await browser.get(`${baseUrl}/dashboard`);
+      await browser.get(`${baseUrl}/#/dashboard`);
       await browser.waitForAngular();
       
       const currentUrl = await browser.getCurrentUrl();
@@ -263,7 +263,7 @@ describe('Authentication E2E Tests', () => {
 
   describe('Logout Functionality', () => {
     it('should handle logout when not logged in', async () => {
-      await browser.get(`${baseUrl}/landing`);
+      await browser.get(`${baseUrl}/#/landing`);
       await browser.waitForAngular();
       
       // Try to access logout functionality
