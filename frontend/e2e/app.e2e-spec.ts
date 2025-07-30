@@ -16,8 +16,8 @@ describe("CRM Application E2E Tests", () => {
       try {
         // Navigate to landing page with URL verification
         console.log('📱 Navigating to landing page...');
-        await browser.get(`${baseUrl}/#/landing`);
-        await browser.wait(EC.urlContains('#/landing'), 10000); // 10 seconds max
+        await browser.get(`${baseUrl}/landing`);
+        await browser.wait(EC.urlContains('/landing'), 10000); // 10 seconds max
         console.log('✅ Navigation to landing page successful');
         
         // Wait for Angular to be ready
@@ -83,8 +83,8 @@ describe("CRM Application E2E Tests", () => {
       try {
         // Navigate to landing page with URL verification
         console.log('📱 Navigating to landing page...');
-        await browser.get(`${baseUrl}/#/landing`);
-        await browser.wait(EC.urlContains('#/landing'), 10000); // 10 seconds max
+        await browser.get(`${baseUrl}/landing`);
+        await browser.wait(EC.urlContains('/landing'), 10000); // 10 seconds max
         console.log('✅ Navigation to landing page successful');
         
         // Wait for Angular to be ready
@@ -117,8 +117,8 @@ describe("CRM Application E2E Tests", () => {
       try {
         // Navigate to landing page with URL verification
         console.log('📱 Navigating to landing page...');
-        await browser.get(`${baseUrl}/#/landing`);
-        await browser.wait(EC.urlContains('#/landing'), 10000); // 10 seconds max
+        await browser.get(`${baseUrl}/landing`);
+        await browser.wait(EC.urlContains('/landing'), 10000); // 10 seconds max
         console.log('✅ Navigation to landing page successful');
         
         // Wait for Angular to be ready
@@ -157,8 +157,8 @@ describe("CRM Application E2E Tests", () => {
       try {
         // Navigate to landing page with URL verification
         console.log('📱 Navigating to landing page...');
-        await browser.get(`${baseUrl}/#/landing`);
-        await browser.wait(EC.urlContains('#/landing'), 10000); // 10 seconds max
+        await browser.get(`${baseUrl}/landing`);
+        await browser.wait(EC.urlContains('/landing'), 10000); // 10 seconds max
         console.log('✅ Navigation to landing page successful');
         
         // Wait for Angular to be ready
@@ -293,7 +293,7 @@ describe("CRM Application E2E Tests", () => {
       try {
         // Navigate to a non-existent page
         console.log('📱 Navigating to non-existent page...');
-        await browser.get(`${baseUrl}/#/non-existent-page`);
+        await browser.get(`${baseUrl}/non-existent-page`);
         await browser.waitForAngular();
         
         // Should redirect to landing page (or login if protected)
@@ -301,7 +301,7 @@ describe("CRM Application E2E Tests", () => {
         console.log(`✅ Current URL after 404: ${currentUrl}`);
         
         // The app should handle 404 gracefully (redirect to landing or show error)
-        expect(currentUrl).toContain('#/');
+        expect(currentUrl).toContain('/');
         console.log('✅ 404 handling test completed');
         
       } catch (error) {

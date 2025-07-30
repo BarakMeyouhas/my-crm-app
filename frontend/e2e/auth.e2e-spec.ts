@@ -25,8 +25,11 @@ describe('Authentication E2E Tests', () => {
 
   describe('Landing Page Navigation', () => {
     it('should load landing page and navigate to login', async () => {
-      await browser.get(`${baseUrl}/#/landing`);
-      await browser.wait(EC.urlContains('#/landing'), 10000);
+      // Navigate to landing page
+      console.log('📱 Navigating to landing page...');
+      await browser.get(`${baseUrl}/landing`);
+      await browser.wait(EC.urlContains('/landing'), 10000);
+      console.log('✅ Navigation to landing page successful');
       
       const loginLink = element(by.css('a[routerLink="/login"]'));
       await browser.wait(EC.elementToBeClickable(loginLink), 10000);
@@ -39,8 +42,11 @@ describe('Authentication E2E Tests', () => {
     });
 
     it('should load landing page and navigate to register', async () => {
-      await browser.get(`${baseUrl}/#/landing`);
-      await browser.wait(EC.urlContains('#/landing'), 10000);
+      // Navigate to landing page
+      console.log('📱 Navigating to landing page...');
+      await browser.get(`${baseUrl}/landing`);
+      await browser.wait(EC.urlContains('/landing'), 10000);
+      console.log('✅ Navigation to landing page successful');
       
       const registerLink = element(by.css('a[routerLink="/register"]'));
       await browser.wait(EC.elementToBeClickable(registerLink), 10000);
@@ -55,8 +61,8 @@ describe('Authentication E2E Tests', () => {
 
   describe('User Registration', () => {
     it('should register a new user successfully', async () => {
-      await browser.get(`${baseUrl}/#/register`);
-      await browser.wait(EC.urlContains('#/register'), 10000);
+      await browser.get(`${baseUrl}/register`);
+      await browser.wait(EC.urlContains('/register'), 10000);
       
       // Try multiple possible form control selectors for reactive forms
       const firstNameSelectors = [
@@ -174,32 +180,24 @@ describe('Authentication E2E Tests', () => {
     });
 
     it('should handle form validation', async () => {
-      await browser.get(`${baseUrl}/#/register`);
-      await browser.wait(EC.urlContains('#/register'), 10000);
+      await browser.get(`${baseUrl}/register`);
+      await browser.wait(EC.urlContains('/register'), 10000);
       
       const submitButton = element(by.css('button[type="submit"]'));
+      await browser.wait(EC.elementToBeClickable(submitButton), 10000);
+      await submitButton.click();
       
-      try {
-        await browser.wait(EC.elementToBeClickable(submitButton), 10000);
-        // Try to submit empty form
-        await submitButton.click();
-        await browser.waitForAngular();
-        
-        // Should show validation errors or prevent submission
-        const currentUrl = await browser.getCurrentUrl();
-        expect(currentUrl).toContain('/register');
-        
-        console.log('✅ Form validation working');
-      } catch (error) {
-        console.log('⚠️ Form validation test failed');
-      }
+      // Should stay on register page or show validation errors
+      const currentUrl = await browser.getCurrentUrl();
+      expect(currentUrl).toContain('/register');
+      console.log('✅ Form validation working');
     });
   });
 
   describe('User Login', () => {
     it('should display login form', async () => {
-      await browser.get(`${baseUrl}/#/login`);
-      await browser.wait(EC.urlContains('#/login'), 10000);
+      await browser.get(`${baseUrl}/login`);
+      await browser.wait(EC.urlContains('/login'), 10000);
       
       // Check for form elements that actually exist in the login component
       const emailInput = element(by.css('input[name="email"]'));
@@ -226,25 +224,17 @@ describe('Authentication E2E Tests', () => {
     });
 
     it('should handle login form validation', async () => {
-      await browser.get(`${baseUrl}/#/login`);
-      await browser.wait(EC.urlContains('#/login'), 10000);
+      await browser.get(`${baseUrl}/login`);
+      await browser.wait(EC.urlContains('/login'), 10000);
       
       const loginSubmitButton = element(by.css('button[type="submit"]'));
+      await browser.wait(EC.elementToBeClickable(loginSubmitButton), 10000);
+      await loginSubmitButton.click();
       
-      try {
-        await browser.wait(EC.elementToBeClickable(loginSubmitButton), 10000);
-        // Try to submit empty form
-        await loginSubmitButton.click();
-        await browser.waitForAngular();
-        
-        // Should show validation errors or prevent submission
-        const currentUrl = await browser.getCurrentUrl();
-        expect(currentUrl).toContain('/login');
-        
-        console.log('✅ Login form validation working');
-      } catch (error) {
-        console.log('⚠️ Login form validation test failed');
-      }
+      // Should stay on login page or show validation errors
+      const currentUrl = await browser.getCurrentUrl();
+      expect(currentUrl).toContain('/login');
+      console.log('✅ Login form validation working');
     });
   });
 
@@ -254,11 +244,11 @@ describe('Authentication E2E Tests', () => {
       await browser.executeScript('window.localStorage.clear();');
       console.log('✅ localStorage cleared');
       
-      await browser.get(`${baseUrl}/#/dashboard`);
+      await browser.get(`${baseUrl}/dashboard`);
       await browser.waitForAngular();
       
       const currentUrl = await browser.getCurrentUrl();
-      expect(currentUrl).toMatch(/#\/login|#\/auth/);
+      expect(currentUrl).toMatch(/\/login|\/auth/);
       console.log('✅ Dashboard access protection working');
     });
   });
