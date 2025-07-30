@@ -3,7 +3,7 @@ import { browser, by, element, ExpectedConditions as EC } from 'protractor';
 describe('Ultra Minimal E2E Test', () => {
   const baseUrl = process.env.BASE_URL || 'http://127.0.0.1:4201';
 
-  fit('should start Protractor without hanging', async () => {
+  it('should start Protractor without hanging', async () => {
     console.log('🧪 Starting ultra minimal test...');
     console.log(`⏰ Timestamp: ${new Date().toISOString()}`);
     console.log(`🌐 Base URL: ${baseUrl}`);
