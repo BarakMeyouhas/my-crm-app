@@ -67,13 +67,13 @@ describe('Client Management E2E Tests', () => {
       await browser.get(`${baseUrl}/login`);
       await browser.sleep(2000);
       
-      const emailInput = element(by.css('input[type="email"]'));
-      const passwordInput = element(by.css('input[type="password"]'));
-      const submitButton = element(by.css('button[type="submit"]'));
+      const loginEmailInput = element(by.css('input[type="email"]'));
+      const loginPasswordInput = element(by.css('input[type="password"]'));
+      const loginSubmitButton = element(by.css('button[type="submit"]'));
       
-      await emailInput.sendKeys(testUser.email);
-      await passwordInput.sendKeys(testUser.password);
-      await submitButton.click();
+      await loginEmailInput.sendKeys(testUser.email);
+      await loginPasswordInput.sendKeys(testUser.password);
+      await loginSubmitButton.click();
       
       await browser.sleep(3000);
       
@@ -99,13 +99,13 @@ describe('Client Management E2E Tests', () => {
       await browser.get(`${baseUrl}/login`);
       await browser.sleep(2000);
       
-      const emailInput = element(by.css('input[type="email"]'));
-      const passwordInput = element(by.css('input[type="password"]'));
-      const submitButton = element(by.css('button[type="submit"]'));
+      const loginEmailInput = element(by.css('input[type="email"]'));
+      const loginPasswordInput = element(by.css('input[type="password"]'));
+      const loginSubmitButton = element(by.css('button[type="submit"]'));
       
-      await emailInput.sendKeys(testUser.email);
-      await passwordInput.sendKeys(testUser.password);
-      await submitButton.click();
+      await loginEmailInput.sendKeys(testUser.email);
+      await loginPasswordInput.sendKeys(testUser.password);
+      await loginSubmitButton.click();
       
       await browser.sleep(3000);
       
@@ -130,13 +130,13 @@ describe('Client Management E2E Tests', () => {
       await browser.get(`${baseUrl}/login`);
       await browser.sleep(2000);
       
-      const emailInput = element(by.css('input[type="email"]'));
-      const passwordInput = element(by.css('input[type="password"]'));
-      const submitButton = element(by.css('button[type="submit"]'));
+      const loginEmailInput = element(by.css('input[type="email"]'));
+      const loginPasswordInput = element(by.css('input[type="password"]'));
+      const loginSubmitButton = element(by.css('button[type="submit"]'));
       
-      await emailInput.sendKeys(testUser.email);
-      await passwordInput.sendKeys(testUser.password);
-      await submitButton.click();
+      await loginEmailInput.sendKeys(testUser.email);
+      await loginPasswordInput.sendKeys(testUser.password);
+      await loginSubmitButton.click();
       
       await browser.sleep(3000);
       
@@ -146,18 +146,18 @@ describe('Client Management E2E Tests', () => {
       
       // Check for form elements
       const nameInput = element(by.css('input[formControlName="name"], input[name="name"]'));
-      const emailInput = element(by.css('input[formControlName="email"], input[name="email"]'));
+      const clientEmailInput = element(by.css('input[formControlName="email"], input[name="email"]'));
       const phoneInput = element(by.css('input[formControlName="phone"], input[name="phone"]'));
-      const submitButton = element(by.css('button[type="submit"]'));
+      const formSubmitButton = element(by.css('button[type="submit"]'));
       
       try {
         await browser.wait(EC.presenceOf(nameInput), 10000);
-        await browser.wait(EC.presenceOf(emailInput), 10000);
-        await browser.wait(EC.presenceOf(submitButton), 10000);
+        await browser.wait(EC.presenceOf(clientEmailInput), 10000);
+        await browser.wait(EC.presenceOf(formSubmitButton), 10000);
         
         expect(await nameInput.isPresent()).toBe(true);
-        expect(await emailInput.isPresent()).toBe(true);
-        expect(await submitButton.isPresent()).toBe(true);
+        expect(await clientEmailInput.isPresent()).toBe(true);
+        expect(await formSubmitButton.isPresent()).toBe(true);
       } catch (error) {
         console.log('Add client form elements not found');
       }
@@ -168,13 +168,13 @@ describe('Client Management E2E Tests', () => {
       await browser.get(`${baseUrl}/login`);
       await browser.sleep(2000);
       
-      const emailInput = element(by.css('input[type="email"]'));
-      const passwordInput = element(by.css('input[type="password"]'));
-      const submitButton = element(by.css('button[type="submit"]'));
+      const loginEmailInput = element(by.css('input[type="email"]'));
+      const loginPasswordInput = element(by.css('input[type="password"]'));
+      const loginSubmitButton = element(by.css('button[type="submit"]'));
       
-      await emailInput.sendKeys(testUser.email);
-      await passwordInput.sendKeys(testUser.password);
-      await submitButton.click();
+      await loginEmailInput.sendKeys(testUser.email);
+      await loginPasswordInput.sendKeys(testUser.password);
+      await loginSubmitButton.click();
       
       await browser.sleep(3000);
       
@@ -183,10 +183,10 @@ describe('Client Management E2E Tests', () => {
       await browser.sleep(2000);
       
       // Try to submit empty form
-      const submitButton = element(by.css('button[type="submit"]'));
+      const emptyFormSubmitButton = element(by.css('button[type="submit"]'));
       try {
-        await browser.wait(EC.elementToBeClickable(submitButton), 10000);
-        await submitButton.click();
+        await browser.wait(EC.elementToBeClickable(emptyFormSubmitButton), 10000);
+        await emptyFormSubmitButton.click();
         
         // Wait for validation errors
         await browser.sleep(1000);
@@ -205,13 +205,13 @@ describe('Client Management E2E Tests', () => {
       await browser.get(`${baseUrl}/login`);
       await browser.sleep(2000);
       
-      const emailInput = element(by.css('input[type="email"]'));
-      const passwordInput = element(by.css('input[type="password"]'));
-      const submitButton = element(by.css('button[type="submit"]'));
+      const loginEmailInput = element(by.css('input[type="email"]'));
+      const loginPasswordInput = element(by.css('input[type="password"]'));
+      const loginSubmitButton = element(by.css('button[type="submit"]'));
       
-      await emailInput.sendKeys(testUser.email);
-      await passwordInput.sendKeys(testUser.password);
-      await submitButton.click();
+      await loginEmailInput.sendKeys(testUser.email);
+      await loginPasswordInput.sendKeys(testUser.password);
+      await loginSubmitButton.click();
       
       await browser.sleep(3000);
       
@@ -221,21 +221,21 @@ describe('Client Management E2E Tests', () => {
       
       // Fill in the client form
       const nameInput = element(by.css('input[formControlName="name"], input[name="name"]'));
-      const emailInput = element(by.css('input[formControlName="email"], input[name="email"]'));
+      const clientEmailInput = element(by.css('input[formControlName="email"], input[name="email"]'));
       const phoneInput = element(by.css('input[formControlName="phone"], input[name="phone"]'));
       const companyInput = element(by.css('input[formControlName="company"], input[name="company"]'));
       const notesInput = element(by.css('textarea[formControlName="notes"], textarea[name="notes"]'));
       
       try {
         await nameInput.sendKeys(testClient.name);
-        await emailInput.sendKeys(testClient.email);
+        await clientEmailInput.sendKeys(testClient.email);
         await phoneInput.sendKeys(testClient.phone);
         await companyInput.sendKeys(testClient.company);
         await notesInput.sendKeys(testClient.notes);
         
         // Submit the form
-        const submitButton = element(by.css('button[type="submit"]'));
-        await submitButton.click();
+        const formSubmitButton = element(by.css('button[type="submit"]'));
+        await formSubmitButton.click();
         
         // Wait for submission to complete
         await browser.sleep(3000);
@@ -264,13 +264,13 @@ describe('Client Management E2E Tests', () => {
       await browser.get(`${baseUrl}/login`);
       await browser.sleep(2000);
       
-      const emailInput = element(by.css('input[type="email"]'));
-      const passwordInput = element(by.css('input[type="password"]'));
-      const submitButton = element(by.css('button[type="submit"]'));
+      const loginEmailInput = element(by.css('input[type="email"]'));
+      const loginPasswordInput = element(by.css('input[type="password"]'));
+      const loginSubmitButton = element(by.css('button[type="submit"]'));
       
-      await emailInput.sendKeys(testUser.email);
-      await passwordInput.sendKeys(testUser.password);
-      await submitButton.click();
+      await loginEmailInput.sendKeys(testUser.email);
+      await loginPasswordInput.sendKeys(testUser.password);
+      await loginSubmitButton.click();
       
       await browser.sleep(3000);
       
@@ -304,13 +304,13 @@ describe('Client Management E2E Tests', () => {
       await browser.get(`${baseUrl}/login`);
       await browser.sleep(2000);
       
-      const emailInput = element(by.css('input[type="email"]'));
-      const passwordInput = element(by.css('input[type="password"]'));
-      const submitButton = element(by.css('button[type="submit"]'));
+      const loginEmailInput = element(by.css('input[type="email"]'));
+      const loginPasswordInput = element(by.css('input[type="password"]'));
+      const loginSubmitButton = element(by.css('button[type="submit"]'));
       
-      await emailInput.sendKeys(testUser.email);
-      await passwordInput.sendKeys(testUser.password);
-      await submitButton.click();
+      await loginEmailInput.sendKeys(testUser.email);
+      await loginPasswordInput.sendKeys(testUser.password);
+      await loginSubmitButton.click();
       
       await browser.sleep(3000);
       
@@ -328,16 +328,16 @@ describe('Client Management E2E Tests', () => {
         
         // Update client information
         const nameInput = element(by.css('input[formControlName="name"], input[name="name"]'));
-        const emailInput = element(by.css('input[formControlName="email"], input[name="email"]'));
+        const clientEmailInput = element(by.css('input[formControlName="email"], input[name="email"]'));
         
         await nameInput.clear();
         await nameInput.sendKeys('Updated Client Name');
-        await emailInput.clear();
-        await emailInput.sendKeys('updated@example.com');
+        await clientEmailInput.clear();
+        await clientEmailInput.sendKeys('updated@example.com');
         
         // Submit the form
-        const submitButton = element(by.css('button[type="submit"]'));
-        await submitButton.click();
+        const formSubmitButton = element(by.css('button[type="submit"]'));
+        await formSubmitButton.click();
         
         // Wait for update to complete
         await browser.sleep(3000);
@@ -366,13 +366,13 @@ describe('Client Management E2E Tests', () => {
       await browser.get(`${baseUrl}/login`);
       await browser.sleep(2000);
       
-      const emailInput = element(by.css('input[type="email"]'));
-      const passwordInput = element(by.css('input[type="password"]'));
-      const submitButton = element(by.css('button[type="submit"]'));
+      const loginEmailInput = element(by.css('input[type="email"]'));
+      const loginPasswordInput = element(by.css('input[type="password"]'));
+      const loginSubmitButton = element(by.css('button[type="submit"]'));
       
-      await emailInput.sendKeys(testUser.email);
-      await passwordInput.sendKeys(testUser.password);
-      await submitButton.click();
+      await loginEmailInput.sendKeys(testUser.email);
+      await loginPasswordInput.sendKeys(testUser.password);
+      await loginSubmitButton.click();
       
       await browser.sleep(3000);
       
@@ -406,13 +406,13 @@ describe('Client Management E2E Tests', () => {
       await browser.get(`${baseUrl}/login`);
       await browser.sleep(2000);
       
-      const emailInput = element(by.css('input[type="email"]'));
-      const passwordInput = element(by.css('input[type="password"]'));
-      const submitButton = element(by.css('button[type="submit"]'));
+      const loginEmailInput = element(by.css('input[type="email"]'));
+      const loginPasswordInput = element(by.css('input[type="password"]'));
+      const loginSubmitButton = element(by.css('button[type="submit"]'));
       
-      await emailInput.sendKeys(testUser.email);
-      await passwordInput.sendKeys(testUser.password);
-      await submitButton.click();
+      await loginEmailInput.sendKeys(testUser.email);
+      await loginPasswordInput.sendKeys(testUser.password);
+      await loginSubmitButton.click();
       
       await browser.sleep(3000);
       
@@ -465,13 +465,13 @@ describe('Client Management E2E Tests', () => {
       await browser.get(`${baseUrl}/login`);
       await browser.sleep(2000);
       
-      const emailInput = element(by.css('input[type="email"]'));
-      const passwordInput = element(by.css('input[type="password"]'));
-      const submitButton = element(by.css('button[type="submit"]'));
+      const loginEmailInput = element(by.css('input[type="email"]'));
+      const loginPasswordInput = element(by.css('input[type="password"]'));
+      const loginSubmitButton = element(by.css('button[type="submit"]'));
       
-      await emailInput.sendKeys(testUser.email);
-      await passwordInput.sendKeys(testUser.password);
-      await submitButton.click();
+      await loginEmailInput.sendKeys(testUser.email);
+      await loginPasswordInput.sendKeys(testUser.password);
+      await loginSubmitButton.click();
       
       await browser.sleep(3000);
       
@@ -494,13 +494,13 @@ describe('Client Management E2E Tests', () => {
       await browser.get(`${baseUrl}/login`);
       await browser.sleep(2000);
       
-      const emailInput = element(by.css('input[type="email"]'));
-      const passwordInput = element(by.css('input[type="password"]'));
-      const submitButton = element(by.css('button[type="submit"]'));
+      const loginEmailInput = element(by.css('input[type="email"]'));
+      const loginPasswordInput = element(by.css('input[type="password"]'));
+      const loginSubmitButton = element(by.css('button[type="submit"]'));
       
-      await emailInput.sendKeys(testUser.email);
-      await passwordInput.sendKeys(testUser.password);
-      await submitButton.click();
+      await loginEmailInput.sendKeys(testUser.email);
+      await loginPasswordInput.sendKeys(testUser.password);
+      await loginSubmitButton.click();
       
       await browser.sleep(3000);
       

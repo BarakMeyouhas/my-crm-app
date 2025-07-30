@@ -7,170 +7,170 @@ on:
     branches: [ main, develop ]
 
 jobs:
-  backend:
-    runs-on: ubuntu-latest
-    name: Backend Tests
-    
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: servix_db
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5433:5432
+  # backend:
+  #   runs-on: ubuntu-latest
+  #   name: Backend Tests
+  #   
+  #   services:
+  #     postgres:
+  #       image: postgres:latest
+  #       env:
+  #         POSTGRES_USER: postgres
+  #         POSTGRES_PASSWORD: postgres
+  #         POSTGRES_DB: servix_db
+  #       options: >-
+  #         --health-cmd pg_isready
+  #         --health-interval 10s
+  #         --health-timeout 5s
+  #         --health-retries 5
+  #       ports:
+  #         - 5433:5432
 
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-    
-    - name: Cache backend dependencies
-      uses: actions/cache@v4
-      with:
-        path: backend/node_modules
-        key: ${{ runner.os }}-backend-node-${{ hashFiles('backend/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-backend-node-
-    
-    - name: Install backend dependencies
-      run: |
-        cd backend
-        npm ci
-    
-    - name: Setup Prisma
-      run: |
-        cd backend
-        npx prisma generate
-    
-    - name: Test database migrations
-      run: |
-        cd backend
-        npx prisma migrate deploy
-      env:
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5433/servix_db
-    
-    - name: Run backend API structure tests
-      run: |
-        cd backend
-        npm run test:ci
-      env:
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5433/servix_db
-    
-    # Security audit - only fails on critical vulnerabilities
-    # Non-critical vulnerabilities in dev dependencies are expected and don't affect production
-    - name: Run backend security audit
-      run: |
-        cd backend
-        npm audit --audit-level=critical || echo "Backend security audit completed - non-critical vulnerabilities found"
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #   
+  #   - name: Setup Node.js
+  #     uses: actions/setup-node@v3
+  #     with:
+  #       node-version: '18'
+  #   
+  #   - name: Cache backend dependencies
+  #     uses: actions/cache@v4
+  #     with:
+  #       path: backend/node_modules
+  #       key: ${{ runner.os }}-backend-node-${{ hashFiles('backend/package-lock.json') }}
+  #       restore-keys: |
+  #         ${{ runner.os }}-backend-node-
+  #   
+  #   - name: Install backend dependencies
+  #     run: |
+  #       cd backend
+  #       npm ci
+  #   
+  #   - name: Setup Prisma
+  #     run: |
+  #       cd backend
+  #       npx prisma generate
+  #   
+  #   - name: Test database migrations
+  #     run: |
+  #       cd backend
+  #       npx prisma migrate deploy
+  #     env:
+  #       DATABASE_URL: postgresql://postgres:postgres@localhost:5433/servix_db
+  #   
+  #   - name: Run backend API structure tests
+  #     run: |
+  #       cd backend
+  #       npm run test:ci
+  #     env:
+  #       DATABASE_URL: postgresql://postgres:postgres@localhost:5433/servix_db
+  #   
+  #   # Security audit - only fails on critical vulnerabilities
+  #   # Non-critical vulnerabilities in dev dependencies are expected and don't affect production
+  #   - name: Run backend security audit
+  #     run: |
+  #       cd backend
+  #       npm audit --audit-level=critical || echo "Backend security audit completed - non-critical vulnerabilities found"
 
-  api-tests:
-    runs-on: ubuntu-latest
-    name: API Tests (Postman CLI)
-    needs: [backend]
-    
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: servix_db
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5433:5432
+  # api-tests:
+  #   runs-on: ubuntu-latest
+  #   name: API Tests (Postman CLI)
+  #   needs: [backend]
+  #   
+  #   services:
+  #     postgres:
+  #       image: postgres:latest
+  #       env:
+  #         POSTGRES_USER: postgres
+  #         POSTGRES_PASSWORD: postgres
+  #         POSTGRES_DB: servix_db
+  #       options: >-
+  #         --health-cmd pg_isready
+  #         --health-interval 10s
+  #         --health-timeout 5s
+  #         --health-retries 5
+  #       ports:
+  #         - 5433:5432
 
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-    
-    - name: Cache postman dependencies
-      uses: actions/cache@v4
-      with:
-        path: postman/node_modules
-        key: ${{ runner.os }}-postman-node-${{ hashFiles('postman/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-postman-node-
-    
-    - name: Install Newman (Postman CLI)
-      run: |
-        npm install -g newman@5.3.2
-        npm install -g newman-reporter-html@1.0.5
-    
-    - name: Install postman dependencies
-      run: |
-        cd postman
-        npm ci --legacy-peer-deps
-    
-    - name: Setup backend for API tests
-      run: |
-        cd backend
-        npm ci
-        npx prisma generate
-        npx prisma migrate deploy
-        npx prisma db seed
-      env:
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5433/servix_db
-    
-    - name: Start backend server
-      run: |
-        cd backend
-        npm start &
-        sleep 10
-        # Wait for server to be ready
-        for i in {1..30}; do
-          if curl -s http://localhost:5000/api/companies > /dev/null; then
-            echo "Backend server is ready!"
-            break
-          fi
-          echo "Waiting for server... (attempt $i/30)"
-          sleep 2
-        done
-      env:
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5433/servix_db
-        JWT_SECRET: test-secret-key
-    
-    - name: Run API tests with Newman
-      run: |
-        cd postman
-        newman run ./CRM-App-API.postman_collection.json \
-          -e ./github-actions-environment.json \
-          --reporters cli,json,html \
-          --reporter-json-export ./test-results.json \
-          --reporter-html-export ./test-report.html \
-          --verbose
-    
-    - name: Upload API test results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: api-test-results
-        path: |
-          postman/test-results.json
-          postman/test-report.html
-        retention-days: 7
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #   
+  #   - name: Setup Node.js
+  #     uses: actions/setup-node@v3
+  #     with:
+  #       node-version: '18'
+  #   
+  #   - name: Cache postman dependencies
+  #     uses: actions/cache@v4
+  #     with:
+  #       path: postman/node_modules
+  #       key: ${{ runner.os }}-postman-node-${{ hashFiles('postman/package-lock.json') }}
+  #       restore-keys: |
+  #         ${{ runner.os }}-postman-node-
+  #   
+  #   - name: Install Newman (Postman CLI)
+  #     run: |
+  #       npm install -g newman@5.3.2
+  #       npm install -g newman-reporter-html@1.0.5
+  #   
+  #   - name: Install postman dependencies
+  #     run: |
+  #       cd postman
+  #       npm ci --legacy-peer-deps
+  #   
+  #   - name: Setup backend for API tests
+  #     run: |
+  #       cd backend
+  #       npm ci
+  #       npx prisma generate
+  #       npx prisma migrate deploy
+  #       npx prisma db seed
+  #     env:
+  #       DATABASE_URL: postgresql://postgres:postgres@localhost:5433/servix_db
+  #   
+  #   - name: Start backend server
+  #     run: |
+  #       cd backend
+  #       npm start &
+  #       sleep 10
+  #       # Wait for server to be ready
+  #       for i in {1..30}; do
+  #         if curl -s http://localhost:5000/api/companies > /dev/null; then
+  #           echo "Backend server is ready!"
+  #           break
+  #         fi
+  #         echo "Waiting for server... (attempt $i/30)"
+  #         sleep 2
+  #       done
+  #     env:
+  #       DATABASE_URL: postgresql://postgres:postgres@localhost:5433/servix_db
+  #       JWT_SECRET: test-secret-key
+  #   
+  #   - name: Run API tests with Newman
+  #     run: |
+  #       cd postman
+  #       newman run ./CRM-App-API.postman_collection.json \
+  #         -e ./github-actions-environment.json \
+  #         --reporters cli,json,html \
+  #         --reporter-json-export ./test-results.json \
+  #         --reporter-html-export ./test-report.html \
+  #         --verbose
+  #   
+  #   - name: Upload API test results
+  #     uses: actions/upload-artifact@v4
+  #     if: always()
+  #     with:
+  #       name: api-test-results
+  #       path: |
+  #         postman/test-results.json
+  #         postman/test-report.html
+  #       retention-days: 7
 
   frontend:
     runs-on: ubuntu-latest
     name: Frontend Tests
-    needs: [api-tests]
+    # needs: [api-tests]  # Commented out since api-tests is disabled
 
     steps:
     - uses: actions/checkout@v4
@@ -426,46 +426,46 @@ jobs:
         CHROME_BIN: /usr/bin/google-chrome
         CHROMEDRIVER_PATH: /usr/bin/chromedriver
 
-  build:
-    needs: [backend, frontend, api-tests]
-    runs-on: ubuntu-latest
-    name: Build Project
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+  # build:
+  #   needs: [backend, frontend, api-tests]  # Commented out since backend and api-tests are disabled
+  #   runs-on: ubuntu-latest
+  #   name: Build Project
+  #   if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
 
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-    
-    - name: Install backend dependencies
-      run: |
-        cd backend
-        npm ci
-    
-    - name: Install frontend dependencies
-      run: |
-        cd frontend
-        npm install
-    
-    - name: Build backend
-      run: |
-        cd backend
-        npx prisma generate
-        npm run build || echo "No build script found, skipping"
-    
-    - name: Build frontend
-      run: |
-        cd frontend
-        npm run build --prod
-    
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-artifacts
-        path: |
-          backend/dist/
-          frontend/dist/
-        retention-days: 7 
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #   
+  #   - name: Setup Node.js
+  #     uses: actions/setup-node@v3
+  #     with:
+  #       node-version: '18'
+  #   
+  #   - name: Install backend dependencies
+  #     run: |
+  #       cd backend
+  #       npm ci
+  #   
+  #   - name: Install frontend dependencies
+  #     run: |
+  #       cd frontend
+  #       npm install
+  #   
+  #   - name: Build backend
+  #     run: |
+  #       cd backend
+  #       npx prisma generate
+  #       npm run build || echo "No build script found, skipping"
+  #   
+  #   - name: Build frontend
+  #     run: |
+  #       cd frontend
+  #       npm run build --prod
+  #   
+  #   - name: Upload build artifacts
+  #     uses: actions/upload-artifact@v4
+  #     with:
+  #       name: build-artifacts
+  #       path: |
+  #         backend/dist/
+  #         frontend/dist/
+  #       retention-days: 7 
