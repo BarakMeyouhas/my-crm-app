@@ -3,6 +3,13 @@
 
 const { SpecReporter } = require('jasmine-spec-reporter');
 const path = require('path');
+const os = require('os');
+
+// Detect platform and set appropriate ChromeDriver path
+const isWindows = os.platform() === 'win32';
+const chromedriverName = isWindows ? 'chromedriver.exe' : 'chromedriver';
+const chromedriverPath = process.env.CHROMEDRIVER_PATH || 
+  (isWindows ? path.join(__dirname, chromedriverName) : '/usr/bin/chromedriver');
 
 exports.config = {
   allScriptsTimeout: 180000, // Increased from 120000
@@ -72,8 +79,8 @@ exports.config = {
       ]
     }
   },
-  // Use manually downloaded ChromeDriver 138
-  chromeDriver: process.env.CHROMEDRIVER_PATH || path.join(__dirname, 'chromedriver.exe'),
+  // Use platform-appropriate ChromeDriver path
+  chromeDriver: chromedriverPath,
   directConnect: true,
   baseUrl: 'http://localhost:4201/',
   framework: 'jasmine',
@@ -90,6 +97,9 @@ exports.config = {
     // Disable webdriver-manager updates to prevent conflicts
     process.env.WEBDRIVER_MANAGER_GECKODRIVER = 'false';
     process.env.WEBDRIVER_MANAGER_CHROMEDRIVER = 'false';
+    
+    console.log(`🌐 Platform: ${os.platform()}`);
+    console.log(`🔧 ChromeDriver path: ${chromedriverPath}`);
   },
   onPrepare() {
     jasmine.getEnv().addReporter(new SpecReporter({ 

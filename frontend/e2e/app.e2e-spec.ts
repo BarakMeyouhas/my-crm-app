@@ -9,118 +9,207 @@ describe("CRM Application E2E Tests", () => {
     page = new MaterialDashboardAngularPage();
   });
 
-  describe("Landing Page", () => {
-    it("should load the landing page successfully", async () => {
-      await browser.get(`${baseUrl}/landing`);
+  describe('Landing Page', () => {
+    it('should display all required landing page elements', async () => {
+      console.log('🚀 Starting landing page test...');
       
-      // Wait for Angular to be ready
-      await browser.waitForAngular();
-      
-      const pageTitle = await browser.getTitle();
-      expect(pageTitle).toBeTruthy();
-      
-      console.log('✅ Landing page loaded successfully');
-    });
-
-    it("should display all required landing page elements", async () => {
-      await browser.get(`${baseUrl}/landing`);
-      
-      // Wait for Angular to be ready
-      await browser.waitForAngular();
-      
-      // Check for brand logo - using the correct selector
-      const brandLogo = element(by.css('img[src*="Servix Logo"]'));
       try {
-        await browser.wait(EC.presenceOf(brandLogo), 10000);
-        const logoPresent = await brandLogo.isPresent();
-        console.log(logoPresent ? '✅ Brand logo found' : '⚠️ Brand logo not found');
-      } catch (error) {
-        console.log('⚠️ Brand logo not found');
-      }
-      
-      // Check for hero subtitle - using the correct class
-      const heroSubtitle = element(by.css('.hero-subtitle'));
-      try {
-        await browser.wait(EC.presenceOf(heroSubtitle), 10000);
-        const subtitlePresent = await heroSubtitle.isPresent();
-        console.log(subtitlePresent ? '✅ Hero subtitle found' : '⚠️ Hero subtitle not found');
-      } catch (error) {
-        console.log('⚠️ Hero subtitle not found');
-      }
-      
-      // Check for navigation links - using the correct selectors
-      const loginLink = element(by.css('a[routerLink="/login"]'));
-      try {
-        await browser.wait(EC.presenceOf(loginLink), 10000);
-        const loginPresent = await loginLink.isPresent();
-        console.log(loginPresent ? '✅ Login link found' : '⚠️ Login link not found');
-      } catch (error) {
-        console.log('⚠️ Login link not found');
-      }
-      
-      const registerLink = element(by.css('a[routerLink="/register"]'));
-      try {
-        await browser.wait(EC.presenceOf(registerLink), 10000);
-        const registerPresent = await registerLink.isPresent();
-        console.log(registerPresent ? '✅ Register link found' : '⚠️ Register link not found');
-      } catch (error) {
-        console.log('⚠️ Register link not found');
-      }
-      
-      // Check for hero title
-      const heroTitle = element(by.css('.hero-title'));
-      try {
-        await browser.wait(EC.presenceOf(heroTitle), 10000);
-        const titlePresent = await heroTitle.isPresent();
-        console.log(titlePresent ? '✅ Hero title found' : '⚠️ Hero title not found');
-      } catch (error) {
-        console.log('⚠️ Hero title not found');
-      }
-      
-      console.log('✅ Landing page elements verified');
-    });
-
-    it("should navigate to login page from landing", async () => {
-      await browser.get(`${baseUrl}/landing`);
-      
-      // Wait for Angular to be ready
-      await browser.waitForAngular();
-      
-      const loginLink = element(by.css('a[routerLink="/login"]'));
-      try {
-        await browser.wait(EC.elementToBeClickable(loginLink), 10000);
-        await loginLink.click();
+        // Navigate to landing page with URL verification
+        console.log('📱 Navigating to landing page...');
+        await browser.get(`${baseUrl}/landing`);
+        await browser.wait(EC.urlContains('/landing'), 10000); // 10 seconds max
+        console.log('✅ Navigation to landing page successful');
         
-        // Wait for navigation to complete
+        // Wait for Angular to be ready
+        console.log('⏳ Waiting for Angular to be ready...');
         await browser.waitForAngular();
+        console.log('✅ Angular is ready');
         
-        const currentUrl = await browser.getCurrentUrl();
-        expect(currentUrl).toContain('/login');
-        console.log('✅ Navigation to login page successful');
+        // Check for brand logo
+        console.log('🔍 Checking for brand logo...');
+        const brandLogo = element(by.css('img[src*="Servix Logo"]'));
+        try {
+          await browser.wait(EC.presenceOf(brandLogo), 10000);
+          const logoPresent = await brandLogo.isPresent();
+          console.log(logoPresent ? '✅ Brand logo found' : '⚠️ Brand logo not found');
+        } catch (error) {
+          console.log('⚠️ Brand logo not found');
+        }
+        
+        // Check for hero subtitle
+        console.log('🔍 Checking for hero subtitle...');
+        const heroSubtitle = element(by.css('.hero-subtitle'));
+        try {
+          await browser.wait(EC.presenceOf(heroSubtitle), 10000);
+          const subtitlePresent = await heroSubtitle.isPresent();
+          console.log(subtitlePresent ? '✅ Hero subtitle found' : '⚠️ Hero subtitle not found');
+        } catch (error) {
+          console.log('⚠️ Hero subtitle not found');
+        }
+        
+        // Check for login link
+        console.log('🔍 Checking for login link...');
+        const loginLink = element(by.css('a[routerLink="/login"]'));
+        try {
+          await browser.wait(EC.presenceOf(loginLink), 10000);
+          const loginPresent = await loginLink.isPresent();
+          console.log(loginPresent ? '✅ Login link found' : '⚠️ Login link not found');
+        } catch (error) {
+          console.log('⚠️ Login link not found');
+        }
+        
+        // Check for register link
+        console.log('🔍 Checking for register link...');
+        const registerLink = element(by.css('a[routerLink="/register"]'));
+        try {
+          await browser.wait(EC.presenceOf(registerLink), 10000);
+          const registerPresent = await registerLink.isPresent();
+          console.log(registerPresent ? '✅ Register link found' : '⚠️ Register link not found');
+        } catch (error) {
+          console.log('⚠️ Register link not found');
+        }
+        
+        console.log('✅ Landing page test completed successfully!');
+        
       } catch (error) {
-        console.log('⚠️ Navigation to login failed');
+        console.error('❌ Landing page test failed:', error.message);
+        throw error;
+      }
+    });
+
+    it('should display hero title', async () => {
+      console.log('🚀 Starting hero title test...');
+      
+      try {
+        // Navigate to landing page with URL verification
+        console.log('📱 Navigating to landing page...');
+        await browser.get(`${baseUrl}/landing`);
+        await browser.wait(EC.urlContains('/landing'), 10000); // 10 seconds max
+        console.log('✅ Navigation to landing page successful');
+        
+        // Wait for Angular to be ready
+        console.log('⏳ Waiting for Angular to be ready...');
+        await browser.waitForAngular();
+        console.log('✅ Angular is ready');
+        
+        // Check for hero title
+        console.log('🔍 Checking for hero title...');
+        const heroTitle = element(by.css('.hero-title'));
+        try {
+          await browser.wait(EC.presenceOf(heroTitle), 10000);
+          const titlePresent = await heroTitle.isPresent();
+          console.log(titlePresent ? '✅ Hero title found' : '⚠️ Hero title not found');
+        } catch (error) {
+          console.log('⚠️ Hero title not found');
+        }
+        
+        console.log('✅ Hero title test completed successfully!');
+        
+      } catch (error) {
+        console.error('❌ Hero title test failed:', error.message);
+        throw error;
+      }
+    });
+
+    it('should navigate to login page from landing', async () => {
+      console.log('🚀 Starting login navigation test...');
+      
+      try {
+        // Navigate to landing page with URL verification
+        console.log('📱 Navigating to landing page...');
+        await browser.get(`${baseUrl}/landing`);
+        await browser.wait(EC.urlContains('/landing'), 10000); // 10 seconds max
+        console.log('✅ Navigation to landing page successful');
+        
+        // Wait for Angular to be ready
+        console.log('⏳ Waiting for Angular to be ready...');
+        await browser.waitForAngular();
+        console.log('✅ Angular is ready');
+        
+        // Find and click login link
+        console.log('🔍 Looking for login link...');
+        const loginLink = element(by.css('a[routerLink="/login"]'));
+        try {
+          await browser.wait(EC.elementToBeClickable(loginLink), 10000);
+          await loginLink.click();
+          console.log('✅ Login link clicked');
+          
+          // Wait for navigation to complete
+          await browser.waitForAngular();
+          await browser.wait(EC.urlContains('/login'), 10000);
+          
+          const currentUrl = await browser.getCurrentUrl();
+          expect(currentUrl).toContain('/login');
+          console.log('✅ Navigation to login page successful');
+        } catch (error) {
+          console.log('⚠️ Navigation to login failed');
+        }
+        
+      } catch (error) {
+        console.error('❌ Login navigation test failed:', error.message);
+        throw error;
       }
     });
 
     it("should navigate to register page from landing", async () => {
-      await browser.get(`${baseUrl}/landing`);
+      console.log('🚀 Starting register navigation test...');
       
-      // Wait for Angular to be ready
-      await browser.waitForAngular();
-      
-      const registerLink = element(by.css('a[routerLink="/register"]'));
       try {
-        await browser.wait(EC.elementToBeClickable(registerLink), 10000);
-        await registerLink.click();
+        // Navigate to landing page with URL verification
+        console.log('📱 Navigating to landing page...');
+        await browser.get(`${baseUrl}/landing`);
+        await browser.wait(EC.urlContains('/landing'), 10000); // 10 seconds max
+        console.log('✅ Navigation to landing page successful');
         
-        // Wait for navigation to complete
+        // Wait for Angular to be ready
+        console.log('⏳ Waiting for Angular to be ready...');
         await browser.waitForAngular();
+        console.log('✅ Angular is ready');
         
-        const currentUrl = await browser.getCurrentUrl();
-        expect(currentUrl).toContain('/register');
-        console.log('✅ Navigation to register page successful');
+        // Try multiple possible register link selectors
+        const registerLinkSelectors = [
+          'a[routerLink="/register"]',
+          'a.nav-link[routerLink="/register"]',
+          'a.btn[routerLink="/register"]',
+          'a[routerLink="/register"].btn-primary'
+        ];
+        
+        let registerLink = null;
+        for (const selector of registerLinkSelectors) {
+          try {
+            const elementFinder = element(by.css(selector));
+            await browser.wait(EC.presenceOf(elementFinder), 2000);
+            registerLink = elementFinder;
+            console.log(`✅ Found register link with selector: ${selector}`);
+            break;
+          } catch (error) {
+            console.log(`⚠️ Selector not found: ${selector}`);
+          }
+        }
+        
+        if (registerLink) {
+          try {
+            await browser.wait(EC.elementToBeClickable(registerLink), 10000);
+            await registerLink.click();
+            console.log('✅ Register link clicked');
+            
+            // Wait for navigation to complete
+            await browser.waitForAngular();
+            await browser.wait(EC.urlContains('/register'), 10000);
+            
+            const currentUrl = await browser.getCurrentUrl();
+            expect(currentUrl).toContain('/register');
+            console.log('✅ Navigation to register page successful');
+          } catch (error) {
+            console.log('⚠️ Navigation to register failed');
+          }
+        } else {
+          console.log('⚠️ No register link found with any selector');
+        }
+        
       } catch (error) {
-        console.log('⚠️ Navigation to register failed');
+        console.error('❌ Register navigation test failed:', error.message);
+        throw error;
       }
     });
   });

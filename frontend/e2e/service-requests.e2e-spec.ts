@@ -69,13 +69,30 @@ describe('Service Requests E2E Tests', () => {
       await browser.get(`${baseUrl}/landing`);
       await browser.waitForAngular();
       
-      const breadcrumb = element(by.css('.breadcrumb, .nav-breadcrumb, [data-testid="breadcrumb"]'));
+      // Try multiple possible breadcrumb selectors
+      const breadcrumbSelectors = [
+        '.breadcrumb',
+        '.nav-breadcrumb', 
+        '[data-testid="breadcrumb"]',
+        '.navigation-breadcrumb',
+        '.page-breadcrumb'
+      ];
       
-      try {
-        await browser.wait(EC.presenceOf(breadcrumb), 10000);
-        console.log('✅ Breadcrumb navigation available');
-      } catch (error) {
-        console.log('⚠️ Breadcrumb navigation not available');
+      let breadcrumbFound = false;
+      for (const selector of breadcrumbSelectors) {
+        try {
+          const breadcrumb = element(by.css(selector));
+          await browser.wait(EC.presenceOf(breadcrumb), 2000);
+          console.log(`✅ Breadcrumb navigation available with selector: ${selector}`);
+          breadcrumbFound = true;
+          break;
+        } catch (error) {
+          console.log(`⚠️ Breadcrumb selector not found: ${selector}`);
+        }
+      }
+      
+      if (!breadcrumbFound) {
+        console.log('⚠️ Breadcrumb navigation not available (this is optional)');
       }
     });
   });
