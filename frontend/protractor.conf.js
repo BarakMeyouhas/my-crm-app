@@ -90,6 +90,10 @@ exports.config = {
     defaultTimeoutInterval: 180000, // Increased from 180000
     print: function() {}
   },
+  // Add troubleshooting options
+  troubleshoot: true,
+  verbose: true,
+  logLevel: 'DEBUG',
   beforeLaunch: function() {
     require('ts-node').register({
       project: 'e2e/tsconfig.e2e.json'
