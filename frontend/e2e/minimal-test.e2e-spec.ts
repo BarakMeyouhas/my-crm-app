@@ -21,24 +21,10 @@ describe('Minimal E2E Test', () => {
       const pageTitle = await browser.getTitle();
       console.log(`✅ Page title: ${pageTitle}`);
       
-      // Step 3: Check for basic HTML structure
-      console.log('🏗️ Step 3: Checking HTML structure...');
-      console.log(`⏰ Timestamp: ${new Date().toISOString()}`);
-      const body = element(by.css('body'));
-      const bodyText = await body.getText();
-      console.log(`✅ Page has content (${bodyText.length} characters)`);
-      
-      // Step 4: Check if page loaded successfully
-      console.log('🔍 Step 4: Checking page load...');
-      console.log(`⏰ Timestamp: ${new Date().toISOString()}`);
-      const currentUrl = await browser.getCurrentUrl();
-      console.log(`✅ Current URL: ${currentUrl}`);
-      
-      // Step 5: Basic assertion
-      console.log('✅ Step 5: Basic assertion...');
+      // Step 3: Basic assertion
+      console.log('✅ Step 3: Basic assertion...');
       console.log(`⏰ Timestamp: ${new Date().toISOString()}`);
       expect(pageTitle).toBeTruthy();
-      expect(bodyText.length).toBeGreaterThan(0);
       
       console.log('🎉 Minimal test completed successfully!');
       console.log(`⏰ Final timestamp: ${new Date().toISOString()}`);

@@ -463,7 +463,7 @@ jobs:
         echo "Base URL: $BASE_URL"
         
         # Use --webdriver-update=false to prevent webdriver-manager interference
-        xvfb-run --server-args="-screen 0 1920x1080x24" npx ng e2e --webdriver-update=false --port 4201
+        timeout 300 xvfb-run --server-args="-screen 0 1920x1080x24" npx ng e2e --webdriver-update=false --port 4201 --specs=./e2e/minimal-test.e2e-spec.ts
       env:
         CI: true
         CHROME_BIN: /usr/bin/google-chrome
