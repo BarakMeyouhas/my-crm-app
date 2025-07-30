@@ -21,6 +21,7 @@ exports.config = {
   capabilities: {
     'browserName': 'chrome',
     'chromeOptions': {
+      'binary': process.env.CHROME_BIN, // Required in CI
       'args': [
         '--headless',
         '--no-sandbox',
@@ -82,7 +83,7 @@ exports.config = {
   // Use platform-appropriate ChromeDriver path
   chromeDriver: chromedriverPath,
   directConnect: true,
-  baseUrl: 'http://localhost:4201/',
+  baseUrl: process.env.BASE_URL || 'http://127.0.0.1:4201/',
   framework: 'jasmine',
   jasmineNodeOpts: {
     showColors: true,

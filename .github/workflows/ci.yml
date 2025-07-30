@@ -405,37 +405,47 @@ jobs:
         # Start Angular dev server in background
         npx ng serve --port 4201 --host 0.0.0.0 &
         
-        # Wait for Angular dev server to be ready
+        # Wait for Angular dev server to be ready with proper verification
         echo "Waiting for Angular dev server to start..."
         sleep 10
         
-        # Check if the server is responding
+        # Check if the server is responding with proper verification
         for i in {1..30}; do
-          if curl -s http://localhost:4201 > /dev/null; then
+          if curl -s http://127.0.0.1:4201/landing | grep -q '<app-root>'; then
             echo "Angular dev server is ready!"
             break
           fi
-          echo "Waiting for server... (attempt $i/30)"
+          echo "Waiting for landing page... (attempt $i/30)"
           sleep 2
         done
+        
+        # Final verification that server is responding
+        if ! curl -s http://127.0.0.1:4201/landing > /dev/null; then
+          echo "❌ Angular dev server is not responding!"
+          exit 1
+        fi
         
         # Run E2E tests with xvfb-run to ensure proper display handling
         # Explicitly set ChromeDriver path to use our downloaded version
         export CHROMEDRIVER_PATH=/usr/bin/chromedriver
         export WEBDRIVER_MANAGER_GECKODRIVER=false
         export WEBDRIVER_MANAGER_CHROMEDRIVER=false
+        export BASE_URL=http://127.0.0.1:4201
         
         echo "=== Running E2E Tests ==="
         echo "ChromeDriver path: $CHROMEDRIVER_PATH"
         echo "WebDriver manager disabled: $WEBDRIVER_MANAGER_CHROMEDRIVER"
+        echo "Base URL: $BASE_URL"
         
-        xvfb-run --server-args="-screen 0 1920x1080x24" npx ng e2e --port 4201
+        # Use --webdriver-update=false to prevent webdriver-manager interference
+        xvfb-run --server-args="-screen 0 1920x1080x24" npx ng e2e --webdriver-update=false --port 4201
       env:
         CI: true
         CHROME_BIN: /usr/bin/google-chrome
         CHROMEDRIVER_PATH: /usr/bin/chromedriver
         WEBDRIVER_MANAGER_GECKODRIVER: false
         WEBDRIVER_MANAGER_CHROMEDRIVER: false
+        BASE_URL: http://127.0.0.1:4201
 
   # build:
   #   needs: [backend, frontend, api-tests]  # Commented out since backend and api-tests are disabled

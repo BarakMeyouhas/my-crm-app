@@ -3,7 +3,7 @@ import { browser, by, element, ExpectedConditions as EC } from 'protractor';
 
 describe("CRM Application E2E Tests", () => {
   let page: MaterialDashboardAngularPage;
-  const baseUrl = 'http://localhost:4201';
+  const baseUrl = process.env.BASE_URL || 'http://127.0.0.1:4201';
 
   beforeEach(() => {
     page = new MaterialDashboardAngularPage();
