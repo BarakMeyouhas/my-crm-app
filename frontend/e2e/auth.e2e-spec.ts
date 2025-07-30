@@ -250,6 +250,10 @@ describe('Authentication E2E Tests', () => {
 
   describe('Dashboard Access', () => {
     it('should redirect to login when accessing dashboard without auth', async () => {
+      // Clear localStorage to ensure no token exists
+      await browser.executeScript('window.localStorage.clear();');
+      console.log('✅ localStorage cleared');
+      
       await browser.get(`${baseUrl}/#/dashboard`);
       await browser.waitForAngular();
       

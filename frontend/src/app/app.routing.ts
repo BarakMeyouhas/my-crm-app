@@ -38,7 +38,7 @@ const routes: Routes = [
       },
     ],
   },
-  { path: "**", redirectTo: "landing" },
+  { path: "**", redirectTo: "login" },
 ];
 
 @NgModule({
