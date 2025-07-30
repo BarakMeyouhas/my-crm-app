@@ -1,390 +1,190 @@
-# E2E Testing Framework
+# E2E Testing Setup
 
-This directory contains comprehensive End-to-End (E2E) tests for the CRM application that integrate the backend, frontend, and database.
-
-## 🎯 Overview
-
-The E2E testing framework provides comprehensive testing of the complete application stack:
-
-- **Backend API** (Node.js/Express)
-- **Frontend** (Angular)
-- **Database** (PostgreSQL)
-- **Authentication** (JWT)
-- **User Interface** (Material Dashboard)
-
-## 📁 Test Structure
-
-```
-e2e/
-├── app.e2e-spec.ts              # Basic application tests
-├── auth.e2e-spec.ts             # Authentication flow tests
-├── client-management.e2e-spec.ts # Client management tests
-├── dashboard.e2e-spec.ts         # Dashboard functionality tests
-├── service-requests.e2e-spec.ts  # Service request tests
-├── setup.e2e-spec.ts            # Environment setup and verification
-├── app.po.ts                    # Page Object Model
-├── run-e2e-tests.js             # Test runner script
-└── README.md                    # This file
-```
+This directory contains End-to-End (E2E) tests for the Angular CRM application using Protractor.
 
 ## 🚀 Quick Start
 
-### Prerequisites
-
-1. **Node.js** (v18 or higher)
-2. **Angular CLI** (`npm install -g @angular/cli`)
-3. **PostgreSQL** database
-4. **Chrome/Chromium** browser
-
-### Running Tests
-
-#### Option 1: Using the Test Runner Script
-
+### Run E2E Tests (Recommended)
 ```bash
-# Navigate to the frontend directory
 cd frontend
-
-# Make the runner script executable
-chmod +x e2e/run-e2e-tests.js
-
-# Run all E2E tests
-node e2e/run-e2e-tests.js
+node e2e/run-e2e-clean.js
 ```
 
-#### Option 2: Using Angular CLI
-
-```bash
-# Navigate to the frontend directory
+### Alternative: Windows Batch File
+```cmd
 cd frontend
-
-# Run all E2E tests
-ng e2e
-
-# Run specific test suite
-ng e2e --specs=./e2e/auth.e2e-spec.ts
-
-# Run tests with specific configuration
-ng e2e --configuration=production
+e2e\run-tests-windows.bat
 ```
 
-#### Option 3: Manual Setup
-
+### Manual Angular CLI
 ```bash
-# 1. Start the backend server
-cd backend
-npm start
-
-# 2. Start the frontend server
 cd frontend
-ng serve --port 4201
-
-# 3. Run E2E tests
 ng e2e
 ```
 
-## 🧪 Test Suites
+## 📁 File Structure
 
-### 1. Setup Tests (`setup.e2e-spec.ts`)
+### Essential Scripts
+- **`run-e2e-clean.js`** - Main E2E test runner with cleanup and ChromeDriver 138
+- **`download-chromedriver-ci-style.js`** - ChromeDriver 138 downloader (CI-style)
+- **`run-tests-windows.bat`** - Windows batch file for easy execution
 
-**Purpose**: Verify environment and prepare test data
+### Test Files
+- **`app.e2e-spec.ts`** - Main application tests (landing, navigation, auth protection)
+- **`auth.e2e-spec.ts`** - Authentication tests (login, register)
+- **`setup.e2e-spec.ts`** - Environment setup verification
+- **`dashboard.e2e-spec.ts`** - Dashboard and admin panel tests
+- **`client-management.e2e-spec.ts`** - Client management tests
+- **`service-requests.e2e-spec.ts`** - Service request tests
 
-**Tests Include**:
-- Backend connectivity verification
-- Frontend accessibility checks
-- Database connection validation
-- Test user creation
-- Browser environment verification
-- API endpoint validation
-- Route accessibility checks
+### Documentation
+- **`TEST_FIXES_SUMMARY.md`** - Summary of all E2E test fixes applied
+- **`GITHUB_ACTIONS_READY.md`** - Guide for GitHub Actions CI setup
+- **`README.md`** - This file
 
-### 2. Authentication Tests (`auth.e2e-spec.ts`)
+### Configuration
+- **`protractor.conf.js`** - Protractor configuration (in frontend root)
+- **`tsconfig.e2e.json`** - TypeScript configuration for E2E tests
+- **`app.po.ts`** - Page Object Model for app component
 
-**Purpose**: Test complete authentication flow
+## 🔧 ChromeDriver Setup
 
-**Tests Include**:
+The E2E tests use ChromeDriver 138 to match Chrome browser version 138. The setup is handled automatically by the run scripts.
+
+### Manual ChromeDriver Download
+If needed, run:
+```bash
+cd frontend
+node e2e/download-chromedriver-ci-style.js
+```
+
+## 🧪 Test Categories
+
+### 1. Application Core (`app.e2e-spec.ts`)
 - Landing page functionality
-- User registration process
-- Login/logout functionality
-- Authentication guards
-- Token management
-- Route protection
-
-### 3. Client Management Tests (`client-management.e2e-spec.ts`)
-
-**Purpose**: Test client CRUD operations
-
-**Tests Include**:
-- Client list display
-- Add new client
-- Edit client information
-- Delete client
-- Search and filter functionality
-- Form validation
-
-### 4. Service Request Tests (`service-requests.e2e-spec.ts`)
-
-**Purpose**: Test service request management
-
-**Tests Include**:
-- Service request list display
-- Create new service request
-- Update service request status
-- Edit service request details
-- Filter by status and priority
-- Search functionality
-
-### 5. Dashboard Tests (`dashboard.e2e-spec.ts`)
-
-**Purpose**: Test dashboard functionality
-
-**Tests Include**:
-- Dashboard access control
-- Navigation menu functionality
-- Statistics and metrics display
-- Recent activity sections
-- Quick action buttons
-- User profile information
-
-### 6. Application Tests (`app.e2e-spec.ts`)
-
-**Purpose**: Test general application functionality
-
-**Tests Include**:
-- Landing page elements
-- Navigation functionality
+- Navigation between pages
+- Authentication protection
 - Responsive design
 - Performance metrics
-- Error handling
-- Accessibility features
-- Cross-browser compatibility
 
-## 🔧 Configuration
+### 2. Authentication (`auth.e2e-spec.ts`)
+- User registration
+- User login
+- Form validation
+- Error handling
+
+### 3. Environment Setup (`setup.e2e-spec.ts`)
+- Frontend accessibility
+- Backend connectivity
+- Browser environment
+- Database connectivity
+
+### 4. Dashboard (`dashboard.e2e-spec.ts`)
+- Dashboard access protection
+- Admin panel functionality
+- User role verification
+
+### 5. Client Management (`client-management.e2e-spec.ts`)
+- Client list access protection
+- Client management interface
+- CRUD operations verification
+
+### 6. Service Requests (`service-requests.e2e-spec.ts`)
+- Service request access protection
+- Service request management
+- Request workflow verification
+
+## ⚙️ Configuration
 
 ### Protractor Configuration
-
-The E2E tests use Protractor with the following configuration:
-
-```javascript
-// protractor.conf.js
-exports.config = {
-  allScriptsTimeout: 120000,
-  specs: ['./e2e/**/*.e2e-spec.ts'],
-  capabilities: {
-    'browserName': 'chrome',
-    'chromeOptions': {
-      'args': [
-        '--headless',
-        '--no-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-gpu',
-        '--window-size=1920,1080'
-      ]
-    }
-  },
-  baseUrl: 'http://localhost:4201/',
-  framework: 'jasmine'
-};
-```
+Key settings in `protractor.conf.js`:
+- **ChromeDriver 138**: Manual download and path configuration
+- **Timeout**: 180 seconds for all scripts
+- **Headless Mode**: Enabled for CI compatibility
+- **WebDriver Manager**: Disabled to prevent conflicts
 
 ### Environment Variables
+- `CHROMEDRIVER_PATH`: Path to ChromeDriver 138 executable
+- `WEBDRIVER_MANAGER_CHROMEDRIVER`: Set to 'false' to prevent conflicts
+- `WEBDRIVER_MANAGER_GECKODRIVER`: Set to 'false' to prevent conflicts
 
-```bash
-# Backend URL
-BACKEND_URL=http://localhost:5000
-
-# Frontend URL
-FRONTEND_URL=http://localhost:4201
-
-# Database URL
-DATABASE_URL=postgresql://postgres:postgres@localhost:5433/servix_db
-
-# JWT Secret
-JWT_SECRET=test-secret-key
-```
-
-## 📊 Test Reports
-
-### Coverage Reports
-
-After running tests, coverage reports are generated in:
-- `frontend/coverage/` - Code coverage reports
-- `frontend/test-results/` - Test execution results
-- `frontend/screenshots/` - Screenshots of failed tests
-
-### Console Output
-
-The test runner provides detailed console output including:
-- ✅ Success indicators
-- ❌ Error messages
-- ⚠️ Warnings
-- 📊 Performance metrics
-- 🔍 Debug information
-
-## 🛠️ Troubleshooting
+## 🚨 Troubleshooting
 
 ### Common Issues
 
-#### 1. Backend Not Running
-```bash
-# Start backend server
-cd backend
-npm start
+1. **ChromeDriver Version Mismatch**
+   ```bash
+   # Solution: Download correct version
+   node e2e/download-chromedriver-ci-style.js
+   ```
+
+2. **Too Many Chrome Processes**
+   ```bash
+   # Solution: Use clean runner
+   node e2e/run-e2e-clean.js
+   ```
+
+3. **Script Timeout**
+   ```bash
+   # Solution: Increased timeouts in protractor.conf.js
+   # AllScriptsTimeout: 180000
+   ```
+
+4. **Element Not Found**
+   ```bash
+   # Solution: Better wait strategies implemented
+   # Using browser.waitForAngular() and ExpectedConditions
+   ```
+
+### Performance Tips
+
+1. **Clean Environment**: Always use `run-e2e-clean.js` to avoid process conflicts
+2. **Headless Mode**: Tests run faster in headless mode (default)
+3. **Timeout Management**: 10-minute timeout prevents infinite hanging
+4. **Process Cleanup**: Automatic cleanup prevents resource conflicts
+
+## 📊 Test Results
+
+### Expected Output
+```
+🧪 E2E Test Runner - Clean Environment
+=======================================
+✅ Chrome processes cleaned
+✅ ChromeDriver processes cleaned
+✅ Using ChromeDriver at: C:\...\chromedriver.exe
+🚀 Starting E2E tests...
+✅ E2E tests completed successfully!
 ```
 
-#### 2. Frontend Not Running
-```bash
-# Start frontend server
-cd frontend
-ng serve --port 4201
-```
+### Success Indicators
+- ✅ All test suites pass
+- ✅ No ChromeDriver version errors
+- ✅ No script timeout errors
+- ✅ No element not found errors
+- ✅ Clean process termination
 
-#### 3. Database Connection Issues
-```bash
-# Check database status
-cd backend
-npx prisma db push
-npx prisma generate
-```
+## 🔄 CI/CD Integration
 
-#### 4. Chrome/ChromeDriver Issues
-```bash
-# Install ChromeDriver
-npm install -g chromedriver
+The E2E tests are configured for GitHub Actions CI. See `GITHUB_ACTIONS_READY.md` for detailed setup instructions.
 
-# Or use system ChromeDriver
-export CHROMEDRIVER_PATH=/usr/bin/chromedriver
-```
+### CI Configuration
+- Uses same ChromeDriver 138 approach as local
+- Disabled webdriver-manager conflicts
+- Proper environment variable setup
+- 10-minute timeout protection
 
-#### 5. Port Conflicts
-```bash
-# Check if ports are in use
-lsof -i :4201
-lsof -i :5000
+## 📝 Development Notes
 
-# Kill processes if needed
-kill -9 <PID>
-```
+### Recent Fixes Applied
+- ChromeDriver version mismatch resolved
+- WebDriver manager conflicts prevented
+- Improved wait strategies implemented
+- Better error handling added
+- Process cleanup automation
 
-### Debug Mode
-
-Run tests in debug mode for detailed output:
-
-```bash
-# Run with verbose output
-ng e2e --verbose
-
-# Run with debug logging
-DEBUG=* ng e2e
-
-# Run specific test with debugging
-ng e2e --specs=./e2e/auth.e2e-spec.ts --verbose
-```
-
-## 🔄 Continuous Integration
-
-The E2E tests are integrated into the CI/CD pipeline:
-
-```yaml
-# .github/workflows/ci.yml
-e2e:
-  runs-on: ubuntu-latest
-  needs: [frontend]
-  steps:
-    - uses: actions/checkout@v3
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-    - name: Install dependencies
-      run: |
-        cd frontend
-        npm install --legacy-peer-deps
-    - name: Run E2E tests
-      run: |
-        cd frontend
-        ng e2e --watch=false
-```
-
-## 📈 Best Practices
-
-### 1. Test Organization
-- Group related tests in describe blocks
-- Use descriptive test names
-- Follow the Arrange-Act-Assert pattern
-
-### 2. Page Object Model
-- Use page objects for element selectors
-- Keep selectors maintainable
-- Avoid hardcoded values
-
-### 3. Test Data Management
-- Use unique test data
-- Clean up after tests
-- Use factories for test data
-
-### 4. Error Handling
-- Add proper error handling
-- Use try-catch blocks
-- Provide meaningful error messages
-
-### 5. Performance
-- Keep tests fast
-- Use appropriate waits
-- Avoid unnecessary delays
-
-## 🎯 Test Coverage
-
-The E2E tests cover:
-
-- ✅ **User Authentication** (100%)
-- ✅ **Client Management** (100%)
-- ✅ **Service Request Management** (100%)
-- ✅ **Dashboard Functionality** (100%)
-- ✅ **Navigation** (100%)
-- ✅ **Form Validation** (100%)
-- ✅ **Error Handling** (100%)
-- ✅ **Responsive Design** (100%)
-
-## 📝 Contributing
-
-When adding new E2E tests:
-
-1. **Follow the existing pattern**
-2. **Use descriptive test names**
-3. **Add proper error handling**
-4. **Include setup and cleanup**
-5. **Update this README**
-
-### Example Test Structure
-
-```typescript
-describe('Feature Name', () => {
-  beforeEach(async () => {
-    // Setup
-  });
-
-  afterEach(async () => {
-    // Cleanup
-  });
-
-  it('should perform specific action', async () => {
-    // Arrange
-    // Act
-    // Assert
-  });
-});
-```
-
-## 📞 Support
-
-For issues with E2E tests:
-
-1. Check the troubleshooting section
-2. Review console output
-3. Check test reports
-4. Verify environment setup
-5. Contact the development team
-
----
-
-**Happy Testing! 🧪✨** 
+### Test Reliability Improvements
+- Replaced `browser.sleep()` with `browser.waitForAngular()`
+- Added explicit waits with `ExpectedConditions`
+- Implemented try-catch error handling
+- Increased timeouts for stability
+- Disabled Protractor control flow manager 

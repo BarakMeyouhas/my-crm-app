@@ -310,6 +310,7 @@ jobs:
 
     - name: Download ChromeDriver 138 for Testing
       run: |
+        echo "=== Downloading ChromeDriver 138 ==="
         wget -O chromedriver-linux64.zip https://storage.googleapis.com/chrome-for-testing-public/138.0.7204.168/linux64/chromedriver-linux64.zip
         unzip -o chromedriver-linux64.zip
         sudo mv -f chromedriver-linux64/chromedriver /usr/bin/chromedriver
@@ -322,6 +323,7 @@ jobs:
         # Clean up webdriver-manager's ChromeDriver to prevent conflicts
         echo "Cleaning up webdriver-manager ChromeDriver..."
         rm -rf node_modules/webdriver-manager/selenium/chromedriver* || true
+        rm -rf frontend/node_modules/webdriver-manager/selenium/chromedriver* || true
         echo "Webdriver-manager ChromeDriver cleaned up"
 
     - name: Install Chrome and ChromeDriver (dynamic version matching)
@@ -420,11 +422,20 @@ jobs:
         # Run E2E tests with xvfb-run to ensure proper display handling
         # Explicitly set ChromeDriver path to use our downloaded version
         export CHROMEDRIVER_PATH=/usr/bin/chromedriver
+        export WEBDRIVER_MANAGER_GECKODRIVER=false
+        export WEBDRIVER_MANAGER_CHROMEDRIVER=false
+        
+        echo "=== Running E2E Tests ==="
+        echo "ChromeDriver path: $CHROMEDRIVER_PATH"
+        echo "WebDriver manager disabled: $WEBDRIVER_MANAGER_CHROMEDRIVER"
+        
         xvfb-run --server-args="-screen 0 1920x1080x24" npx ng e2e --port 4201
       env:
         CI: true
         CHROME_BIN: /usr/bin/google-chrome
         CHROMEDRIVER_PATH: /usr/bin/chromedriver
+        WEBDRIVER_MANAGER_GECKODRIVER: false
+        WEBDRIVER_MANAGER_CHROMEDRIVER: false
 
   # build:
   #   needs: [backend, frontend, api-tests]  # Commented out since backend and api-tests are disabled
