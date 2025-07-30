@@ -254,9 +254,7 @@ describe('Authentication E2E Tests', () => {
       await browser.waitForAngular();
       
       const currentUrl = await browser.getCurrentUrl();
-      // Should redirect to login or show auth required message
-      expect(currentUrl).toMatch(/\/login|\/auth/);
-      
+      expect(currentUrl).toMatch(/#\/login|#\/auth/);
       console.log('✅ Dashboard access protection working');
     });
   });
