@@ -117,7 +117,7 @@ jobs:
     - name: Install postman dependencies
       run: |
         cd postman
-        npm install
+        npm ci --legacy-peer-deps
     
     - name: Setup backend for API tests
       run: |
