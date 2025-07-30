@@ -47,9 +47,9 @@ describe("CRM Application E2E Tests", () => {
           console.log('⚠️ Hero subtitle not found');
         }
         
-        // Check for login link
+        // Check for login link (navbar)
         console.log('🔍 Checking for login link...');
-        const loginLink = element(by.css('a[routerLink="/login"]'));
+        const loginLink = element(by.css('.navbar-nav a[routerLink="/login"]'));
         try {
           await browser.wait(EC.presenceOf(loginLink), 10000);
           const loginPresent = await loginLink.isPresent();
@@ -58,9 +58,9 @@ describe("CRM Application E2E Tests", () => {
           console.log('⚠️ Login link not found');
         }
         
-        // Check for register link
+        // Check for register link (navbar)
         console.log('🔍 Checking for register link...');
-        const registerLink = element(by.css('a[routerLink="/register"]'));
+        const registerLink = element(by.css('.navbar-nav a[routerLink="/register"]'));
         try {
           await browser.wait(EC.presenceOf(registerLink), 10000);
           const registerPresent = await registerLink.isPresent();
@@ -126,9 +126,9 @@ describe("CRM Application E2E Tests", () => {
         await browser.waitForAngular();
         console.log('✅ Angular is ready');
         
-        // Find and click login link
+        // Find and click login link (navbar)
         console.log('🔍 Looking for login link...');
-        const loginLink = element(by.css('a[routerLink="/login"]'));
+        const loginLink = element(by.css('.navbar-nav a[routerLink="/login"]'));
         try {
           await browser.wait(EC.elementToBeClickable(loginLink), 10000);
           await loginLink.click();
@@ -166,8 +166,9 @@ describe("CRM Application E2E Tests", () => {
         await browser.waitForAngular();
         console.log('✅ Angular is ready');
         
-        // Try multiple possible register link selectors
+        // Try multiple possible register link selectors (prioritize navbar)
         const registerLinkSelectors = [
+          '.navbar-nav a[routerLink="/register"]',
           'a[routerLink="/register"]',
           'a.nav-link[routerLink="/register"]',
           'a.btn[routerLink="/register"]',

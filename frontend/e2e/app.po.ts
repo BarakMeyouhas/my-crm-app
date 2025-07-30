@@ -18,10 +18,10 @@ export class MaterialDashboardAngularPage {
   }
 
   getLoginLink() {
-    return element(by.css('a[routerLink="/login"]'));
+    return element(by.css('.navbar-nav a[routerLink="/login"]'));
   }
 
   getRegisterLink() {
-    return element(by.css('a[routerLink="/register"]'));
+    return element(by.css('.navbar-nav a[routerLink="/register"]'));
   }
 }
