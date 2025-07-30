@@ -1,9 +1,13 @@
 import { browser, by, element, ExpectedConditions as EC } from 'protractor';
 import * as http from 'http';
 
-describe('Setup and Environment E2E Tests', () => {
+describe('Setup E2E Tests', () => {
   const baseUrl = 'http://localhost:4201';
   const backendUrl = 'http://localhost:5000';
+
+  beforeEach(async () => {
+    await browser.waitForAngularEnabled(false);
+  });
 
   describe('Environment Verification', () => {
     it('should verify frontend accessibility', async () => {

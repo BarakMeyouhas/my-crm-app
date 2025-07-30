@@ -3,6 +3,10 @@ import { browser, by, element, ExpectedConditions as EC } from 'protractor';
 describe('Sanity Check E2E Test', () => {
   const baseUrl = process.env.BASE_URL || 'http://127.0.0.1:4201';
 
+  beforeEach(async () => {
+    await browser.waitForAngularEnabled(false);
+  });
+
   it('should load landing page and verify basic functionality', async () => {
     console.log('🧪 Starting sanity check test...');
     console.log(`⏰ Timestamp: ${new Date().toISOString()}`);

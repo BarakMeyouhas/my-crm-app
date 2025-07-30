@@ -5,6 +5,10 @@ describe('Dashboard E2E Tests', () => {
   const baseUrl = 'http://localhost:4201';
   const backendUrl = 'http://localhost:5000';
 
+  beforeEach(async () => {
+    await browser.waitForAngularEnabled(false);
+  });
+
   beforeAll(async () => {
     // Check if backend is accessible
     try {
