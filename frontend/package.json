@@ -5,7 +5,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --configuration=production",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
@@ -16,7 +16,8 @@
     "e2e:dashboard": "ng e2e --specs=./e2e/dashboard.e2e-spec.ts",
     "e2e:setup": "ng e2e --specs=./e2e/setup.e2e-spec.ts",
     "e2e:ci": "ng e2e --watch=false --browsers=ChromeHeadless",
-    "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm install && ng serve -o"
+    "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm install && ng serve -o",
+    "build:prod": "ng build --configuration=production"
   },
   "engines": {
     "node": ">=16.0.0",
