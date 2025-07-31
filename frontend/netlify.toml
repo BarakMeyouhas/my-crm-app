@@ -1,9 +1,11 @@
 [build]
   publish = "dist"
-  command = "npm ci --legacy-peer-deps && npm run build:prod"
+  command = "npm install --legacy-peer-deps --force && npm run build:prod"
 
 [build.environment]
   NODE_VERSION = "18"
+  NPM_FLAGS = "--legacy-peer-deps"
+  CI = "false"
 
 [[redirects]]
   from = "/*"
