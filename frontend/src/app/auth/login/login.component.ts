@@ -1,9 +1,7 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { jwtDecode } from 'jwt-decode';
-import { environment } from "../../../environments/environment";
-
+import { AuthService } from "../../services/auth.service";
 
 @Component({
   selector: "app-login",
@@ -50,35 +48,29 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    this.http
-      .post<any>(`${environment.apiUrl}/auth/login`, {
-        email: this.email,
-        password: this.password,
-      })
-      .subscribe({
-        next: (res) => {
-          localStorage.setItem("token", res.token); // שים לב שהטוקן נשמר ב-localStorage
-          const decoded: any = jwtDecode(res.token);
-          console.log("Decoded JWT:", decoded);
+    this.authService.login(this.email, this.password).subscribe({
+      next: (res) => {
+        const decoded: any = jwtDecode(res.token);
+        console.log("Decoded JWT:", decoded);
 
-          const role = decoded.role;
+        const role = decoded.role;
 
-          if (res.role === "Admin") {
-            this.router.navigate(["/admin-panel"]); // אם המשתמש הוא אדמין, נווט לפאנל הניהול
-          } else {
-            this.router.navigate(["/dashboard"]);
-          }
-        },
-        error: (err) => {
-          this.errorMessage = err.error.message || "Login failed"; // הודעת שגיאה כללית במקרה של כישלון
-        },
-      });
+        if (res.role === "Admin") {
+          this.router.navigate(["/admin-panel"]); // אם המשתמש הוא אדמין, נווט לפאנל הניהול
+        } else {
+          this.router.navigate(["/dashboard"]);
+        }
+      },
+      error: (err) => {
+        this.errorMessage = err.error.message || "Login failed"; // הודעת שגיאה כללית במקרה של כישלון
+      },
+    });
   }
   email: string = '';
   password: string = '';
   errorMessage: string = '';
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   goToRegister() {
     this.router.navigate(["/register"]);

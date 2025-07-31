@@ -17,8 +17,7 @@
     "e2e:setup": "ng e2e --specs=./e2e/setup.e2e-spec.ts",
     "e2e:ci": "ng e2e --watch=false --browsers=ChromeHeadless",
     "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm install && ng serve -o",
-    "build:prod": "ng build --configuration=production",
-    "build:debug": "echo 'Node version:' && node --version && echo 'NPM version:' && npm --version && echo 'Angular CLI version:' && npx ng version && ng build --configuration=production"
+    "build:prod": "ng build --configuration=production"
   },
   "engines": {
     "node": ">=16.0.0",

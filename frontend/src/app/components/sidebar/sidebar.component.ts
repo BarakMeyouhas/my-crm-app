@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { JwtHelperService } from "@auth0/angular-jwt";
+import { jwtDecode } from "jwt-decode";
 
 declare const $: any;
 declare interface RouteInfo {
@@ -51,13 +51,13 @@ export class SidebarComponent implements OnInit {
 
   menuItems: any[];
 
-  constructor(private jwtHelper: JwtHelperService) {}
+  constructor() {}
 
   ngOnInit() {
     const token = localStorage.getItem("token");
     if (token) {
       try {
-        const decodedToken = this.jwtHelper.decodeToken(token);
+        const decodedToken: any = jwtDecode(token);
         this.isAdmin = decodedToken?.role === "Admin";
       } catch (error) {
         console.warn('Invalid token in localStorage:', error);

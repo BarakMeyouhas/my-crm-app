@@ -1,7 +1,7 @@
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { AppRoutingModule } from './app.routing';
 import { ComponentsModule } from './components/components.module';
@@ -13,6 +13,7 @@ import { LoginComponent } from './auth/login/login.component';
 import { UnauthorizedComponent } from './pages/unauthorized/unauthorized.component';
 import { AdminUsersComponent } from './admin/admin-users/admin-users.component';
 import { ClientListComponent } from './client/client-list/client-list.component';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 import { MatOptionModule } from "@angular/material/core";
 import { MatInputModule } from '@angular/material/input';
@@ -44,7 +45,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     AdminUsersComponent,
     ClientListComponent,
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

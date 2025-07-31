@@ -28,13 +28,13 @@ const routes: Routes = [
           import("./layouts/admin-layout/admin-layout.module").then(
             (m) => m.AdminLayoutModule
           ),
-        data: { roles: ["admin", "client"] },
+        data: { roles: ["Admin", "Manager", "Employee"] },
       },
       {
         path: "admin-panel",
         component: AdminUsersComponent,
         canActivate: [AdminGuard],
-        data: { roles: ["admin"] }, // רק אדמין
+        data: { roles: ["Admin"] }, // רק אדמין
       },
     ],
   },
