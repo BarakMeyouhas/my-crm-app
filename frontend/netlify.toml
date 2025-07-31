@@ -1,6 +1,6 @@
 [build]
   publish = "dist"
-  command = "CI='' npm install --legacy-peer-deps --force && CI='' npx ng build --configuration=production"
+  command = "ng build --configuration production"
 
 [build.environment]
   NODE_VERSION = "18"
