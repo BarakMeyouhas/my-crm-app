@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ServiceRequestService {
-  private baseUrl = 'http://localhost:5000/api/service-requests';
+  private baseUrl = `${environment.apiUrl}/service-requests`;
 
   constructor(private http: HttpClient, private auth: AuthService) {}
 

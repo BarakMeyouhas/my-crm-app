@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { jwtDecode } from 'jwt-decode';
+import { environment } from "../../../environments/environment";
 
 
 @Component({
@@ -50,7 +51,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   onSubmit() {
     this.http
-      .post<any>("http://localhost:5000/api/auth/login", {
+      .post<any>(`${environment.apiUrl}/auth/login`, {
         email: this.email,
         password: this.password,
       })
@@ -62,7 +63,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
           const role = decoded.role;
 
-          if (res.role === "admin") {
+          if (res.role === "Admin") {
             this.router.navigate(["/admin-panel"]); // אם המשתמש הוא אדמין, נווט לפאנל הניהול
           } else {
             this.router.navigate(["/dashboard"]);

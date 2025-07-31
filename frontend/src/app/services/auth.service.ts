@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { BehaviorSubject, Observable, tap } from "rxjs";
+import { environment } from "../../environments/environment";
 
 // Define or import the User interface
 export interface User {
@@ -15,8 +16,8 @@ export interface User {
 })
 export class AuthService {
   private userSubject = new BehaviorSubject<any>(null);
-  private apiUrl = "http://localhost:5000/api"; // Add your API base URL here
-  private adminUrl = "http://localhost:5000/api/admin";
+  private apiUrl = environment.apiUrl;
+  private adminUrl = `${environment.apiUrl}/admin`;
 
   constructor(private http: HttpClient) {}
 
@@ -31,7 +32,7 @@ export class AuthService {
   getAllUsers(): Observable<any[]> {
     const token = localStorage.getItem("token");
     const headers = new HttpHeaders().set("Authorization", `Bearer ${token}`);
-    return this.http.get<any[]>("http://localhost:5000/api/admin/users", {
+    return this.http.get<any[]>(`${this.adminUrl}/users`, {
       headers,
     });
   }
@@ -42,7 +43,7 @@ export class AuthService {
       `Bearer ${this.token}`
     );
     return this.http
-      .get("http://localhost:5000/api/profile", { headers })
+      .get(`${this.apiUrl}/profile`, { headers })
       .pipe(tap((user) => this.userSubject.next(user)));
   }
 
@@ -56,7 +57,7 @@ export class AuthService {
   }
 
   register(userData: any) {
-    return this.http.post("http://localhost:5000/api/auth/register", userData);
+    return this.http.post(`${this.apiUrl}/auth/register`, userData);
   }
 
   logout() {

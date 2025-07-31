@@ -9,6 +9,7 @@ import {
 // Make sure the following file exists: src/app/auth/auth.service.ts
 import { AuthService } from "../../services/auth.service";
 import { Router } from "@angular/router";
+import { environment } from "../../../environments/environment";
 
 @Component({
   selector: "app-register",
@@ -103,7 +104,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     // כאן תקרא ל-API שמחזיר את רשימת החברות
     this.http
       .get<{ id: number; name: string }[]>(
-        "http://localhost:5000/api/companies"
+        `${environment.apiUrl}/companies`
       )
       .subscribe({
         next: (data) => {
