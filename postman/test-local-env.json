@@ -1,0 +1,102 @@
+{
+  "id": "crm-app-test-local-env",
+  "name": "CRM App - Test Local",
+  "values": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:5000",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "secret",
+      "enabled": true
+    },
+    {
+      "key": "companyId",
+      "value": "1",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "companyName",
+      "value": "TechNova",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "userEmail",
+      "value": "admin1@technova.com",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "userPassword",
+      "value": "hashedpassword",
+      "type": "secret",
+      "enabled": true
+    },
+    {
+      "key": "userFirstName",
+      "value": "Admin",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "userLastName",
+      "value": "User",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "userRole",
+      "value": "Admin",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "clientName",
+      "value": "Test Client",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "clientEmail",
+      "value": "client@example.com",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "clientPhone",
+      "value": "+1234567890",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "clientCompany",
+      "value": "Test Company",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "clientId",
+      "value": "1",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "serviceRequestTitle",
+      "value": "Test Service Request",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "serviceRequestDescription",
+      "value": "This is a test service request description",
+      "type": "default",
+      "enabled": true
+    }
+  ]
+} 
