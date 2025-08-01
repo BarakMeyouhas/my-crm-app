@@ -1,18 +1,17 @@
 const express = require("express");
 const router = express.Router();
-const { authenticateToken } = require("../middleware/auth");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 let clients = []; // לצורך הדגמה, אפשר להחליף ב־PostgreSQL מאוחר יותר
 let idCounter = 1;
 
 // Get all clients
-router.get("/", authenticateToken, (req, res) => {
+router.get("/", (req, res) => {
   res.json(clients);
 });
 
 // Create client
-router.post("/", authenticateToken, (req, res) => {
+router.post("/", (req, res) => {
   const newClient = {
     id: idCounter++,
     ...req.body,
@@ -23,7 +22,7 @@ router.post("/", authenticateToken, (req, res) => {
 });
 
 // Update client
-router.put("/:id", authenticateToken, (req, res) => {
+router.put("/:id", (req, res) => {
   const index = clients.findIndex((c) => c.id === parseInt(req.params.id));
   if (index === -1) return res.sendStatus(404);
   clients[index] = { ...clients[index], ...req.body };

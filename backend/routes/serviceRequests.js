@@ -4,7 +4,7 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 // Get all service requests
-router.get("/service-requests", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const { companyId } = req.query;
     const findManyArgs = {
@@ -26,7 +26,7 @@ router.get("/service-requests", async (req, res) => {
 });
 
 // Create a new service request
-router.post("/service-requests", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const {
       title,

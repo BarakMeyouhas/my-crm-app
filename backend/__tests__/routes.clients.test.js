@@ -204,7 +204,8 @@ describe('Clients Routes', () => {
       });
 
       const response = await request(app)
-        .delete(`/api/clients/users/${userToDelete.id}`);
+        .delete(`/api/clients/users/${userToDelete.id}`)
+        .set('Authorization', `Bearer ${userToken}`);
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('message', 'User deleted');
@@ -219,7 +220,8 @@ describe('Clients Routes', () => {
 
     it('should return 400 when user ID is invalid', async () => {
       const response = await request(app)
-        .delete('/api/clients/users/invalid-id');
+        .delete('/api/clients/users/invalid-id')
+        .set('Authorization', `Bearer ${userToken}`);
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('error', 'Invalid user ID');
@@ -227,7 +229,8 @@ describe('Clients Routes', () => {
 
     it('should return 500 when trying to delete non-existent user', async () => {
       const response = await request(app)
-        .delete('/api/clients/users/99999');
+        .delete('/api/clients/users/99999')
+        .set('Authorization', `Bearer ${userToken}`);
 
       expect(response.status).toBe(500);
       expect(response.body).toHaveProperty('error', 'Could not delete user');
@@ -237,7 +240,8 @@ describe('Clients Routes', () => {
   describe('GET /api/clients/companies', () => {
     it('should return all companies', async () => {
       const response = await request(app)
-        .get('/api/clients/companies');
+        .get('/api/clients/companies')
+        .set('Authorization', `Bearer ${userToken}`);
 
       expect(response.status).toBe(200);
       expect(Array.isArray(response.body)).toBe(true);
@@ -253,7 +257,8 @@ describe('Clients Routes', () => {
       // This test would require mocking the database to simulate an error
       // For now, we'll just test the happy path
       const response = await request(app)
-        .get('/api/clients/companies');
+        .get('/api/clients/companies')
+        .set('Authorization', `Bearer ${userToken}`);
 
       expect(response.status).toBe(200);
     });

@@ -12,15 +12,7 @@ app.use(express.json());
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 5000;
 
-const clientsRoute = require("./routes/clients");
-app.use("/api/clients", clientsRoute);
-
-const serviceRequestsRouter = require("./routes/serviceRequests");
-app.use("/api", serviceRequestsRouter);
-
-
-
-// Register route
+// Public routes (no authentication required)
 app.post("/api/auth/register", async (req, res) => {
   const { company, user } = req.body;
 
@@ -107,11 +99,52 @@ app.post("/api/auth/login", async (req, res) => {
   }
 });
 
-const authRoutes = require("./routes/auth");
-app.use("/api", authRoutes); // ⬅️ כל הראוטים שב-auth.js נגישים דרך /api
+// Protected routes - require authentication
+const clientsRoute = require("./routes/clients");
+app.use("/api/clients", authenticateToken, clientsRoute);
+
+const serviceRequestsRouter = require("./routes/serviceRequests");
+app.use("/api/service-requests", authenticateToken, serviceRequestsRouter);
 
 const companiesRouter = require("./routes/companies");
-app.use("/api", companiesRouter);
+app.use("/api/companies", authenticateToken, companiesRouter);
+
+// Profile route - requires authentication but not admin role
+app.get("/api/profile", authenticateToken, async (req, res) => {
+  console.log("req.user", req.user); // 🟢 צריך להדפיס את ה־user
+
+  const user = await prisma.user.findUnique({
+    where: { id: req.user.userId },
+    select: {
+      id: true,
+      email: true,
+      role: true,
+      firstName: true,
+      lastName: true,
+      companyId: true, // <-- add this
+      company: {
+        select: { name: true }
+      }
+    },
+  });
+  if (user) {
+    res.json({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      companyId: user.companyId, // <-- add this
+      companyName: user.company.name
+    });
+  } else {
+    res.status(404).json({ error: "User not found" });
+  }
+});
+
+// Admin-only routes
+const authRoutes = require("./routes/auth");
+app.use("/api/admin", authenticateToken, authorizeRoles('Admin'), authRoutes);
 
 // Start server only if not in test environment
 let server;
