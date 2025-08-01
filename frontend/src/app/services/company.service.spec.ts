@@ -32,7 +32,7 @@ describe('CompanyService', () => {
         expect(companies).toEqual(mockCompanies);
       });
 
-      const req = httpMock.expectOne(`${environment.apiUrl}/api/companies`);
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/public/companies`);
       expect(req.request.method).toBe('GET');
       req.flush(mockCompanies);
     });
@@ -45,7 +45,7 @@ describe('CompanyService', () => {
         }
       });
 
-      const req = httpMock.expectOne(`${environment.apiUrl}/api/companies`);
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/public/companies`);
       req.flush('Internal Server Error', { status: 500, statusText: 'Internal Server Error' });
     });
 
@@ -57,7 +57,7 @@ describe('CompanyService', () => {
         }
       });
 
-      const req = httpMock.expectOne(`${environment.apiUrl}/api/companies`);
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/public/companies`);
       req.error(new ErrorEvent('Network error'));
     });
 
@@ -66,7 +66,7 @@ describe('CompanyService', () => {
         expect(companies).toEqual([]);
       });
 
-      const req = httpMock.expectOne(`${environment.apiUrl}/api/companies`);
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/public/companies`);
       req.flush([]);
     });
 
@@ -82,7 +82,7 @@ describe('CompanyService', () => {
         }
       });
 
-      const req = httpMock.expectOne(`${environment.apiUrl}/api/companies`);
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/public/companies`);
       req.flush('Invalid JSON', { status: 200, statusText: 'OK' });
     });
   });
