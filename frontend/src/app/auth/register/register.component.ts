@@ -9,6 +9,7 @@ import {
 // Make sure the following file exists: src/app/auth/auth.service.ts
 import { AuthService } from "../../services/auth.service";
 import { Router } from "@angular/router";
+import { environment } from "../../../environments/environment";
 
 @Component({
   selector: "app-register",
@@ -30,23 +31,23 @@ export class RegisterComponent implements OnInit, OnDestroy {
   // Testimonials functionality
   testimonials = [
     {
-      text: 'Servix helped me streamline my client management and increased my productivity by 40%.',
-      name: 'Sarah Johnson',
-      title: 'Freelance Designer',
-      avatar: '👩‍🎨',
+      text: "Servix transformed our service management completely. We've seen a 40% improvement in response times.",
+      author: "Sarah Johnson",
+      position: "Operations Manager",
+      company: "TechCorp"
     },
     {
-      text: 'The best CRM solution I\'ve used. Simple, powerful, and gets the job done.',
-      name: 'Michael Chen',
-      title: 'Digital Consultant',
-      avatar: '👨‍💼',
+      text: "The best CRM solution we've ever used. Intuitive, powerful, and customer support is outstanding.",
+      author: "Michael Chen",
+      position: "CEO",
+      company: "InnovateLab"
     },
     {
-      text: 'From managing 5 clients to 50+ - Servix scaled with my business perfectly.',
-      name: 'Emma Rodriguez',
-      title: 'Marketing Specialist',
-      avatar: '👩‍💻',
-    },
+      text: "Finally, a service management platform that actually understands our business needs.",
+      author: "Emily Rodriguez",
+      position: "Service Director",
+      company: "Global Solutions"
+    }
   ];
   currentTestimonial = 0;
   private testimonialInterval: any;
@@ -103,7 +104,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     // כאן תקרא ל-API שמחזיר את רשימת החברות
     this.http
       .get<{ id: number; name: string }[]>(
-        "http://localhost:5000/api/companies"
+        `${environment.apiUrl}/api/companies`
       )
       .subscribe({
         next: (data) => {

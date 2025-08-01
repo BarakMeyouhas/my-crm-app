@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { CompanyService } from './company.service';
+import { environment } from '../../environments/environment';
 
 describe('CompanyService', () => {
   let service: CompanyService;
@@ -31,7 +32,7 @@ describe('CompanyService', () => {
         expect(companies).toEqual(mockCompanies);
       });
 
-      const req = httpMock.expectOne('http://localhost:5000/api/companies');
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/companies`);
       expect(req.request.method).toBe('GET');
       req.flush(mockCompanies);
     });
@@ -44,7 +45,7 @@ describe('CompanyService', () => {
         }
       });
 
-      const req = httpMock.expectOne('http://localhost:5000/api/companies');
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/companies`);
       req.flush('Internal Server Error', { status: 500, statusText: 'Internal Server Error' });
     });
 
@@ -56,7 +57,7 @@ describe('CompanyService', () => {
         }
       });
 
-      const req = httpMock.expectOne('http://localhost:5000/api/companies');
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/companies`);
       req.error(new ErrorEvent('Network error'));
     });
 
@@ -65,7 +66,7 @@ describe('CompanyService', () => {
         expect(companies).toEqual([]);
       });
 
-      const req = httpMock.expectOne('http://localhost:5000/api/companies');
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/companies`);
       req.flush([]);
     });
 
@@ -81,7 +82,7 @@ describe('CompanyService', () => {
         }
       });
 
-      const req = httpMock.expectOne('http://localhost:5000/api/companies');
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/companies`);
       req.flush('Invalid JSON', { status: 200, statusText: 'OK' });
     });
   });

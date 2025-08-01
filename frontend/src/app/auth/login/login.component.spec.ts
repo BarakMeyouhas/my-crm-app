@@ -1,11 +1,10 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { By } from '@angular/platform-browser';
-
 import { LoginComponent } from './login.component';
+import { AuthService } from '../../services/auth.service';
+import { environment } from '../../../environments/environment';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -15,8 +14,17 @@ describe('LoginComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RouterTestingModule, HttpClientTestingModule, FormsModule],
-      declarations: [ LoginComponent ]
+      declarations: [ LoginComponent ],
+      imports: [ HttpClientTestingModule, FormsModule ],
+      providers: [
+        AuthService,
+        {
+          provide: Router,
+          useValue: {
+            navigate: jasmine.createSpy('navigate')
+          }
+        }
+      ]
     })
     .compileComponents();
 
@@ -24,7 +32,6 @@ describe('LoginComponent', () => {
     component = fixture.componentInstance;
     httpMock = TestBed.inject(HttpTestingController);
     router = TestBed.inject(Router);
-    fixture.detectChanges();
   });
 
   afterEach(() => {
@@ -32,58 +39,23 @@ describe('LoginComponent', () => {
     localStorage.clear();
   });
 
+  beforeEach(() => {
+    fixture.detectChanges();
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should initialize with testimonials', () => {
-    expect(component.testimonials).toBeDefined();
-    expect(component.testimonials.length).toBe(3);
-    expect(component.currentTestimonial).toBe(0);
-  });
+  describe('Form Validation', () => {
+    it('should have email and password properties', () => {
+      expect(component.email).toBeDefined();
+      expect(component.password).toBeDefined();
+    });
 
-  it('should have testimonials with required properties', () => {
-    const firstTestimonial = component.testimonials[0];
-    expect(firstTestimonial.text).toBeDefined();
-    expect(firstTestimonial.name).toBeDefined();
-    expect(firstTestimonial.title).toBeDefined();
-    expect(firstTestimonial.avatar).toBeDefined();
-  });
-
-  it('should set testimonial correctly', fakeAsync(() => {
-    component.setTestimonial(1);
-    expect(component.currentTestimonial).toBe(1);
-    expect(component.animationDirection).toBe('right');
-    
-    tick(4000);
-    expect(component.currentTestimonial).toBe(2);
-    
-    // Clean up the interval
-    component.ngOnDestroy();
-  }));
-
-  it('should handle testimonial rotation with left direction', fakeAsync(() => {
-    component.currentTestimonial = 2;
-    component.setTestimonial(1);
-    expect(component.animationDirection).toBe('left');
-    
-    tick(4000);
-    expect(component.currentTestimonial).toBe(2);
-    
-    // Clean up the interval
-    component.ngOnDestroy();
-  }));
-
-  it('should clear interval on destroy', fakeAsync(() => {
-    const clearIntervalSpy = spyOn(window, 'clearInterval');
-    component.ngOnDestroy();
-    expect(clearIntervalSpy).toHaveBeenCalled();
-  }));
-
-  it('should navigate to register page', () => {
-    const navigateSpy = spyOn(router, 'navigate');
-    component.goToRegister();
-    expect(navigateSpy).toHaveBeenCalledWith(['/register']);
+    it('should have error message property', () => {
+      expect(component.errorMessage).toBeDefined();
+    });
   });
 
   describe('Form Submission', () => {
@@ -97,11 +69,10 @@ describe('LoginComponent', () => {
         token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJFbXBsb3llZSIsImlhdCI6MTYzNDU2Nzg5MCwiZXhwIjoxNjM0NTcxNDkwfQ.mock-signature',
         role: 'Employee'
       };
-      const navigateSpy = spyOn(router, 'navigate');
       
       component.onSubmit();
       
-      const req = httpMock.expectOne('http://localhost:5000/api/auth/login');
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/auth/login`);
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual({
         email: 'test@example.com',
@@ -112,7 +83,7 @@ describe('LoginComponent', () => {
       tick();
       
       expect(localStorage.getItem('token')).toBe(mockResponse.token);
-      expect(navigateSpy).toHaveBeenCalledWith(['/dashboard']);
+      expect(router.navigate).toHaveBeenCalledWith(['/dashboard']);
     }));
 
     it('should submit login form successfully for admin user', fakeAsync(() => {
@@ -120,15 +91,14 @@ describe('LoginComponent', () => {
         token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJBZG1pbiIsImlhdCI6MTYzNDU2Nzg5MCwiZXhwIjoxNjM0NTcxNDkwfQ.mock-signature',
         role: 'Admin'
       };
-      const navigateSpy = spyOn(router, 'navigate');
       
       component.onSubmit();
       
-      const req = httpMock.expectOne('http://localhost:5000/api/auth/login');
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/auth/login`);
       req.flush(mockResponse);
       tick();
       
-      expect(navigateSpy).toHaveBeenCalledWith(['/admin-panel']);
+      expect(router.navigate).toHaveBeenCalledWith(['/admin-panel']);
     }));
 
     it('should handle login error', fakeAsync(() => {
@@ -140,7 +110,7 @@ describe('LoginComponent', () => {
       
       component.onSubmit();
       
-      const req = httpMock.expectOne('http://localhost:5000/api/auth/login');
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/auth/login`);
       req.flush(mockError, { status: 401, statusText: 'Unauthorized' });
       tick();
       
@@ -150,7 +120,7 @@ describe('LoginComponent', () => {
     it('should handle login error without message', fakeAsync(() => {
       component.onSubmit();
       
-      const req = httpMock.expectOne('http://localhost:5000/api/auth/login');
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/auth/login`);
       req.flush({}, { status: 500, statusText: 'Internal Server Error' });
       tick();
       

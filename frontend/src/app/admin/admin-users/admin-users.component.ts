@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { AuthService } from "../../services/auth.service";
+import { environment } from "../../../environments/environment";
 
 @Component({
   selector: "app-admin-users",
@@ -27,7 +28,7 @@ export class AdminUsersComponent implements OnInit {
       headers
     );
     this.http
-      .get<any[]>("http://localhost:5000/api/admin/users", { headers })
+      .get<any[]>(`${environment.apiUrl}/api/admin/users`, { headers })
       .subscribe(
         (res) => {
           console.log("Users loaded from API:", res);
@@ -51,7 +52,7 @@ export class AdminUsersComponent implements OnInit {
     const headers = new HttpHeaders().set("Authorization", `Bearer ${token}`);
 
     this.http
-      .delete(`http://localhost:5000/api/admin/users/${userId}`, { headers })
+      .delete(`${environment.apiUrl}/api/admin/users/${userId}`, { headers })
       .subscribe(
         () => {
           console.log("User deleted:", userId);

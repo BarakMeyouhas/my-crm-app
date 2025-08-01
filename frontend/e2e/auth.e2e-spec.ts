@@ -3,7 +3,7 @@ import * as http from 'http';
 
 describe('Authentication E2E Tests', () => {
   const baseUrl = 'http://localhost:4201';
-  const backendUrl = 'http://localhost:5000';
+  const backendUrl = 'https://my-crm-backend-5qvj.onrender.com';
 
   beforeEach(async () => {
     await browser.waitForAngularEnabled(false);

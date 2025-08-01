@@ -99,6 +99,19 @@ app.post("/api/auth/login", async (req, res) => {
   }
 });
 
+// Public companies endpoint for registration
+app.get("/api/public/companies", async (req, res) => {
+  try {
+    const companies = await prisma.company.findMany({
+      select: { id: true, name: true }
+    });
+    res.json(companies);
+  } catch (err) {
+    console.error("Failed to fetch companies:", err);
+    res.status(500).json({ message: "Failed to fetch companies" });
+  }
+});
+
 // Protected routes - require authentication
 const clientsRoute = require("./routes/clients");
 app.use("/api/clients", authenticateToken, clientsRoute);

@@ -11,10 +11,10 @@
       <div class="testimonial-content" [ngClass]="animationDirection">
         <p class="testimonial-text">{{ testimonials[currentTestimonial].text }}</p>
         <div class="testimonial-author">
-          <div class="author-avatar">{{ testimonials[currentTestimonial].avatar }}</div>
+          <div class="author-avatar">{{ testimonials[currentTestimonial].author.charAt(0) }}</div>
           <div class="author-info">
-            <div class="author-name">{{ testimonials[currentTestimonial].name }}</div>
-            <div class="author-title">{{ testimonials[currentTestimonial].title }}</div>
+            <div class="author-name">{{ testimonials[currentTestimonial].author }}</div>
+            <div class="author-title">{{ testimonials[currentTestimonial].position }} at {{ testimonials[currentTestimonial].company }}</div>
           </div>
         </div>
       </div>

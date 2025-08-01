@@ -3,11 +3,12 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { AuthService } from "./auth.service";
+import { environment } from "../../environments/environment";
 
 @Injectable({ providedIn: "root" })
 export class ClientService {
-  private baseUrl = "http://localhost:5000/api/clients";
-  private adminUrl = 'http://localhost:5000/api/admin/users';
+  private baseUrl = `${environment.apiUrl}/api/clients`;
+  private adminUrl = `${environment.apiUrl}/api/admin/users`;
 
   constructor(private http: HttpClient, private auth: AuthService) {}
 

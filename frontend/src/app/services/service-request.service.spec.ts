@@ -1,31 +1,40 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { ServiceRequestService } from './service-request.service';
+import { AuthService } from './auth.service';
+import { environment } from '../../environments/environment';
 
 describe('ServiceRequestService', () => {
   let service: ServiceRequestService;
   let httpMock: HttpTestingController;
+  let authService: AuthService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [ServiceRequestService]
+      providers: [ServiceRequestService, AuthService]
     });
     service = TestBed.inject(ServiceRequestService);
     httpMock = TestBed.inject(HttpTestingController);
+    authService = TestBed.inject(AuthService);
   });
 
   afterEach(() => {
     httpMock.verify();
+    localStorage.clear();
+  });
+
+  beforeEach(() => {
+    localStorage.setItem('token', 'test-token');
   });
 
   describe('getServiceRequests', () => {
-    it('should fetch all service requests', () => {
+    it('should fetch all service requests with auth headers', () => {
       const mockServiceRequests = [
         {
           id: 1,
           title: 'Service Request 1',
-          description: 'Description 1',
+          description: 'Description for request 1',
           status: 'PENDING',
           companyId: 1,
           createdById: 1,
@@ -36,7 +45,7 @@ describe('ServiceRequestService', () => {
         {
           id: 2,
           title: 'Service Request 2',
-          description: 'Description 2',
+          description: 'Description for request 2',
           status: 'IN_PROGRESS',
           companyId: 1,
           createdById: 1,
@@ -50,8 +59,9 @@ describe('ServiceRequestService', () => {
         expect(requests).toEqual(mockServiceRequests);
       });
 
-      const req = httpMock.expectOne('http://localhost:5000/api/service-requests');
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/service-requests`);
       expect(req.request.method).toBe('GET');
+      expect(req.request.headers.get('Authorization')).toBe('Bearer test-token');
       req.flush(mockServiceRequests);
     });
 
@@ -75,8 +85,9 @@ describe('ServiceRequestService', () => {
         expect(requests).toEqual(mockServiceRequests);
       });
 
-      const req = httpMock.expectOne(`http://localhost:5000/api/service-requests?companyId=${companyId}`);
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/service-requests?companyId=${companyId}`);
       expect(req.request.method).toBe('GET');
+      expect(req.request.headers.get('Authorization')).toBe('Bearer test-token');
       req.flush(mockServiceRequests);
     });
 
@@ -88,7 +99,7 @@ describe('ServiceRequestService', () => {
         }
       });
 
-      const req = httpMock.expectOne('http://localhost:5000/api/service-requests');
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/service-requests`);
       req.flush('Internal Server Error', { status: 500, statusText: 'Internal Server Error' });
     });
 
@@ -97,7 +108,7 @@ describe('ServiceRequestService', () => {
         expect(requests).toEqual([]);
       });
 
-      const req = httpMock.expectOne('http://localhost:5000/api/service-requests');
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/service-requests`);
       req.flush([]);
     });
   });
@@ -125,8 +136,9 @@ describe('ServiceRequestService', () => {
         expect(response).toEqual(mockResponse);
       });
 
-      const req = httpMock.expectOne('http://localhost:5000/api/service-requests');
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/service-requests`);
       expect(req.request.method).toBe('POST');
+      expect(req.request.headers.get('Authorization')).toBe('Bearer test-token');
       expect(req.request.body).toEqual(serviceRequestData);
       req.flush(mockResponse);
     });
@@ -152,14 +164,16 @@ describe('ServiceRequestService', () => {
         expect(response).toEqual(mockResponse);
       });
 
-      const req = httpMock.expectOne('http://localhost:5000/api/service-requests');
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/service-requests`);
       expect(req.request.method).toBe('POST');
+      expect(req.request.headers.get('Authorization')).toBe('Bearer test-token');
+      expect(req.request.body).toEqual(serviceRequestData);
       req.flush(mockResponse);
     });
 
     it('should handle error when creating service request fails', () => {
       const serviceRequestData = {
-        title: 'Invalid Request',
+        title: 'Invalid Service Request',
         description: 'This request is missing required fields'
       };
 
@@ -170,15 +184,15 @@ describe('ServiceRequestService', () => {
         }
       });
 
-      const req = httpMock.expectOne('http://localhost:5000/api/service-requests');
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/service-requests`);
       req.flush('Bad Request', { status: 400, statusText: 'Bad Request' });
     });
 
-    it('should handle validation errors', () => {
+    it('should handle server error when creating service request', () => {
       const serviceRequestData = {
-        title: 'Request with Validation Error',
+        title: 'Service Request',
         description: 'Description',
-        companyId: 999, // Non-existent company
+        companyId: 1,
         createdById: 1
       };
 
@@ -189,8 +203,8 @@ describe('ServiceRequestService', () => {
         }
       });
 
-      const req = httpMock.expectOne('http://localhost:5000/api/service-requests');
-      req.flush('Server error', { status: 500, statusText: 'Internal Server Error' });
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/service-requests`);
+      req.flush('Internal Server Error', { status: 500, statusText: 'Internal Server Error' });
     });
   });
 
@@ -199,9 +213,8 @@ describe('ServiceRequestService', () => {
       expect(service).toBeTruthy();
     });
 
-    it('should have correct base URL', () => {
-      // This test verifies the service is properly configured
-      expect(service).toBeDefined();
+    it('should have AuthService injected', () => {
+      expect(authService).toBeTruthy();
     });
   });
 }); 

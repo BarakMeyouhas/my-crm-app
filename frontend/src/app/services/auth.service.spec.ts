@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { AuthService, User } from './auth.service';
+import { AuthService } from './auth.service';
+import { environment } from '../../environments/environment';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -13,40 +14,45 @@ describe('AuthService', () => {
     });
     service = TestBed.inject(AuthService);
     httpMock = TestBed.inject(HttpTestingController);
-    
-    // Clear localStorage before each test
-    localStorage.clear();
   });
 
   afterEach(() => {
     httpMock.verify();
+    localStorage.clear();
   });
 
-  describe('token getter', () => {
-    it('should return null when no token is stored', () => {
-      expect(service.token).toBeNull();
-    });
-
-    it('should return stored token', () => {
-      const testToken = 'test-token';
-      localStorage.setItem('token', testToken);
-      expect(service.token).toBe(testToken);
-    });
-  });
-
-  describe('currentUser', () => {
-    it('should return observable of current user', (done) => {
-      const mockUser = {
-        id: 1,
-        name: 'Test User',
-        email: 'test@example.com',
+  describe('login', () => {
+    it('should login successfully and store token', () => {
+      const loginData = { email: 'test@example.com', password: 'password123' };
+      const mockResponse = {
+        message: 'Login successful',
+        token: 'test-token',
         role: 'Admin'
       };
 
-      service.currentUser.subscribe(user => {
-        expect(user).toBeNull(); // Initially null
-        done();
+      service.login(loginData.email, loginData.password).subscribe(response => {
+        expect(response).toEqual(mockResponse);
+        expect(localStorage.getItem('token')).toBe('test-token');
       });
+
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/auth/login`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(loginData);
+      req.flush(mockResponse);
+    });
+
+    it('should handle login error', () => {
+      const loginData = { email: 'test@example.com', password: 'wrongpassword' };
+
+      service.login(loginData.email, loginData.password).subscribe({
+        next: () => fail('should have failed'),
+        error: (error) => {
+          expect(error.status).toBe(401);
+        }
+      });
+
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/auth/login`);
+      req.flush('Invalid credentials', { status: 401, statusText: 'Unauthorized' });
     });
   });
 
@@ -54,7 +60,7 @@ describe('AuthService', () => {
     it('should fetch all users with auth token', () => {
       const mockUsers = [
         { id: 1, email: 'user1@example.com', role: 'Admin' },
-        { id: 2, email: 'user2@example.com', role: 'User' }
+        { id: 2, email: 'user2@example.com', role: 'Employee' }
       ];
 
       localStorage.setItem('token', 'test-token');
@@ -63,7 +69,7 @@ describe('AuthService', () => {
         expect(users).toEqual(mockUsers);
       });
 
-      const req = httpMock.expectOne('http://localhost:5000/api/admin/users');
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/admin/users`);
       expect(req.request.method).toBe('GET');
       expect(req.request.headers.get('Authorization')).toBe('Bearer test-token');
       req.flush(mockUsers);
@@ -79,7 +85,7 @@ describe('AuthService', () => {
         }
       });
 
-      const req = httpMock.expectOne('http://localhost:5000/api/admin/users');
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/admin/users`);
       req.flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
     });
   });
@@ -102,7 +108,7 @@ describe('AuthService', () => {
         expect(user).toEqual(mockUser);
       });
 
-      const req = httpMock.expectOne('http://localhost:5000/api/profile');
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/profile`);
       expect(req.request.method).toBe('GET');
       expect(req.request.headers.get('Authorization')).toBe('Bearer test-token');
       req.flush(mockUser);
@@ -123,7 +129,7 @@ describe('AuthService', () => {
         }
       });
 
-      const req = httpMock.expectOne('http://localhost:5000/api/profile');
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/profile`);
       req.flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
     });
   });
@@ -139,7 +145,7 @@ describe('AuthService', () => {
         expect(response).toEqual(mockResponse);
       });
 
-      const req = httpMock.expectOne(`http://localhost:5000/api/admin/users/${userId}`);
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/admin/users/${userId}`);
       expect(req.request.method).toBe('DELETE');
       expect(req.request.headers.get('Authorization')).toBe('Bearer test-token');
       req.flush(mockResponse);
@@ -164,60 +170,59 @@ describe('AuthService', () => {
         }
       });
 
-      const req = httpMock.expectOne(`http://localhost:5000/api/admin/users/${userId}`);
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/admin/users/${userId}`);
       req.flush('User not found', { status: 404, statusText: 'Not Found' });
     });
   });
 
   describe('register', () => {
-    it('should register new user', () => {
-      const userData = {
-        company: { companyId: '1' },
+    it('should register user successfully', () => {
+      const registerData = {
+        company: { companyId: 1 },
         user: {
-          email: 'newuser@example.com',
-          firstName: 'New',
-          lastName: 'User',
+          firstName: 'John',
+          lastName: 'Doe',
+          email: 'john@example.com',
           password: 'password123',
-          role: 'User'
+          role: 'Admin'
         }
       };
-
       const mockResponse = {
         message: 'User registered successfully',
         userId: 1,
         companyId: 1
       };
 
-      service.register(userData).subscribe(response => {
+      service.register(registerData).subscribe(response => {
         expect(response).toEqual(mockResponse);
       });
 
-      const req = httpMock.expectOne('http://localhost:5000/api/auth/register');
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/auth/register`);
       expect(req.request.method).toBe('POST');
-      expect(req.request.body).toEqual(userData);
+      expect(req.request.body).toEqual(registerData);
       req.flush(mockResponse);
     });
 
     it('should handle registration error', () => {
-      const userData = {
-        company: { companyId: '1' },
+      const registerData = {
+        company: { companyId: 1 },
         user: {
+          firstName: 'John',
+          lastName: 'Doe',
           email: 'existing@example.com',
-          firstName: 'Existing',
-          lastName: 'User',
           password: 'password123',
-          role: 'User'
+          role: 'Admin'
         }
       };
 
-      service.register(userData).subscribe({
+      service.register(registerData).subscribe({
         next: () => fail('should have failed'),
         error: (error) => {
           expect(error.status).toBe(400);
         }
       });
 
-      const req = httpMock.expectOne('http://localhost:5000/api/auth/register');
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/auth/register`);
       req.flush('User already exists', { status: 400, statusText: 'Bad Request' });
     });
   });
@@ -225,18 +230,24 @@ describe('AuthService', () => {
   describe('logout', () => {
     it('should clear token and reset current user', () => {
       localStorage.setItem('token', 'test-token');
-      
-      // Set up a mock user in the service
-      const mockUser = { id: 1, name: 'Test User', email: 'test@example.com', role: 'Admin' };
-      service['userSubject'].next(mockUser);
-
       service.logout();
 
       expect(localStorage.getItem('token')).toBeNull();
-      
+
       service.currentUser.subscribe(user => {
         expect(user).toBeNull();
       });
+    });
+  });
+
+  describe('token getter', () => {
+    it('should return token from localStorage', () => {
+      localStorage.setItem('token', 'test-token');
+      expect(service.token).toBe('test-token');
+    });
+
+    it('should return null when no token exists', () => {
+      expect(service.token).toBeNull();
     });
   });
 });

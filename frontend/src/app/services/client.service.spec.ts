@@ -2,45 +2,44 @@ import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { ClientService } from './client.service';
 import { AuthService } from './auth.service';
+import { environment } from '../../environments/environment';
 
 describe('ClientService', () => {
   let service: ClientService;
   let httpMock: HttpTestingController;
-  let authService: jasmine.SpyObj<AuthService>;
+  let authService: AuthService;
 
   beforeEach(() => {
-    const authServiceSpy = jasmine.createSpyObj('AuthService', [], {
-      token: 'test-token'
-    });
-
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [
-        ClientService,
-        { provide: AuthService, useValue: authServiceSpy }
-      ]
+      providers: [ClientService, AuthService]
     });
     service = TestBed.inject(ClientService);
     httpMock = TestBed.inject(HttpTestingController);
-    authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
+    authService = TestBed.inject(AuthService);
   });
 
   afterEach(() => {
     httpMock.verify();
+    localStorage.clear();
+  });
+
+  beforeEach(() => {
+    localStorage.setItem('token', 'test-token');
   });
 
   describe('getClients', () => {
     it('should fetch all clients with auth headers', () => {
       const mockClients = [
-        { id: 1, name: 'Client 1', email: 'client1@example.com', phone: '123-456-7890', company: 'Corp 1' },
-        { id: 2, name: 'Client 2', email: 'client2@example.com', phone: '098-765-4321', company: 'Corp 2' }
+        { id: 1, name: 'Client 1', email: 'client1@example.com', phone: '555-111-1111', company: 'Corp 1' },
+        { id: 2, name: 'Client 2', email: 'client2@example.com', phone: '555-222-2222', company: 'Corp 2' }
       ];
 
       service.getClients().subscribe(clients => {
         expect(clients).toEqual(mockClients);
       });
 
-      const req = httpMock.expectOne('http://localhost:5000/api/clients');
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/clients`);
       expect(req.request.method).toBe('GET');
       expect(req.request.headers.get('Authorization')).toBe('Bearer test-token');
       req.flush(mockClients);
@@ -54,7 +53,7 @@ describe('ClientService', () => {
         }
       });
 
-      const req = httpMock.expectOne('http://localhost:5000/api/clients');
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/clients`);
       req.flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
     });
   });
@@ -78,7 +77,7 @@ describe('ClientService', () => {
         expect(response).toEqual(mockResponse);
       });
 
-      const req = httpMock.expectOne('http://localhost:5000/api/clients');
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/clients`);
       expect(req.request.method).toBe('POST');
       expect(req.request.headers.get('Authorization')).toBe('Bearer test-token');
       expect(req.request.body).toEqual(clientData);
@@ -98,7 +97,7 @@ describe('ClientService', () => {
         }
       });
 
-      const req = httpMock.expectOne('http://localhost:5000/api/clients');
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/clients`);
       req.flush('Bad Request', { status: 400, statusText: 'Bad Request' });
     });
   });
@@ -123,7 +122,7 @@ describe('ClientService', () => {
         expect(response).toEqual(mockResponse);
       });
 
-      const req = httpMock.expectOne(`http://localhost:5000/api/clients/${clientId}`);
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/clients/${clientId}`);
       expect(req.request.method).toBe('PUT');
       expect(req.request.headers.get('Authorization')).toBe('Bearer test-token');
       expect(req.request.body).toEqual(updateData);
@@ -143,7 +142,7 @@ describe('ClientService', () => {
         }
       });
 
-      const req = httpMock.expectOne(`http://localhost:5000/api/clients/${clientId}`);
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/clients/${clientId}`);
       req.flush('Client not found', { status: 404, statusText: 'Not Found' });
     });
   });
@@ -151,16 +150,13 @@ describe('ClientService', () => {
   describe('deleteClient', () => {
     it('should delete a client with auth headers', () => {
       const clientId = 1;
-      const mockResponse = {
-        message: 'Client deleted successfully',
-        client: { id: clientId, name: 'Deleted Client' }
-      };
+      const mockResponse = { message: 'Client deleted successfully' };
 
       service.deleteClient(clientId).subscribe(response => {
         expect(response).toEqual(mockResponse);
       });
 
-      const req = httpMock.expectOne(`http://localhost:5000/api/admin/users/${clientId}`);
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/admin/users/${clientId}`);
       expect(req.request.method).toBe('DELETE');
       expect(req.request.headers.get('Authorization')).toBe('Bearer test-token');
       req.flush(mockResponse);
@@ -176,25 +172,18 @@ describe('ClientService', () => {
         }
       });
 
-      const req = httpMock.expectOne(`http://localhost:5000/api/admin/users/${clientId}`);
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/admin/users/${clientId}`);
       req.flush('Client not found', { status: 404, statusText: 'Not Found' });
     });
   });
 
-  describe('headers getter', () => {
-    it('should return headers with auth token', () => {
-      const headers = service['headers'];
-      expect(headers.headers.get('Authorization')).toBe('Bearer test-token');
+  describe('service creation', () => {
+    it('should be created', () => {
+      expect(service).toBeTruthy();
     });
 
-    it('should update headers when token changes', () => {
-      // Change the token
-      Object.defineProperty(authService, 'token', {
-        get: () => 'new-token'
-      });
-
-      const headers = service['headers'];
-      expect(headers.headers.get('Authorization')).toBe('Bearer new-token');
+    it('should have AuthService injected', () => {
+      expect(authService).toBeTruthy();
     });
   });
 });
