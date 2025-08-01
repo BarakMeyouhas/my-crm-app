@@ -59,13 +59,41 @@ export const AdminLayoutRoutes: Routes = [
     component: DashboardComponent,
     canActivate: [AuthGuard]
   },
-      { path: "service-request", component: ServiceRequestComponent },
-  { path: "table-list", component: TableListComponent },
-  { path: "typography", component: TypographyComponent },
-  { path: "icons", component: IconsComponent },
-  { path: "maps", component: MapsComponent },
-  { path: "notifications", component: NotificationsComponent },
-  { path: "upgrade", component: UpgradeComponent },
+      { 
+        path: "service-request", 
+        component: ServiceRequestComponent,
+        canActivate: [AuthGuard]
+      },
+  { 
+    path: "table-list", 
+    component: TableListComponent,
+    canActivate: [AuthGuard]
+  },
+  { 
+    path: "typography", 
+    component: TypographyComponent,
+    canActivate: [AuthGuard]
+  },
+  { 
+    path: "icons", 
+    component: IconsComponent,
+    canActivate: [AuthGuard]
+  },
+  { 
+    path: "maps", 
+    component: MapsComponent,
+    canActivate: [AuthGuard]
+  },
+  { 
+    path: "notifications", 
+    component: NotificationsComponent,
+    canActivate: [AuthGuard]
+  },
+  { 
+    path: "upgrade", 
+    component: UpgradeComponent,
+    canActivate: [AuthGuard]
+  },
   {
     path: "admin/users",
     component: AdminUsersComponent,
