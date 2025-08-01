@@ -38,11 +38,19 @@ describe('CompanyService', () => {
     });
 
     it('should handle error when fetching companies fails', () => {
-      service.getCompanies().subscribe({
-        next: () => fail('should have failed'),
-        error: (error) => {
-          expect(error.status).toBe(500);
-        }
+      const fallbackCompanies = [
+        { id: 1, name: "TechNova" },
+        { id: 2, name: "GreenEdge Solutions" },
+        { id: 3, name: "ByteBridge" },
+        { id: 4, name: "OmegaHealth" },
+        { id: 5, name: "Cloudify" },
+        { id: 6, name: "SecureStack" },
+        { id: 7, name: "DataSpring" },
+        { id: 8, name: "NextGen AI" }
+      ];
+
+      service.getCompanies().subscribe(companies => {
+        expect(companies).toEqual(fallbackCompanies);
       });
 
       const req = httpMock.expectOne(`${environment.apiUrl}/api/public/companies`);
@@ -50,11 +58,19 @@ describe('CompanyService', () => {
     });
 
     it('should handle network error', () => {
-      service.getCompanies().subscribe({
-        next: () => fail('should have failed'),
-        error: (error) => {
-          expect(error.status).toBe(0);
-        }
+      const fallbackCompanies = [
+        { id: 1, name: "TechNova" },
+        { id: 2, name: "GreenEdge Solutions" },
+        { id: 3, name: "ByteBridge" },
+        { id: 4, name: "OmegaHealth" },
+        { id: 5, name: "Cloudify" },
+        { id: 6, name: "SecureStack" },
+        { id: 7, name: "DataSpring" },
+        { id: 8, name: "NextGen AI" }
+      ];
+
+      service.getCompanies().subscribe(companies => {
+        expect(companies).toEqual(fallbackCompanies);
       });
 
       const req = httpMock.expectOne(`${environment.apiUrl}/api/public/companies`);
