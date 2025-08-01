@@ -152,16 +152,16 @@
       "name": "Companies",
       "item": [
         {
-          "name": "Get All Companies",
+          "name": "Get All Companies (Public)",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/companies",
+              "raw": "{{baseUrl}}/api/public/companies",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "companies"]
+              "path": ["api", "public", "companies"]
             },
-            "description": "Get list of all companies"
+            "description": "Get list of all companies (public endpoint for registration)"
           },
           "response": [],
           "event": [
@@ -179,6 +179,48 @@
                   "    if (responseJson.length > 0) {",
                   "        pm.environment.set('companyId', responseJson[0].id);",
                   "        pm.environment.set('companyName', responseJson[0].name);",
+                  "    }",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get All Companies (Protected)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/companies",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "companies"]
+            },
+            "description": "Get list of all companies (protected endpoint for authenticated users)"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Companies response is valid\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 401]);",
+                  "    if (pm.response.code === 200) {",
+                  "        const responseJson = pm.response.json();",
+                  "        pm.expect(responseJson).to.be.an('array');",
+                  "        pm.expect(responseJson.length).to.be.greaterThan(0);",
+                  "        pm.expect(responseJson[0]).to.have.property('id');",
+                  "        pm.expect(responseJson[0]).to.have.property('name');",
+                  "    } else if (pm.response.code === 401) {",
+                  "        const responseJson = pm.response.json();",
+                  "        pm.expect(responseJson).to.have.property('message');",
                   "    }",
                   "});"
                 ]
