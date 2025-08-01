@@ -6,10 +6,8 @@ const authenticateToken = (req, res, next) => {
 
   if (!token) return res.status(401).json({ message: 'Missing token' });
 
-  
-
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "defaultsecret");
     req.user = decoded; // מידע על המשתמש מתוך הטוקן
     next();
   } catch (err) {

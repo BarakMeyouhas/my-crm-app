@@ -94,8 +94,8 @@ describe('LoginComponent', () => {
 
     it('should submit login form successfully for regular user', fakeAsync(() => {
       const mockResponse = {
-        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNjM0NTY3ODkwLCJleHAiOjE2MzQ1NzE0OTB9.mock-signature',
-        role: 'user'
+        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJFbXBsb3llZSIsImlhdCI6MTYzNDU2Nzg5MCwiZXhwIjoxNjM0NTcxNDkwfQ.mock-signature',
+        role: 'Employee'
       };
       const navigateSpy = spyOn(router, 'navigate');
       
@@ -117,8 +117,8 @@ describe('LoginComponent', () => {
 
     it('should submit login form successfully for admin user', fakeAsync(() => {
       const mockResponse = {
-        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJhZG1pbiIsImlhdCI6MTYzNDU2Nzg5MCwiZXhwIjoxNjM0NTcxNDkwfQ.mock-signature',
-        role: 'admin'
+        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJBZG1pbiIsImlhdCI6MTYzNDU2Nzg5MCwiZXhwIjoxNjM0NTcxNDkwfQ.mock-signature',
+        role: 'Admin'
       };
       const navigateSpy = spyOn(router, 'navigate');
       
