@@ -11,10 +11,10 @@ export class CompanyService {
   constructor(private http: HttpClient) { }
 
   getCompanies(): Observable<{ id: number; name: string }[]> {
-    return this.http.get<{ id: number; name: string }[]>(`${environment.apiUrl}/api/companies`).pipe(
+    return this.http.get<{ id: number; name: string }[]>(`${environment.apiUrl}/api/public/companies`).pipe(
       catchError(error => {
-        console.log('Companies endpoint requires auth, using fallback data');
-        // Return sample companies for registration
+        console.log('Companies endpoint not available yet, using fallback data for registration');
+        // Return sample companies for registration - same as seed data
         return of([
           { id: 1, name: "TechNova" },
           { id: 2, name: "GreenEdge Solutions" },

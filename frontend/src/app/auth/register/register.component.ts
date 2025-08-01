@@ -101,10 +101,10 @@ export class RegisterComponent implements OnInit, OnDestroy {
   }
 
   loadCompanies() {
-    // כאן תקרא ל-API שמחזיר את רשימת החברות
+    // Use the public companies endpoint for registration
     this.http
       .get<{ id: number; name: string }[]>(
-        `${environment.apiUrl}/api/companies`
+        `${environment.apiUrl}/api/public/companies`
       )
       .subscribe({
         next: (data) => {
@@ -112,6 +112,17 @@ export class RegisterComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.error("Failed to load companies", err);
+          // Fallback to sample companies if API fails
+          this.companies = [
+            { id: 1, name: "TechNova" },
+            { id: 2, name: "GreenEdge Solutions" },
+            { id: 3, name: "ByteBridge" },
+            { id: 4, name: "OmegaHealth" },
+            { id: 5, name: "Cloudify" },
+            { id: 6, name: "SecureStack" },
+            { id: 7, name: "DataSpring" },
+            { id: 8, name: "NextGen AI" }
+          ];
         },
       });
   }
