@@ -216,13 +216,30 @@ describe("CRM Application E2E Tests", () => {
   });
 
   describe("Authentication Protection", () => {
+    beforeEach(async () => {
+      // Ensure clean state for authentication tests
+      await browser.executeScript("localStorage.clear();");
+      await browser.executeScript("sessionStorage.clear();");
+    });
+
     it("should redirect to login when accessing protected routes", async () => {
+      console.log('🚀 Testing dashboard protection...');
+      
       await browser.get(`${baseUrl}/dashboard`);
       
       // Wait for Angular to be ready
       await browser.waitForAngular();
       
+      // Wait a bit more for the redirect to complete
+      await browser.sleep(1000);
+      
       const currentUrl = await browser.getCurrentUrl();
+      console.log(`📍 Current URL: ${currentUrl}`);
+      
+      // Check if localStorage is actually cleared
+      const token = await browser.executeScript("return localStorage.getItem('token');");
+      console.log(`🔑 Token in localStorage: ${token ? 'Present' : 'None'}`);
+      
       expect(currentUrl).toContain('/login');
       console.log('✅ Dashboard access properly protected');
     });
@@ -232,6 +249,9 @@ describe("CRM Application E2E Tests", () => {
       
       // Wait for Angular to be ready
       await browser.waitForAngular();
+      
+      // Wait a bit more for the redirect to complete
+      await browser.sleep(1000);
       
       const currentUrl = await browser.getCurrentUrl();
       expect(currentUrl).toContain('/login');
@@ -243,6 +263,9 @@ describe("CRM Application E2E Tests", () => {
       
       // Wait for Angular to be ready
       await browser.waitForAngular();
+      
+      // Wait a bit more for the redirect to complete
+      await browser.sleep(1000);
       
       const currentUrl = await browser.getCurrentUrl();
       expect(currentUrl).toContain('/login');
