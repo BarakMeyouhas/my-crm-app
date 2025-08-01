@@ -36,15 +36,25 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
+                  "pm.test(\"Response time is less than 2000ms\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});",
+                  "",
                   "pm.test(\"Registration response is valid\", function () {",
                   "    pm.expect(pm.response.code).to.be.oneOf([201, 400]);",
                   "    if (pm.response.code === 201) {",
                   "        const responseJson = pm.response.json();",
                   "        pm.expect(responseJson).to.have.property('message');",
                   "        pm.expect(responseJson.message).to.equal('User registered successfully');",
+                  "        console.log('✅ User registered successfully');",
                   "    } else if (pm.response.code === 400) {",
                   "        const responseJson = pm.response.json();",
                   "        pm.expect(responseJson).to.have.property('message');",
+                  "        console.log('⚠️ User registration failed:', responseJson.message);",
+                  "        // If user already exists, that's okay for testing",
+                  "        if (responseJson.message.includes('already exists')) {",
+                  "            console.log('ℹ️ User already exists, proceeding with login');",
+                  "        }",
                   "    }",
                   "});"
                 ]
@@ -80,6 +90,10 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
+                  "pm.test(\"Response time is less than 2000ms\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});",
+                  "",
                   "pm.test(\"Login response is valid\", function () {",
                   "    pm.expect(pm.response.code).to.be.oneOf([200, 401]);",
                   "    if (pm.response.code === 200) {",
@@ -92,10 +106,29 @@
                   "        // Store the token for subsequent requests",
                   "        if (responseJson.token) {",
                   "            pm.environment.set('authToken', responseJson.token);",
+                  "            console.log('✅ Login successful, token stored');",
                   "        }",
                   "    } else if (pm.response.code === 401) {",
                   "        const responseJson = pm.response.json();",
                   "        pm.expect(responseJson).to.have.property('message');",
+                  "        console.log('❌ Login failed:', responseJson.message);",
+                  "        ",
+                  "        // If login fails, try to create a test user with known credentials",
+                  "        console.log('ℹ️ Attempting to create test user...');",
+                  "        const testUserData = {",
+                  "            company: { companyId: pm.environment.get('companyId') },",
+                  "            user: {",
+                  "                email: 'test-admin@technova.com',",
+                  "                firstName: 'Test',",
+                  "                lastName: 'Admin',",
+                  "                password: 'testpassword123',",
+                  "                role: 'Admin'",
+                  "            }",
+                  "        };",
+                  "        ",
+                  "        // Note: In a real scenario, you might want to create a user first",
+                  "        // For now, we'll just log the issue",
+                  "        console.log('ℹ️ Test user creation would be handled here');",
                   "    }",
                   "});"
                 ]
@@ -127,6 +160,10 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
+                  "pm.test(\"Response time is less than 2000ms\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});",
+                  "",
                   "pm.test(\"Profile response is valid\", function () {",
                   "    pm.expect(pm.response.code).to.be.oneOf([200, 401]);",
                   "    if (pm.response.code === 200) {",
@@ -135,9 +172,19 @@
                   "        pm.expect(responseJson).to.have.property('role');",
                   "        pm.expect(responseJson).to.have.property('firstName');",
                   "        pm.expect(responseJson).to.have.property('lastName');",
+                  "        console.log('✅ Profile retrieved successfully');",
                   "    } else if (pm.response.code === 401) {",
                   "        const responseJson = pm.response.json();",
                   "        pm.expect(responseJson).to.have.property('message');",
+                  "        console.log('❌ Profile access failed:', responseJson.message);",
+                  "        ",
+                  "        // Check if we have a token",
+                  "        const token = pm.environment.get('authToken');",
+                  "        if (!token) {",
+                  "            console.log('ℹ️ No auth token available - login may have failed');",
+                  "        } else {",
+                  "            console.log('ℹ️ Token exists but profile access failed');",
+                  "        }",
                   "    }",
                   "});"
                 ]
@@ -512,22 +559,68 @@
   ],
   "event": [
     {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global pre-request script",
+          "console.log('🚀 Starting request:', pm.request.name);",
+          "console.log('📍 URL:', pm.request.url.toString());",
+          "console.log('🔑 Auth Token:', pm.environment.get('authToken') ? 'Present' : 'Missing');",
+          "",
+          "// Set unique timestamps for test data",
+          "const timestamp = Date.now();",
+          "pm.environment.set('timestamp', timestamp);",
+          "",
+          "// Update dynamic variables with timestamps",
+          "const userEmail = pm.environment.get('userEmail');",
+          "if (userEmail && userEmail.includes('{{$timestamp}}')) {",
+          "    pm.environment.set('userEmail', userEmail.replace('{{$timestamp}}', timestamp));",
+          "}",
+          "",
+          "const clientName = pm.environment.get('clientName');",
+          "if (clientName && clientName.includes('{{$timestamp}}')) {",
+          "    pm.environment.set('clientName', clientName.replace('{{$timestamp}}', timestamp));",
+          "}",
+          "",
+          "const clientEmail = pm.environment.get('clientEmail');",
+          "if (clientEmail && clientEmail.includes('{{$timestamp}}')) {",
+          "    pm.environment.set('clientEmail', clientEmail.replace('{{$timestamp}}', timestamp));",
+          "}",
+          "",
+          "const serviceRequestTitle = pm.environment.get('serviceRequestTitle');",
+          "if (serviceRequestTitle && serviceRequestTitle.includes('{{$timestamp}}')) {",
+          "    pm.environment.set('serviceRequestTitle', serviceRequestTitle.replace('{{$timestamp}}', timestamp));",
+          "}"
+        ]
+      }
+    },
+    {
       "listen": "test",
       "script": {
         "type": "text/javascript",
-                  "exec": [
-            "// Global test script for the collection",
-            "pm.test(\"Response time is less than 2000ms\", function () {",
-            "    pm.expect(pm.response.responseTime).to.be.below(2000);",
-            "});"
-          ]
+        "exec": [
+          "// Global test script for the collection",
+          "pm.test(\"Response time is less than 2000ms\", function () {",
+          "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+          "});",
+          "",
+          "// Log response status",
+          "console.log('📊 Response:', pm.response.status, pm.response.statusText);",
+          "console.log('⏱️ Response time:', pm.response.responseTime + 'ms');",
+          "",
+          "// Check for common errors",
+          "if (pm.response.code >= 400) {",
+          "    console.log('⚠️ Error response:', pm.response.text());",
+          "}"
+        ]
       }
     }
   ],
   "variable": [
     {
       "key": "baseUrl",
-      "value": "https://my-crm-backend-5qvj.onrender.com",
+      "value": "http://localhost:5000",
       "type": "string"
     },
     {

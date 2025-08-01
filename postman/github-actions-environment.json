@@ -4,7 +4,7 @@
   "values": [
     {
       "key": "baseUrl",
-      "value": "https://my-crm-backend-5qvj.onrender.com",
+      "value": "http://localhost:5000",
       "type": "default",
       "enabled": true
     },
@@ -28,25 +28,25 @@
     },
     {
       "key": "userEmail",
-      "value": "admin1@technova.com",
+      "value": "test-admin-{{$timestamp}}@technova.com",
       "type": "default",
       "enabled": true
     },
     {
       "key": "userPassword",
-      "value": "hashedpassword",
+      "value": "testpassword123",
       "type": "secret",
       "enabled": true
     },
     {
       "key": "userFirstName",
-      "value": "Admin",
+      "value": "Test",
       "type": "default",
       "enabled": true
     },
     {
       "key": "userLastName",
-      "value": "User",
+      "value": "Admin",
       "type": "default",
       "enabled": true
     },
@@ -58,13 +58,13 @@
     },
     {
       "key": "clientName",
-      "value": "Test Client",
+      "value": "Test Client {{$timestamp}}",
       "type": "default",
       "enabled": true
     },
     {
       "key": "clientEmail",
-      "value": "client@example.com",
+      "value": "client-{{$timestamp}}@example.com",
       "type": "default",
       "enabled": true
     },
@@ -88,7 +88,7 @@
     },
     {
       "key": "serviceRequestTitle",
-      "value": "Test Service Request",
+      "value": "Test Service Request {{$timestamp}}",
       "type": "default",
       "enabled": true
     },
