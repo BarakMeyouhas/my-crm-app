@@ -3,7 +3,7 @@ name: CD - Simple Deployment
 on:
   workflow_run:
     workflows: ["CI"]
-    branches: [main]
+    branches: [main, feature/cd-pipeline]
     types: [completed]
 
 jobs:
