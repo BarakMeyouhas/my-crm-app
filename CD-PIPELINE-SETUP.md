@@ -8,9 +8,9 @@ This project now includes a comprehensive Continuous Deployment (CD) pipeline th
 
 ### 1. **Simple CD Pipeline** (`.github/workflows/cd.yml`)
 - **Trigger**: When CI pipeline passes on `main` branch
-- **Purpose**: Deploy to production environment
-- **Services**: Backend and Frontend
-- **Features**: Automatic deployment, health checks, success notifications
+- **Purpose**: Deploy backend to Render, frontend auto-deploys via Netlify
+- **Services**: Backend (Render) + Frontend (Netlify auto-deploy)
+- **Features**: Automatic backend deployment, health checks, success notifications
 
 ## 🔧 Setup Requirements
 
@@ -26,9 +26,8 @@ RENDER_TOKEN=your_render_api_token_here
 #### **Production Environment**
 ```
 RENDER_SERVICE_ID_BACKEND=your_backend_service_id
-RENDER_SERVICE_ID_FRONTEND=your_frontend_service_id
 BACKEND_URL=https://your-backend.onrender.com
-FRONTEND_URL=https://your-frontend.onrender.com
+# Note: Frontend auto-deploys via Netlify, no additional secrets needed
 ```
 
 #### **Staging Environment** (Optional - For Future Use)

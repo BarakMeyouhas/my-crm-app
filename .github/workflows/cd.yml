@@ -47,31 +47,11 @@ jobs:
           
           echo "✅ Backend deployment triggered"
 
-      - name: Deploy Frontend
+      - name: Deploy Frontend (Netlify Auto-Deploy)
         run: |
-          echo "🚀 Deploying frontend to Render..."
-          
-          if [ -z "${{ secrets.RENDER_TOKEN }}" ]; then
-            echo "❌ RENDER_TOKEN not found"
-            exit 1
-          fi
-          
-          if [ -z "${{ secrets.RENDER_SERVICE_ID_FRONTEND }}" ]; then
-            echo "❌ RENDER_SERVICE_ID_FRONTEND not found"
-            exit 1
-          fi
-          
-          echo "✅ Triggering frontend deployment..."
-          
-          curl -X POST \
-            -H "Authorization: Bearer ${{ secrets.RENDER_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID_FRONTEND }}/deploys" \
-            -d '{"clearCache": "do_not_clear"}' \
-            -w "\nHTTP Status: %{http_code}\n" \
-            -s
-          
-          echo "✅ Frontend deployment triggered"
+          echo "🚀 Frontend deployment handled by Netlify..."
+          echo "✅ Netlify automatically deploys when code is pushed to GitHub"
+          echo "✅ No manual deployment needed for frontend"
 
       - name: Wait for deployment
         run: |
@@ -83,18 +63,22 @@ jobs:
         run: |
           echo "🏥 Quick health check..."
           
+          echo "🔍 Testing BACKEND_URL secret..."
+          echo "BACKEND_URL value: ${{ secrets.BACKEND_URL }}"
+          
           if [ -n "${{ secrets.BACKEND_URL }}" ]; then
+            echo "✅ BACKEND_URL secret found"
             echo "🔍 Checking backend..."
             curl -f "${{ secrets.BACKEND_URL }}/api/public/companies" && echo "✅ Backend OK" || echo "⚠️ Backend check failed"
+          else
+            echo "❌ BACKEND_URL secret not found or empty"
           fi
           
-          if [ -n "${{ secrets.FRONTEND_URL }}" ]; then
-            echo "🔍 Checking frontend..."
-            curl -f "${{ secrets.FRONTEND_URL }}" && echo "✅ Frontend OK" || echo "⚠️ Frontend check failed"
-          fi
+          echo "🔍 Frontend health check skipped (handled by Netlify)"
+          echo "✅ Frontend auto-deploys via Netlify"
 
       - name: Success notification
         run: |
-          echo "🎉 Deployment completed!"
+          echo "🎉 Backend deployment completed!"
           echo "🔗 Backend: ${{ secrets.BACKEND_URL }}"
-          echo "🔗 Frontend: ${{ secrets.FRONTEND_URL }}" 
+          echo "🔗 Frontend: Auto-deployed via Netlify" 
