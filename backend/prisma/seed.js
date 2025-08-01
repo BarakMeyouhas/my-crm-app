@@ -138,6 +138,7 @@ var __generator =
   };
 Object.defineProperty(exports, "__esModule", { value: true });
 const { PrismaClient } = require("@prisma/client");
+const bcrypt = require("bcrypt");
 const prisma = new PrismaClient();
 
 async function main() {
@@ -205,13 +206,14 @@ async function main() {
     });
 
     // Create an admin user for each company
+    const passwordHash = await bcrypt.hash("password123", 10);
     const adminUser = await prisma.user.create({
       data: {
         companyId: createdCompany.id,
         firstName: "Admin",
         lastName: `User${i + 1}`,
         email: `admin${i + 1}@${company.contactEmail.split("@")[1]}`,
-        passwordHash: "hashedpassword", // Replace with real hash in production
+        passwordHash: passwordHash,
         role: "Admin",
         // isActive and createdAt are defaulted
       },

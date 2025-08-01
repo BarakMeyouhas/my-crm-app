@@ -383,7 +383,7 @@
                   "        pm.expect(responseJson).to.be.an('array');",
                   "    } else if (pm.response.code === 401) {",
                   "        const responseJson = pm.response.json();",
-                  "        pm.expect(responseJson).to.have.property('error');",
+                  "        pm.expect(responseJson).to.have.property('message');",
                   "    }",
                   "});"
                 ]
@@ -527,7 +527,7 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost:5000",
+      "value": "https://my-crm-backend-5qvj.onrender.com",
       "type": "string"
     },
     {
