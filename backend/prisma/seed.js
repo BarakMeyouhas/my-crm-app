@@ -144,6 +144,13 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("🌱 Starting seed...");
 
+  // Clean up existing data
+  console.log("🧹 Cleaning up existing data...");
+  await prisma.serviceRequest.deleteMany({});
+  await prisma.user.deleteMany({});
+  await prisma.company.deleteMany({});
+  console.log("✅ Cleanup complete!");
+
   // Companies to seed
   const companies = [
     {
@@ -227,6 +234,7 @@ async function main() {
         companyId: createdCompany.id,
         createdById: adminUser.id,
         status: "PENDING",
+        urgency: "MEDIUM",
         dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1 week from now
         // createdAt and updatedAt are defaulted
       },
@@ -238,32 +246,107 @@ async function main() {
         title: `IT Support - Email Issues`,
         description: `Employees of ${company.name} are experiencing issues with email delivery.`,
         status: "IN_PROGRESS",
+        urgency: "HIGH",
         dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
       },
       {
         title: `Cloud Migration Consultation`,
         description: `${company.name} is planning to migrate to the cloud and requests consultation.`,
         status: "PENDING",
+        urgency: "LOW",
         dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
       },
       {
         title: `Security Audit Request`,
         description: `${company.name} would like a full audit of their systems for vulnerabilities.`,
         status: "PENDING",
+        urgency: "HIGH",
         dueDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
       },
       {
         title: `Bug Report - CRM not loading`,
         description: `The internal CRM system used by ${company.name} fails to load for some users.`,
         status: "IN_PROGRESS",
+        urgency: "CRITICAL",
         dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
       },
       {
         title: `Feature Request - Dark Mode`,
         description: `${company.name} requested a dark mode feature in the dashboard.`,
         status: "COMPLETED",
+        urgency: "LOW",
         dueDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // already done
       },
+      {
+        title: `Server Down - Production Environment`,
+        description: `Production servers for ${company.name} are completely down. All services affected.`,
+        status: "PENDING",
+        urgency: "CRITICAL",
+        dueDate: new Date(Date.now() + 1 * 60 * 60 * 1000), // 1 hour from now
+      },
+      {
+        title: `Database Performance Issues`,
+        description: `Database queries are running very slowly for ${company.name}, affecting user experience.`,
+        status: "IN_PROGRESS",
+        urgency: "HIGH",
+        dueDate: new Date(Date.now() + 6 * 24 * 60 * 60 * 1000),
+      },
+      {
+        title: `Backup System Failure`,
+        description: `Automated backup system for ${company.name} has stopped working.`,
+        status: "PENDING",
+        urgency: "HIGH",
+        dueDate: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000),
+      },
+      {
+        title: `UI Enhancement Request`,
+        description: `${company.name} would like to improve the user interface of their application.`,
+        status: "PENDING",
+        urgency: "MEDIUM",
+        dueDate: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000),
+      },
+      {
+        title: `SSL Certificate Expiring`,
+        description: `SSL certificate for ${company.name} will expire in 30 days.`,
+        status: "PENDING",
+        urgency: "MEDIUM",
+        dueDate: new Date(Date.now() + 25 * 24 * 60 * 60 * 1000),
+      },
+      {
+        title: `API Integration Support`,
+        description: `${company.name} needs help integrating a third-party API into their system.`,
+        status: "COMPLETED",
+        urgency: "MEDIUM",
+        dueDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+      },
+      {
+        title: `Data Breach Alert`,
+        description: `Suspicious activity detected in ${company.name}'s system. Potential security breach.`,
+        status: "PENDING",
+        urgency: "CRITICAL",
+        dueDate: new Date(Date.now() + 30 * 60 * 1000), // 30 minutes from now
+      },
+      {
+        title: `Mobile App Update`,
+        description: `${company.name} requests an update to their mobile application.`,
+        status: "IN_PROGRESS",
+        urgency: "LOW",
+        dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      },
+      {
+        title: `Network Connectivity Issues`,
+        description: `Multiple users at ${company.name} are experiencing network connectivity problems.`,
+        status: "PENDING",
+        urgency: "HIGH",
+        dueDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
+      },
+      {
+        title: `Documentation Update`,
+        description: `${company.name} needs updated documentation for their software.`,
+        status: "COMPLETED",
+        urgency: "LOW",
+        dueDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      }
     ];
 
     for (const request of moreRequests) {

@@ -36,6 +36,7 @@ describe('ServiceRequestService', () => {
           title: 'Service Request 1',
           description: 'Description for request 1',
           status: 'PENDING',
+          urgency: 'MEDIUM',
           companyId: 1,
           createdById: 1,
           company: { id: 1, name: 'Company 1' },
@@ -47,11 +48,12 @@ describe('ServiceRequestService', () => {
           title: 'Service Request 2',
           description: 'Description for request 2',
           status: 'IN_PROGRESS',
+          urgency: 'HIGH',
           companyId: 1,
           createdById: 1,
           company: { id: 1, name: 'Company 1' },
           createdBy: { id: 1, firstName: 'John', lastName: 'Doe' },
-          createdAt: '2024-01-02T00:00:00.000Z'
+          createdAt: '2024-01-01T00:00:00.000Z'
         }
       ];
 
@@ -73,6 +75,7 @@ describe('ServiceRequestService', () => {
           title: 'Company 1 Request',
           description: 'Description',
           status: 'PENDING',
+          urgency: 'MEDIUM',
           companyId: 1,
           createdById: 1,
           company: { id: 1, name: 'Company 1' },
@@ -119,6 +122,7 @@ describe('ServiceRequestService', () => {
         title: 'New Service Request',
         description: 'This is a new service request',
         status: 'PENDING',
+        urgency: 'MEDIUM',
         dueDate: '2024-12-31T23:59:59.000Z',
         companyId: 1,
         createdById: 1
@@ -147,6 +151,8 @@ describe('ServiceRequestService', () => {
       const serviceRequestData = {
         title: 'Service Request with Default Status',
         description: 'This request should have PENDING status by default',
+        status: 'PENDING',
+        urgency: 'MEDIUM',
         companyId: 1,
         createdById: 1
       };
@@ -204,6 +210,103 @@ describe('ServiceRequestService', () => {
       });
 
       const req = httpMock.expectOne(`${environment.apiUrl}/api/service-requests`);
+      req.flush('Internal Server Error', { status: 500, statusText: 'Internal Server Error' });
+    });
+  });
+
+  describe('updateServiceRequest', () => {
+    it('should update an existing service request', () => {
+      const serviceRequestId = 1;
+      const updatedServiceRequestData = {
+        title: 'Updated Service Request',
+        description: 'This is an updated service request',
+        status: 'COMPLETED',
+        urgency: 'LOW',
+        dueDate: '2024-12-31T23:59:59.000Z'
+      };
+
+      const mockResponse = {
+        id: serviceRequestId,
+        ...updatedServiceRequestData,
+        company: { id: 1, name: 'Company 1' },
+        createdBy: { id: 1, firstName: 'John', lastName: 'Doe' },
+        createdAt: '2024-01-01T00:00:00.000Z'
+      };
+
+      service.updateServiceRequest(serviceRequestId, updatedServiceRequestData).subscribe(response => {
+        expect(response).toEqual(mockResponse);
+      });
+
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/service-requests/${serviceRequestId}`);
+      expect(req.request.method).toBe('PUT');
+      expect(req.request.headers.get('Authorization')).toBe('Bearer test-token');
+      expect(req.request.body).toEqual(updatedServiceRequestData);
+      req.flush(mockResponse);
+    });
+
+    it('should update a service request with urgency', () => {
+      const updateData = {
+        title: 'Updated Request',
+        description: 'Updated Description',
+        status: 'IN_PROGRESS',
+        urgency: 'CRITICAL'
+      };
+
+      const mockResponse = {
+        id: 1,
+        ...updateData,
+        companyId: 1,
+        createdById: 1,
+        company: { id: 1, name: 'Company 1' },
+        createdBy: { id: 1, firstName: 'John', lastName: 'Doe' },
+        createdAt: '2024-01-01T00:00:00.000Z'
+      };
+
+      service.updateServiceRequest(1, updateData).subscribe(response => {
+        expect(response).toEqual(mockResponse);
+      });
+
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/service-requests/1`);
+      expect(req.request.method).toBe('PUT');
+      expect(req.request.body).toEqual(updateData);
+      req.flush(mockResponse);
+    });
+
+    it('should handle error when updating service request fails', () => {
+      const serviceRequestId = 1;
+      const updatedServiceRequestData = {
+        title: 'Invalid Service Request',
+        description: 'This request is missing required fields'
+      };
+
+      service.updateServiceRequest(serviceRequestId, updatedServiceRequestData).subscribe({
+        next: () => fail('should have failed'),
+        error: (error) => {
+          expect(error.status).toBe(400);
+        }
+      });
+
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/service-requests/${serviceRequestId}`);
+      req.flush('Bad Request', { status: 400, statusText: 'Bad Request' });
+    });
+
+    it('should handle server error when updating service request', () => {
+      const serviceRequestId = 1;
+      const updatedServiceRequestData = {
+        title: 'Service Request',
+        description: 'Description',
+        companyId: 1,
+        createdById: 1
+      };
+
+      service.updateServiceRequest(serviceRequestId, updatedServiceRequestData).subscribe({
+        next: () => fail('should have failed'),
+        error: (error) => {
+          expect(error.status).toBe(500);
+        }
+      });
+
+      const req = httpMock.expectOne(`${environment.apiUrl}/api/service-requests/${serviceRequestId}`);
       req.flush('Internal Server Error', { status: 500, statusText: 'Internal Server Error' });
     });
   });

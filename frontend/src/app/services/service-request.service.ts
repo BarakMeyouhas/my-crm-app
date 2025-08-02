@@ -30,4 +30,8 @@ export class ServiceRequestService {
   createServiceRequest(serviceRequest: any): Observable<any> {
     return this.http.post<any>(this.baseUrl, serviceRequest, this.headers);
   }
+
+  updateServiceRequest(id: number, serviceRequest: any): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}/${id}`, serviceRequest, this.headers);
+  }
 } 

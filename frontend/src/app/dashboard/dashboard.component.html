@@ -79,20 +79,33 @@
       <div class="col-md-4">
         <div class="card card-chart">
           <div class="card-header card-header-success">
-            <div class="ct-chart" id="dailySalesChart"></div>
+            <canvas #urgencyChart style="height: 300px;"></canvas>
           </div>
           <div class="card-body">
-            <h4 class="card-title">Daily Sales</h4>
-            <p class="card-category">
-              <span class="text-success"
-                ><i class="fa fa-long-arrow-up"></i> 55%
-              </span>
-              increase in today sales.
-            </p>
+            <h4 class="card-title urgency-title">Service Request Urgency</h4>
+            <p class="card-category urgency-subtitle">Distribution by Urgency Level</p>
+            <div class="chart-legend">
+              <div class="legend-item">
+                <div class="legend-color legend-low"></div>
+                <span>Low</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-color legend-medium"></div>
+                <span>Medium</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-color legend-high"></div>
+                <span>High</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-color legend-critical"></div>
+                <span>Critical</span>
+              </div>
+            </div>
           </div>
           <div class="card-footer">
             <div class="stats">
-              <i class="material-icons">access_time</i> updated 4 minutes ago
+              <i class="material-icons">priority_high</i> Urgency Distribution
             </div>
           </div>
         </div>
@@ -134,15 +147,25 @@
       <div class="col-md-4">
         <div class="card card-chart">
           <div class="card-header card-header-danger">
-            <div class="ct-chart" id="completedTasksChart"></div>
+            <canvas #trendsChart style="height: 200px;"></canvas>
           </div>
           <div class="card-body">
-            <h4 class="card-title">Completed Tasks</h4>
-            <p class="card-category">Last Campaign Performance</p>
+            <h4 class="card-title">Monthly/Quarterly Trends</h4>
+            <p class="card-category">Service Request Volume & Completion Rates</p>
+            <div class="chart-legend">
+              <div class="legend-item">
+                <div class="legend-color legend-total"></div>
+                <span>Total Requests</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-color legend-completed"></div>
+                <span>Completed Requests</span>
+              </div>
+            </div>
           </div>
           <div class="card-footer">
             <div class="stats">
-              <i class="material-icons">access_time</i> campaign sent 2 days ago
+              <i class="material-icons">trending_up</i> Last 6 months trend
             </div>
           </div>
         </div>

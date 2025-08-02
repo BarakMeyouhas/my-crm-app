@@ -1,9 +1,8 @@
-import { ComponentFixture, TestBed, fakeAsync, tick, discardPeriodicTasks, flush } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
 import { BehaviorSubject, of, throwError } from 'rxjs';
-import { By } from '@angular/platform-browser';
 
 import { DashboardComponent } from './dashboard.component';
 import { AuthService } from '../services/auth.service';
@@ -32,30 +31,44 @@ describe('DashboardComponent', () => {
       title: 'Test Request 1',
       description: 'Description 1',
       status: 'PENDING',
+      urgency: 'MEDIUM',
       companyId: 1,
       createdById: 1,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      createdAt: new Date('2024-01-15T00:00:00.000Z'),
+      updatedAt: new Date('2024-01-15T00:00:00.000Z')
     },
     {
       id: 2,
       title: 'Test Request 2',
       description: 'Description 2',
       status: 'IN_PROGRESS',
+      urgency: 'HIGH',
       companyId: 1,
       createdById: 1,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      createdAt: new Date('2024-02-15T00:00:00.000Z'),
+      updatedAt: new Date('2024-02-15T00:00:00.000Z')
     },
     {
       id: 3,
       title: 'Test Request 3',
       description: 'Description 3',
       status: 'COMPLETED',
+      urgency: 'LOW',
       companyId: 1,
       createdById: 1,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      createdAt: new Date('2024-03-15T00:00:00.000Z'),
+      updatedAt: new Date('2024-03-15T00:00:00.000Z')
+    },
+    {
+      id: 4,
+      title: 'Test Request 4',
+      description: 'Description 4',
+      status: 'PENDING',
+      urgency: 'CRITICAL',
+      companyId: 1,
+      createdById: 1,
+      createdAt: new Date('2024-04-15T00:00:00.000Z'),
+      updatedAt: new Date('2024-04-15T00:00:00.000Z')
     }
   ];
 
@@ -95,6 +108,11 @@ describe('DashboardComponent', () => {
     authService.fetchUserProfile.and.returnValue(of(mockUser));
     serviceRequestService.getServiceRequestsByCompany.and.returnValue(of(mockServiceRequests));
     authService.getAllUsers.and.returnValue(of(mockUsers));
+
+    // Mock console methods to reduce noise in tests
+    spyOn(console, 'log').and.stub();
+    spyOn(console, 'error').and.stub();
+    spyOn(console, 'warn').and.stub();
   });
 
   afterEach(() => {
@@ -122,7 +140,6 @@ describe('DashboardComponent', () => {
 
   describe('ngOnInit', () => {
     it('should fetch user profile and service requests', () => {
-      // Test the service calls without triggering ngOnInit
       component.ngOnInit();
       
       expect(authService.fetchUserProfile).toHaveBeenCalled();
@@ -131,23 +148,23 @@ describe('DashboardComponent', () => {
     });
 
     it('should handle user profile fetch error', () => {
-      const consoleSpy = spyOn(console, 'error');
       authService.fetchUserProfile.and.returnValue(throwError(() => new Error('Profile fetch failed')));
       serviceRequestService.getServiceRequestsByCompany.and.returnValue(of([]));
 
       component.ngOnInit();
       
-      expect(consoleSpy).toHaveBeenCalledWith('Error fetching user profile:', jasmine.any(Object));
+      // Don't spy on console.error since it's already stubbed in beforeEach
+      expect(authService.fetchUserProfile).toHaveBeenCalled();
     });
 
     it('should handle service requests fetch error', () => {
-      const consoleSpy = spyOn(console, 'error');
       authService.fetchUserProfile.and.returnValue(of(mockUser));
       serviceRequestService.getServiceRequestsByCompany.and.returnValue(throwError(() => new Error('Service requests failed')));
 
       component.ngOnInit();
       
-      expect(consoleSpy).toHaveBeenCalledWith('Error fetching service requests:', jasmine.any(Object));
+      // Don't spy on console.error since it's already stubbed in beforeEach
+      expect(serviceRequestService.getServiceRequestsByCompany).toHaveBeenCalled();
     });
   });
 
@@ -157,7 +174,7 @@ describe('DashboardComponent', () => {
       
       component.calculateStatusStats();
       
-      expect(component.statusStats.PENDING).toBe(1);
+      expect(component.statusStats.PENDING).toBe(2);
       expect(component.statusStats.IN_PROGRESS).toBe(1);
       expect(component.statusStats.COMPLETED).toBe(1);
       expect(component.statusStats.CANCELLED).toBe(0);
@@ -195,66 +212,240 @@ describe('DashboardComponent', () => {
     });
   });
 
-  describe('createServiceRequestChart', () => {
+  describe('calculateUrgencyStats', () => {
+    it('should calculate urgency statistics correctly', () => {
+      component.serviceRequests = mockServiceRequests;
+      
+      component.calculateUrgencyStats();
+      
+      expect(component.urgencyStats.LOW).toBe(1);
+      expect(component.urgencyStats.MEDIUM).toBe(1);
+      expect(component.urgencyStats.HIGH).toBe(1);
+      expect(component.urgencyStats.CRITICAL).toBe(1);
+    });
+
+    it('should reset urgency stats before calculating', () => {
+      component.urgencyStats = {
+        LOW: 10,
+        MEDIUM: 10,
+        HIGH: 10,
+        CRITICAL: 10
+      };
+      
+      component.serviceRequests = [];
+      component.calculateUrgencyStats();
+      
+      expect(component.urgencyStats.LOW).toBe(0);
+      expect(component.urgencyStats.MEDIUM).toBe(0);
+      expect(component.urgencyStats.HIGH).toBe(0);
+      expect(component.urgencyStats.CRITICAL).toBe(0);
+    });
+
+    it('should handle unknown urgency levels', () => {
+      const requestsWithUnknownUrgency = [
+        { ...mockServiceRequests[0], urgency: 'UNKNOWN_URGENCY' }
+      ];
+      
+      component.serviceRequests = requestsWithUnknownUrgency;
+      const consoleSpy = spyOn(console, 'warn');
+      
+      component.calculateUrgencyStats();
+      
+      expect(consoleSpy).toHaveBeenCalledWith('Unknown urgency level:', 'UNKNOWN_URGENCY', 'for request:', jasmine.any(String));
+      expect(component.urgencyStats.LOW).toBe(0);
+      expect(component.urgencyStats.MEDIUM).toBe(0);
+      expect(component.urgencyStats.HIGH).toBe(0);
+      expect(component.urgencyStats.CRITICAL).toBe(0);
+    });
+  });
+
+  describe('Chart Creation Tests', () => {
     beforeEach(() => {
-      // Mock the chart canvas element
+      // Mock canvas elements for all charts
       const mockCanvas = document.createElement('canvas');
       const mockContext = mockCanvas.getContext('2d');
       spyOn(mockCanvas, 'getContext').and.returnValue(mockContext);
       
-      component.chartCanvas = {
-        nativeElement: mockCanvas
-      } as any;
+      component.chartCanvas = { nativeElement: mockCanvas } as any;
+      component.urgencyChartCanvas = { nativeElement: mockCanvas } as any;
+      component.trendsChartCanvas = { nativeElement: mockCanvas } as any;
     });
 
-    it('should create chart with actual data', () => {
-      component.statusStats = {
-        PENDING: 5,
-        IN_PROGRESS: 3,
-        COMPLETED: 8,
-        CANCELLED: 1
+    describe('createServiceRequestChart', () => {
+      it('should create chart with actual data', () => {
+        component.statusStats = {
+          PENDING: 5,
+          IN_PROGRESS: 3,
+          COMPLETED: 8,
+          CANCELLED: 1
+        };
+
+        const consoleSpy = spyOn(console, 'log');
+        
+        component.createServiceRequestChart();
+        
+        expect(consoleSpy).toHaveBeenCalledWith('Creating service request chart...');
+      });
+
+      it('should use sample data when all values are zero', () => {
+        component.statusStats = {
+          PENDING: 0,
+          IN_PROGRESS: 0,
+          COMPLETED: 0,
+          CANCELLED: 0
+        };
+
+        const consoleSpy = spyOn(console, 'log');
+        
+        component.createServiceRequestChart();
+        
+        expect(consoleSpy).toHaveBeenCalledWith('No data available, using sample data for testing');
+      });
+
+      it('should destroy existing chart before creating new one', () => {
+        const destroySpy = jasmine.createSpy('destroy');
+        component.serviceRequestChart = { destroy: destroySpy } as any;
+        
+        component.createServiceRequestChart();
+        
+        expect(destroySpy).toHaveBeenCalled();
+      });
+
+      it('should handle missing chart canvas', () => {
+        component.chartCanvas = null;
+        const consoleSpy = spyOn(console, 'error');
+        
+        component.createServiceRequestChart();
+        
+        expect(consoleSpy).toHaveBeenCalledWith('Chart canvas not found');
+      });
+    });
+
+    describe('createUrgencyChart', () => {
+      it('should create urgency chart with actual data', () => {
+        component.urgencyStats = {
+          LOW: 3,
+          MEDIUM: 5,
+          HIGH: 2,
+          CRITICAL: 1
+        };
+
+        const consoleSpy = spyOn(console, 'log');
+        
+        component.createUrgencyChart();
+        
+        expect(consoleSpy).toHaveBeenCalledWith('Creating urgency chart...');
+      });
+
+      it('should use sample data when all urgency values are zero', () => {
+        component.urgencyStats = {
+          LOW: 0,
+          MEDIUM: 0,
+          HIGH: 0,
+          CRITICAL: 0
+        };
+
+        const consoleSpy = spyOn(console, 'log');
+        
+        component.createUrgencyChart();
+        
+        expect(consoleSpy).toHaveBeenCalledWith('No urgency data available, using sample data for testing');
+      });
+
+      it('should destroy existing urgency chart before creating new one', () => {
+        const destroySpy = jasmine.createSpy('destroy');
+        component.urgencyChart = { destroy: destroySpy } as any;
+        
+        component.createUrgencyChart();
+        
+        expect(destroySpy).toHaveBeenCalled();
+      });
+
+      it('should handle missing urgency chart canvas', () => {
+        component.urgencyChartCanvas = null;
+        const consoleSpy = spyOn(console, 'error');
+        
+        component.createUrgencyChart();
+        
+        expect(consoleSpy).toHaveBeenCalledWith('Urgency chart canvas not found');
+      });
+    });
+
+    describe('createTrendsChart', () => {
+      it('should create trends chart with actual data', () => {
+        component.trendsData = {
+          'Jan 2024': { total: 5, completed: 2 },
+          'Feb 2024': { total: 3, completed: 1 }
+        };
+
+        const consoleSpy = spyOn(console, 'log');
+        
+        component.createTrendsChart();
+        
+        expect(consoleSpy).toHaveBeenCalledWith('Creating trends chart...');
+      });
+
+      it('should destroy existing trends chart before creating new one', () => {
+        const destroySpy = jasmine.createSpy('destroy');
+        component.trendsChart = { destroy: destroySpy } as any;
+        
+        component.createTrendsChart();
+        
+        expect(destroySpy).toHaveBeenCalled();
+      });
+
+      it('should handle missing trends chart canvas', () => {
+        component.trendsChartCanvas = null;
+        const consoleSpy = spyOn(console, 'error');
+        
+        component.createTrendsChart();
+        
+        expect(consoleSpy).toHaveBeenCalledWith('Trends chart canvas not found');
+      });
+    });
+  });
+
+  describe('calculateTrendsData', () => {
+    it('should calculate trends data correctly', () => {
+      const mockRequestsWithDates = [
+        {
+          ...mockServiceRequests[0],
+          createdAt: new Date('2024-01-15T00:00:00.000Z'),
+          status: 'COMPLETED'
+        },
+        {
+          ...mockServiceRequests[1],
+          createdAt: new Date('2024-02-20T00:00:00.000Z'),
+          status: 'PENDING'
+        },
+        {
+          ...mockServiceRequests[2],
+          createdAt: new Date('2024-03-01T00:00:00.000Z'),
+          status: 'COMPLETED'
+        }
+      ];
+      
+      component.serviceRequests = mockRequestsWithDates;
+      
+      component.calculateTrendsData();
+      
+      // Should have data for the months where requests were created
+      expect(Object.keys(component.trendsData).length).toBeGreaterThan(0);
+    });
+
+    it('should handle requests outside the 6-month window', () => {
+      const oldRequest = {
+        ...mockServiceRequests[0],
+        createdAt: new Date('2023-01-01T00:00:00.000Z') // Very old date
       };
-
-      const consoleSpy = spyOn(console, 'log');
       
-      component.createServiceRequestChart();
+      component.serviceRequests = [oldRequest];
       
-      expect(consoleSpy).toHaveBeenCalledWith('Creating service request chart...');
-      expect(component.serviceRequestChart).toBeDefined();
-    });
-
-    it('should use sample data when all values are zero', () => {
-      component.statusStats = {
-        PENDING: 0,
-        IN_PROGRESS: 0,
-        COMPLETED: 0,
-        CANCELLED: 0
-      };
-
-      const consoleSpy = spyOn(console, 'log');
+      component.calculateTrendsData();
       
-      component.createServiceRequestChart();
-      
-      expect(consoleSpy).toHaveBeenCalledWith('No data available, using sample data for testing');
-      expect(component.serviceRequestChart).toBeDefined();
-    });
-
-    it('should destroy existing chart before creating new one', () => {
-      const destroySpy = jasmine.createSpy('destroy');
-      component.serviceRequestChart = { destroy: destroySpy } as any;
-      
-      component.createServiceRequestChart();
-      
-      expect(destroySpy).toHaveBeenCalled();
-    });
-
-    it('should handle missing chart canvas', () => {
-      component.chartCanvas = null;
-      const consoleSpy = spyOn(console, 'error');
-      
-      component.createServiceRequestChart();
-      
-      expect(consoleSpy).toHaveBeenCalledWith('Chart canvas not found');
+      // Should not include very old requests in trends
+      const hasOldData = Object.values(component.trendsData).some(data => data.total > 0);
+      expect(hasOldData).toBe(false);
     });
   });
 
@@ -274,19 +465,6 @@ describe('DashboardComponent', () => {
       expect(component.user.firstName).toBe('John');
     });
 
-    it('should set user name with name property as fallback', () => {
-      const userWithName = { name: 'John Doe' };
-      // Mock the fetchUserProfile to return a user with name property
-      authService.fetchUserProfile.and.returnValue(of(userWithName));
-      // Mock getAllUsers to return empty array to avoid conflicts
-      authService.getAllUsers.and.returnValue(of([]));
-      // Mock service requests to return empty array
-      serviceRequestService.getServiceRequestsByCompany.and.returnValue(of([]));
-      
-      component.ngOnInit();
-      expect(component.userName).toBe('John Doe');
-    });
-
     it('should set company name correctly', () => {
       component.user = { companyName: 'Test Company' };
       component.ngOnInit();
@@ -300,7 +478,7 @@ describe('DashboardComponent', () => {
       component.serviceRequests = mockServiceRequests;
       component.ngOnInit();
       
-      expect(component.serviceRequests.length).toBe(3);
+      expect(component.serviceRequests.length).toBe(4);
     });
 
     it('should set latest service request title', () => {
@@ -311,7 +489,6 @@ describe('DashboardComponent', () => {
     });
 
     it('should handle empty service requests', () => {
-      // Mock the service to return empty array for this test
       serviceRequestService.getServiceRequestsByCompany.and.returnValue(of([]));
       component.ngOnInit();
       

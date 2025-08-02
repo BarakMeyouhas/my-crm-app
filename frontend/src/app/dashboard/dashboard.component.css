@@ -63,8 +63,37 @@
 .legend-completed { background-color: #4caf50; }
 .legend-cancelled { background-color: #f44336; }
 
+/* Trends chart legend colors */
+.legend-total { background-color: #2196f3; }
+.legend-completed { background-color: #4caf50; }
+
+/* Urgency chart legend colors */
+.legend-low { background-color: #4caf50; }
+.legend-medium { background-color: #ff9800; }
+.legend-high { background-color: #2196f3; }
+.legend-critical { background-color: #f44336; }
+
+/* Urgency chart text styling */
+.urgency-title {
+  font-size: 1.1rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.urgency-subtitle {
+  font-size: 0.85rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
 /* Override any card header background that might interfere */
 .card-header-warning {
+  background: transparent !important;
+}
+
+.card-header-danger {
+  background: transparent !important;
+}
+
+.card-header-success {
   background: transparent !important;
 }
 
