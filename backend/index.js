@@ -9,7 +9,20 @@ const app = express();
 app.use(cors()); // <--- Move this here, before any routes!
 app.use(express.json());
 
+// Force Prisma client regeneration on startup
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+console.log("🔄 Prisma client initialized with latest schema");
+
+// Force Prisma client regeneration for free tier
+const { execSync } = require('child_process');
+try {
+  console.log("🔧 Regenerating Prisma client...");
+  execSync('npx prisma generate', { stdio: 'inherit' });
+  console.log("✅ Prisma client regenerated successfully");
+} catch (error) {
+  console.log("⚠️ Prisma client regeneration failed:", error.message);
+}
 const PORT = process.env.PORT || 5000;
 
 // Public routes (no authentication required)
@@ -158,6 +171,29 @@ app.get("/api/profile", authenticateToken, async (req, res) => {
 // Admin-only routes
 const authRoutes = require("./routes/auth");
 app.use("/api/admin", authenticateToken, authorizeRoles('Admin'), authRoutes);
+
+// Health check endpoint to verify Prisma client
+app.get("/api/health", async (req, res) => {
+  try {
+    // Test if Prisma client supports urgency field
+    const testQuery = await prisma.serviceRequest.findFirst({
+      select: { id: true, urgency: true }
+    });
+    res.json({ 
+      status: "healthy", 
+      prismaClient: "working",
+      urgencySupport: "available",
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      status: "unhealthy", 
+      error: error.message,
+      prismaClient: "error",
+      urgencySupport: "unknown"
+    });
+  }
+});
 
 // Start server only if not in test environment
 let server;

@@ -17,7 +17,11 @@
     "test:local:runner": "node run-tests-local.js",
     "test:ci": "jest --config=jest.ci.config.js",
     "dev": "nodemon index.js",
-    "start": "node index.js"
+    "start": "node index.js",
+    "build": "npx prisma generate && npx prisma db push",
+    "postinstall": "npx prisma generate",
+    "prisma:generate": "npx prisma generate",
+    "prisma:push": "npx prisma db push"
   },
   "keywords": [],
   "author": "",

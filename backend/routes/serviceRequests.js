@@ -29,7 +29,9 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     console.log("🔍 Received service request data:", req.body);
-    console.log("🔄 Backend version: 1.0.1 - Enhanced logging enabled");
+    console.log("🔄 Backend version: 1.0.3 - Force complete redeploy");
+    console.log("🔧 Prisma client regeneration required");
+    console.log("📊 Database schema should include urgency field");
     
     const {
       title,
