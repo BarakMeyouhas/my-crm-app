@@ -29,6 +29,7 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     console.log("🔍 Received service request data:", req.body);
+    console.log("🔄 Backend version: 1.0.1 - Enhanced logging enabled");
     
     const {
       title,
