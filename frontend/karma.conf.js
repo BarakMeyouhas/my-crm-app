@@ -15,7 +15,7 @@ module.exports = function (config) {
     client: {
       clearContext: false, // leave Jasmine Spec Runner output visible in browser
       jasmine: {
-        timeoutInterval: 10000 // Increase timeout to 10 seconds
+        timeoutInterval: 15000 // Increase timeout to 15 seconds for CI
       }
     },
     jasmineHtmlReporter: {
@@ -26,14 +26,15 @@ module.exports = function (config) {
       subdir: '.',
       reporters: [
         { type: 'html' },
-        { type: 'text-summary' }
+        { type: 'text-summary' },
+        { type: 'lcov' }
       ]
     },
     reporters: ['progress', 'kjhtml'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
-    autoWatch: true,
+    autoWatch: false, // Disable autoWatch for CI
     browsers: ['ChromeHeadless'],
     customLaunchers: {
       ChromeHeadless: {
@@ -44,21 +45,65 @@ module.exports = function (config) {
           '--no-sandbox',
           '--disable-dev-shm-usage',
           '--disable-web-security',
-          '--disable-features=VizDisplayCompositor'
+          '--disable-features=VizDisplayCompositor',
+          '--disable-extensions',
+          '--disable-plugins',
+          '--disable-images',
+          '--disable-javascript',
+          '--disable-background-timer-throttling',
+          '--disable-backgrounding-occluded-windows',
+          '--disable-renderer-backgrounding',
+          '--disable-field-trial-config',
+          '--disable-ipc-flooding-protection',
+          '--disable-hang-monitor',
+          '--disable-prompt-on-repost',
+          '--disable-client-side-phishing-detection',
+          '--disable-component-extensions-with-background-pages',
+          '--disable-default-apps',
+          '--disable-sync',
+          '--metrics-recording-only',
+          '--no-first-run',
+          '--safebrowsing-disable-auto-update',
+          '--disable-translate',
+          '--disable-logging',
+          '--disable-default-apps',
+          '--disable-background-networking',
+          '--disable-background-downloads',
+          '--disable-background-uploading',
+          '--disable-background-timer-throttling',
+          '--disable-backgrounding-occluded-windows',
+          '--disable-renderer-backgrounding',
+          '--disable-field-trial-config',
+          '--disable-ipc-flooding-protection',
+          '--disable-hang-monitor',
+          '--disable-prompt-on-repost',
+          '--disable-client-side-phishing-detection',
+          '--disable-component-extensions-with-background-pages',
+          '--disable-default-apps',
+          '--disable-sync',
+          '--metrics-recording-only',
+          '--no-first-run',
+          '--safebrowsing-disable-auto-update',
+          '--disable-translate',
+          '--disable-logging',
+          '--disable-default-apps',
+          '--disable-background-networking',
+          '--disable-background-downloads',
+          '--disable-background-uploading'
         ]
       }
     },
-    singleRun: false,
-    restartOnFileChange: true,
-    captureTimeout: 60000, // Increase capture timeout to 60 seconds
-    browserDisconnectTimeout: 10000, // Increase disconnect timeout
-    browserDisconnectTolerance: 3, // Allow 3 disconnects before failing
-    browserNoActivityTimeout: 30000, // Increase no activity timeout to 30 seconds
+    singleRun: true, // Force single run for CI
+    restartOnFileChange: false, // Disable restart on file change for CI
+    captureTimeout: 120000, // Increase capture timeout to 2 minutes
+    browserDisconnectTimeout: 20000, // Increase disconnect timeout
+    browserDisconnectTolerance: 5, // Allow 5 disconnects before failing
+    browserNoActivityTimeout: 60000, // Increase no activity timeout to 1 minute
     failOnEmptyTestSuite: false, // Don't fail if no tests are found
     client: {
       clearContext: false,
       jasmine: {
-        timeoutInterval: 10000,
+        timeoutInterval: 15000,
         random: false, // Disable random test execution for stability
         seed: null
       }

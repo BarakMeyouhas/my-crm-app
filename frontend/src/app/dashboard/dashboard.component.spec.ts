@@ -136,6 +136,12 @@ describe('DashboardComponent', () => {
       COMPLETED: 0,
       CANCELLED: 0
     });
+    expect(component.urgencyStats).toEqual({
+      LOW: 0,
+      MEDIUM: 0,
+      HIGH: 0,
+      CRITICAL: 0
+    });
   });
 
   describe('ngOnInit', () => {
