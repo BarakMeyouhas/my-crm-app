@@ -28,6 +28,8 @@ router.get("/", async (req, res) => {
 // Create a new service request
 router.post("/", async (req, res) => {
   try {
+    console.log("🔍 Received service request data:", req.body);
+    
     const {
       title,
       description,
@@ -38,12 +40,33 @@ router.post("/", async (req, res) => {
       createdById
     } = req.body;
 
+    console.log("📦 Extracted data:", {
+      title,
+      description,
+      status,
+      urgency,
+      dueDate,
+      companyId,
+      createdById
+    });
+
     // Validate required fields
     if (!title || !description || !companyId || !createdById) {
+      console.log("❌ Missing required fields");
       return res.status(400).json({ 
         message: "Missing required fields: title, description, companyId, and createdById are required" 
       });
     }
+
+    console.log("📤 Creating service request with data:", {
+      title,
+      description,
+      status,
+      urgency,
+      dueDate: dueDate ? new Date(dueDate) : null,
+      companyId: Number(companyId),
+      createdById: Number(createdById)
+    });
 
     const serviceRequest = await prisma.serviceRequest.create({
       data: {
@@ -61,10 +84,16 @@ router.post("/", async (req, res) => {
       }
     });
 
+    console.log("✅ Service request created successfully:", serviceRequest);
     res.status(201).json(serviceRequest);
   } catch (err) {
-    console.error("Error creating service request:", err);
-    res.status(500).json({ message: "Server error" });
+    console.error("❌ Error creating service request:", err);
+    console.error("❌ Error details:", err.message);
+    console.error("❌ Error stack:", err.stack);
+    res.status(500).json({ 
+      message: "Server error", 
+      details: err.message 
+    });
   }
 });
 

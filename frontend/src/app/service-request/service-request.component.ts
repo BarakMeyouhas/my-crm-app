@@ -105,16 +105,26 @@ export class ServiceRequestComponent implements OnInit {
     const formData = this.serviceRequestForm.value;
     console.log('📦 Form data to submit:', formData);
     
+    // Map priority to urgency for backend compatibility
+    const priorityToUrgencyMap: { [key: string]: string } = {
+      'Low': 'LOW',
+      'Medium': 'MEDIUM', 
+      'High': 'HIGH',
+      'Critical': 'CRITICAL'
+    };
+
     const serviceRequest = {
       title: formData.title,
       description: formData.description,
       status: 'PENDING',
+      urgency: priorityToUrgencyMap[formData.priority] || 'MEDIUM',
       dueDate: formData.deadline,
       companyId: this.userCompany.companyId,
       createdById: this.userCompany.id
     };
     
     console.log('📤 Service request payload:', serviceRequest);
+    console.log('🔍 Priority mapping:', formData.priority, '→', priorityToUrgencyMap[formData.priority]);
 
     this.serviceRequestService.createServiceRequest(serviceRequest).subscribe({
       next: (response) => {
@@ -126,7 +136,9 @@ export class ServiceRequestComponent implements OnInit {
       },
       error: (err) => {
         console.error('❌ Error creating service request:', err);
-        this.message = 'Error creating service request. Please try again.';
+        console.error('❌ Error details:', err.error);
+        console.error('❌ Error status:', err.status);
+        this.message = `Error creating service request: ${err.error?.message || err.message || 'Unknown error'}`;
         this.isLoading = false;
       }
     });
