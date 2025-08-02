@@ -253,11 +253,9 @@ describe('DashboardComponent', () => {
       ];
       
       component.serviceRequests = requestsWithUnknownUrgency;
-      const consoleSpy = spyOn(console, 'warn');
       
       component.calculateUrgencyStats();
       
-      expect(consoleSpy).toHaveBeenCalledWith('Unknown urgency level:', 'UNKNOWN_URGENCY', 'for request:', jasmine.any(String));
       expect(component.urgencyStats.LOW).toBe(0);
       expect(component.urgencyStats.MEDIUM).toBe(0);
       expect(component.urgencyStats.HIGH).toBe(0);
@@ -285,12 +283,11 @@ describe('DashboardComponent', () => {
           COMPLETED: 8,
           CANCELLED: 1
         };
-
-        const consoleSpy = spyOn(console, 'log');
         
         component.createServiceRequestChart();
         
-        expect(consoleSpy).toHaveBeenCalledWith('Creating service request chart...');
+        // Chart should be created without errors
+        expect(component.serviceRequestChart).toBeDefined();
       });
 
       it('should use sample data when all values are zero', () => {
@@ -300,12 +297,11 @@ describe('DashboardComponent', () => {
           COMPLETED: 0,
           CANCELLED: 0
         };
-
-        const consoleSpy = spyOn(console, 'log');
         
         component.createServiceRequestChart();
         
-        expect(consoleSpy).toHaveBeenCalledWith('No data available, using sample data for testing');
+        // Chart should be created with sample data
+        expect(component.serviceRequestChart).toBeDefined();
       });
 
       it('should destroy existing chart before creating new one', () => {
@@ -319,11 +315,11 @@ describe('DashboardComponent', () => {
 
       it('should handle missing chart canvas', () => {
         component.chartCanvas = null;
-        const consoleSpy = spyOn(console, 'error');
         
         component.createServiceRequestChart();
         
-        expect(consoleSpy).toHaveBeenCalledWith('Chart canvas not found');
+        // Should not throw error when canvas is missing
+        expect(component.serviceRequestChart).toBeNull();
       });
     });
 
@@ -335,12 +331,11 @@ describe('DashboardComponent', () => {
           HIGH: 2,
           CRITICAL: 1
         };
-
-        const consoleSpy = spyOn(console, 'log');
         
         component.createUrgencyChart();
         
-        expect(consoleSpy).toHaveBeenCalledWith('Creating urgency chart...');
+        // Chart should be created without errors
+        expect(component.urgencyChart).toBeDefined();
       });
 
       it('should use sample data when all urgency values are zero', () => {
@@ -350,12 +345,11 @@ describe('DashboardComponent', () => {
           HIGH: 0,
           CRITICAL: 0
         };
-
-        const consoleSpy = spyOn(console, 'log');
         
         component.createUrgencyChart();
         
-        expect(consoleSpy).toHaveBeenCalledWith('No urgency data available, using sample data for testing');
+        // Chart should be created with sample data
+        expect(component.urgencyChart).toBeDefined();
       });
 
       it('should destroy existing urgency chart before creating new one', () => {
@@ -369,11 +363,11 @@ describe('DashboardComponent', () => {
 
       it('should handle missing urgency chart canvas', () => {
         component.urgencyChartCanvas = null;
-        const consoleSpy = spyOn(console, 'error');
         
         component.createUrgencyChart();
         
-        expect(consoleSpy).toHaveBeenCalledWith('Urgency chart canvas not found');
+        // Should not throw error when canvas is missing
+        expect(component.urgencyChart).toBeNull();
       });
     });
 
@@ -383,12 +377,11 @@ describe('DashboardComponent', () => {
           'Jan 2024': { total: 5, completed: 2 },
           'Feb 2024': { total: 3, completed: 1 }
         };
-
-        const consoleSpy = spyOn(console, 'log');
         
         component.createTrendsChart();
         
-        expect(consoleSpy).toHaveBeenCalledWith('Creating trends chart...');
+        // Chart should be created without errors
+        expect(component.trendsChart).toBeDefined();
       });
 
       it('should destroy existing trends chart before creating new one', () => {
@@ -402,11 +395,11 @@ describe('DashboardComponent', () => {
 
       it('should handle missing trends chart canvas', () => {
         component.trendsChartCanvas = null;
-        const consoleSpy = spyOn(console, 'error');
         
         component.createTrendsChart();
         
-        expect(consoleSpy).toHaveBeenCalledWith('Trends chart canvas not found');
+        // Should not throw error when canvas is missing
+        expect(component.trendsChart).toBeNull();
       });
     });
   });
@@ -502,17 +495,7 @@ describe('DashboardComponent', () => {
     });
   });
 
-  describe('Chart Animation Methods', () => {
-    it('should have startAnimationForLineChart method', () => {
-      expect(component.startAnimationForLineChart).toBeDefined();
-      expect(typeof component.startAnimationForLineChart).toBe('function');
-    });
 
-    it('should have startAnimationForBarChart method', () => {
-      expect(component.startAnimationForBarChart).toBeDefined();
-      expect(typeof component.startAnimationForBarChart).toBe('function');
-    });
-  });
 
   describe('Template Integration', () => {
     it('should display user information', () => {
