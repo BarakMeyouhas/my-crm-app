@@ -9,11 +9,6 @@ const app = express();
 app.use(cors()); // <--- Move this here, before any routes!
 app.use(express.json());
 
-// Force Prisma client regeneration on startup
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
-console.log("🔄 Prisma client initialized with latest schema");
-
 // Force Prisma client regeneration for free tier
 const { execSync } = require('child_process');
 try {
