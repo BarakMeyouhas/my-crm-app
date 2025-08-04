@@ -1,5 +1,6 @@
 {
     "cSpell.words": [
         "Servix"
-    ]
+    ],
+    "angular.enable-strict-mode-prompt": false
 }

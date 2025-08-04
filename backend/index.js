@@ -2,7 +2,9 @@ const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const { PrismaClient } = require("@prisma/client");
-require("dotenv").config();
+require("dotenv").config({
+  path: `.env.${process.env.NODE_ENV || "development"}`,
+});
 const { authenticateToken, authorizeRoles } = require("./middleware/auth"); // ✅ שים לב לשורה הזו
 
 const app = express();
@@ -14,10 +16,10 @@ const prisma = new PrismaClient();
 console.log("🔄 Prisma client initialized with latest schema");
 
 // Force Prisma client regeneration for free tier
-const { execSync } = require('child_process');
+const { execSync } = require("child_process");
 try {
   console.log("🔧 Regenerating Prisma client...");
-  execSync('npx prisma generate', { stdio: 'inherit' });
+  execSync("npx prisma generate", { stdio: "inherit" });
   console.log("✅ Prisma client regenerated successfully");
 } catch (error) {
   console.log("⚠️ Prisma client regeneration failed:", error.message);
@@ -40,11 +42,11 @@ app.post("/api/auth/register", async (req, res) => {
 
     // Find company by ID
     const companyId = parseInt(company.companyId, 10);
-    console.log('Register: companyId from request:', companyId);
+    console.log("Register: companyId from request:", companyId);
     const existingCompany = await prisma.company.findUnique({
       where: { id: companyId },
     });
-    console.log('Register: existingCompany found:', existingCompany);
+    console.log("Register: existingCompany found:", existingCompany);
 
     if (!existingCompany) {
       return res.status(400).json({ message: "Company not found", companyId });
@@ -85,7 +87,7 @@ app.post("/api/auth/login", async (req, res) => {
     const user = await prisma.user.findUnique({
       where: { email },
     });
-    console.log('Login: user found:', user);
+    console.log("Login: user found:", user);
 
     if (!user) {
       return res.status(401).json({ message: "Invalid email or password" });
@@ -106,7 +108,7 @@ app.post("/api/auth/login", async (req, res) => {
 
     res.json({ message: "Login successful", token, role: user.role });
   } catch (err) {
-    console.error('Login error:', err);
+    console.error("Login error:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -115,7 +117,7 @@ app.post("/api/auth/login", async (req, res) => {
 app.get("/api/public/companies", async (req, res) => {
   try {
     const companies = await prisma.company.findMany({
-      select: { id: true, name: true }
+      select: { id: true, name: true },
     });
     res.json(companies);
   } catch (err) {
@@ -148,8 +150,8 @@ app.get("/api/profile", authenticateToken, async (req, res) => {
       lastName: true,
       companyId: true, // <-- add this
       company: {
-        select: { name: true }
-      }
+        select: { name: true },
+      },
     },
   });
   if (user) {
@@ -160,7 +162,7 @@ app.get("/api/profile", authenticateToken, async (req, res) => {
       firstName: user.firstName,
       lastName: user.lastName,
       companyId: user.companyId, // <-- add this
-      companyName: user.company.name
+      companyName: user.company.name,
     });
   } else {
     res.status(404).json({ error: "User not found" });
@@ -169,34 +171,50 @@ app.get("/api/profile", authenticateToken, async (req, res) => {
 
 // Admin-only routes
 const authRoutes = require("./routes/auth");
-app.use("/api/admin", authenticateToken, authorizeRoles('Admin'), authRoutes);
+app.use("/api/admin", authenticateToken, authorizeRoles("Admin"), authRoutes);
 
 // Health check endpoint to verify Prisma client
 app.get("/api/health", async (req, res) => {
   try {
     // Test if Prisma client supports urgency field
     const testQuery = await prisma.serviceRequest.findFirst({
-      select: { id: true, urgency: true }
+      select: { id: true, urgency: true },
     });
-    res.json({ 
-      status: "healthy", 
+    res.json({
+      status: "healthy",
       prismaClient: "working",
       urgencySupport: "available",
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    res.status(500).json({ 
-      status: "unhealthy", 
+    res.status(500).json({
+      status: "unhealthy",
       error: error.message,
       prismaClient: "error",
-      urgencySupport: "unknown"
+      urgencySupport: "unknown",
     });
   }
 });
 
+app.get("/ip", async (req, res) => {
+  const https = require("https");
+  https
+    .get("https://api.ipify.org?format=json", (apiRes) => {
+      let data = "";
+      apiRes.on("data", (chunk) => (data += chunk));
+      apiRes.on("end", () => {
+        const ip = JSON.parse(data).ip;
+        res.send(`Public IP: ${ip}`);
+      });
+    })
+    .on("error", (err) => {
+      res.status(500).send("Error getting IP");
+    });
+});
+
 // Start server only if not in test environment
 let server;
-if (process.env.NODE_ENV !== 'test') {
+if (process.env.NODE_ENV !== "test") {
   server = app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });

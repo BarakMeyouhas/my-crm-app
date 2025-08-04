@@ -21,7 +21,8 @@
     "build": "npx prisma generate && npx prisma db push",
     "postinstall": "npx prisma generate",
     "prisma:generate": "npx prisma generate",
-    "prisma:push": "npx prisma db push"
+    "prisma:push": "npx prisma db push",
+    "ip-check": "node ip-check.js"
   },
   "keywords": [],
   "author": "",
