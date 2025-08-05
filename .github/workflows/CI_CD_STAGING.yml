@@ -543,7 +543,7 @@ jobs:
 
       - name: Build frontend
         working-directory: frontend
-        run: npm install && ng build
+        run: npm install && npm run build --prod
 
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v2.0
