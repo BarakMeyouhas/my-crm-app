@@ -536,7 +536,5 @@ jobs:
       - name: Run tests
         run: echo "✅ CI Passed on staging!"
 
-  deploy-cd:
-    name: Trigger CD_STAGING
-    needs: test
-    uses: ./.github/workflows/CD_STAGING.yml
+      - name: Trigger CD_STAGING
+        uses: ./.github/workflows/CD_STAGING.yml
