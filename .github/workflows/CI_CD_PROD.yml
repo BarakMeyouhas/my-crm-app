@@ -559,10 +559,10 @@ jobs:
       - name: Deploy Backend
         env:
           RENDER_TOKEN: ${{ secrets.RENDER_TOKEN }}
-          RENDER_SERVICE_ID_BACKEND_STG: ${{ secrets.RENDER_SERVICE_ID_BACKEND }}
+          RENDER_SERVICE_ID_BACKEND: ${{ secrets.RENDER_SERVICE_ID_BACKEND }}
         run: |
           echo "🚀 Deploying backend to Render..."
-          echo "RENDER_SERVICE_ID_BACKEND_STG: ${{ secrets.RENDER_SERVICE_ID_BACKEND }}"
+          echo "RENDER_SERVICE_ID_BACKEND: ${{ secrets.RENDER_SERVICE_ID_BACKEND }}"
           echo "RENDER_TOKEN: $RENDER_TOKEN"
 
           if [ -z "$RENDER_TOKEN" ]; then
@@ -616,6 +616,6 @@ jobs:
       - name: Success notification
         run: |
           echo "🎉 Backend deployment completed!"
-          echo "🔗 Backend: ${{ secrets.BACKEND_URL_STG }}"
+          echo "🔗 Backend: ${{ secrets.BACKEND_URL }}"
           echo "🔗 Frontend: Auto-deployed via Netlify"
 
