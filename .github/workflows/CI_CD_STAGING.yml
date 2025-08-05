@@ -562,6 +562,7 @@ jobs:
           RENDER_SERVICE_ID_BACKEND: ${{ secrets.RENDER_SERVICE_ID_BACKEND_STG }}
         run: |
           echo "🚀 Deploying backend to Render..."
+          echo "RENDER_SERVICE_ID_BACKEND_STG: $RENDER_SERVICE_ID_BACKEND_STG"
 
           if [ -z "$RENDER_TOKEN" ]; then
             echo "❌ RENDER_TOKEN not found"
