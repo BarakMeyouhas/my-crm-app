@@ -1,9 +1,9 @@
-name: CD
+name: CD - Staging
 
 on:
   workflow_run:
     workflows: ["CI"]
-    branches: [main]
+    branches: [staging]
     types: [completed]
 
 jobs:
