@@ -547,7 +547,7 @@ jobs:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN_STG }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID_STG }}
         with:
-            publish-dir: .frontend/dist
+            publish-dir: frontend/dist
             production-branch: staging
             deploy-message: "Deploy from GitHub Actions"
             
