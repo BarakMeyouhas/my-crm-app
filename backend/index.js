@@ -14,6 +14,7 @@ app.use(express.json());
 // Initialize Prisma client
 const prisma = new PrismaClient();
 console.log("🔄 Prisma client initialized with latest schema");
+console.log("🔄 Environment:", process.env.NODE_ENV || "development");
 
 // Force Prisma client regeneration for free tier
 const { execSync } = require("child_process");
