@@ -1,4 +1,4 @@
-name: CI - Staging
+name: CI_STAGING
 
 on:
   push:
