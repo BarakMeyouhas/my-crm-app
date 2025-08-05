@@ -1,4 +1,4 @@
-name: CI_STAGING
+name: CI_CD_STAGING
 
 on:
   push:
@@ -541,6 +541,17 @@ jobs:
         with:
           node-version: "18"
 
+      - name: Deploy to Netlify
+        uses: nwtgck/actions-netlify@v2.0
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN_STG }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID_STG }}
+        with:
+            publish-dir: ./dist
+            production-branch: staging
+            deploy-message: "Deploy from GitHub Actions"
+            
+
       - name: Deploy Backend
         env:
           RENDER_TOKEN: ${{ secrets.RENDER_TOKEN }}
@@ -563,18 +574,14 @@ jobs:
           curl -X POST \
             -H "Authorization: Bearer $RENDER_TOKEN" \
             -H "Content-Type: application/json" \
-            "https://api.render.com/v1/services/$RENDER_SERVICE_ID_BACKEND/deploys" \
+            "https://api.render.com/v1/services/$RENDER_SERVICE_ID_BACKEND_STG/deploys" \
             -d '{"clearCache": "do_not_clear"}' \
             -w "\nHTTP Status: %{http_code}\n" \
             -s
 
           echo "✅ Backend deployment triggered"
 
-      - name: Deploy Frontend (Netlify Auto-Deploy)
-        run: |
-          echo "🚀 Frontend deployment handled by Netlify..."
-          echo "✅ Netlify automatically deploys when code is pushed to GitHub"
-          echo "✅ No manual deployment needed for frontend"
+      
 
       - name: Wait for deployment
         run: |
