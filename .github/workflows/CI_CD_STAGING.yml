@@ -559,10 +559,10 @@ jobs:
       - name: Deploy Backend
         env:
           RENDER_TOKEN: ${{ secrets.RENDER_TOKEN }}
-          RENDER_SERVICE_ID_BACKEND: ${{ secrets.RENDER_SERVICE_ID_BACKEND_STG }}
+          RENDER_SERVICE_ID_BACKEND_STG: ${{ secrets.RENDER_SERVICE_ID_BACKEND_STG }}
         run: |
           echo "🚀 Deploying backend to Render..."
-          echo "RENDER_SERVICE_ID_BACKEND_STG: $RENDER_SERVICE_ID_BACKEND_STG"
+          echo "RENDER_SERVICE_ID_BACKEND_STG: ${{ secrets.RENDER_SERVICE_ID_BACKEND_STG }}"
           echo "RENDER_TOKEN: $RENDER_TOKEN"
 
           if [ -z "$RENDER_TOKEN" ]; then
