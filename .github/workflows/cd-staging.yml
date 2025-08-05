@@ -2,7 +2,7 @@ name: CD - Staging
 
 on:
   workflow_run:
-    workflows: ["CI"]
+    workflows: ["CI - Staging"]
     branches: [staging]
     types: [completed]
 
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploy to Render
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -24,22 +24,22 @@ jobs:
       - name: Deploy Backend
         env:
           RENDER_TOKEN: ${{ secrets.RENDER_TOKEN }}
-          RENDER_SERVICE_ID_BACKEND: ${{ secrets.RENDER_SERVICE_ID_BACKEND }}
+          RENDER_SERVICE_ID_BACKEND: ${{ secrets.RENDER_SERVICE_ID_BACKEND_STG }}
         run: |
           echo "🚀 Deploying backend to Render..."
-          
+
           if [ -z "$RENDER_TOKEN" ]; then
             echo "❌ RENDER_TOKEN not found"
             exit 1
           fi
-          
+
           if [ -z "$RENDER_SERVICE_ID_BACKEND" ]; then
             echo "❌ RENDER_SERVICE_ID_BACKEND not found"
             exit 1
           fi
-          
+
           echo "✅ Triggering backend deployment..."
-          
+
           curl -X POST \
             -H "Authorization: Bearer $RENDER_TOKEN" \
             -H "Content-Type: application/json" \
@@ -47,7 +47,7 @@ jobs:
             -d '{"clearCache": "do_not_clear"}' \
             -w "\nHTTP Status: %{http_code}\n" \
             -s
-          
+
           echo "✅ Backend deployment triggered"
 
       - name: Deploy Frontend (Netlify Auto-Deploy)
@@ -65,23 +65,23 @@ jobs:
       - name: Simple health check
         run: |
           echo "🏥 Quick health check..."
-          
+
           echo "🔍 Testing BACKEND_URL secret..."
-          echo "BACKEND_URL value: ${{ secrets.BACKEND_URL }}"
-          
-          if [ -n "${{ secrets.BACKEND_URL }}" ]; then
+          echo "BACKEND_URL value: ${{ secrets.BACKEND_URL_STG }}"
+
+          if [ -n "${{ secrets.BACKEND_URL_STG }}" ]; then
             echo "✅ BACKEND_URL secret found"
             echo "🔍 Checking backend..."
-            curl -f "${{ secrets.BACKEND_URL }}/api/public/companies" && echo "✅ Backend OK" || echo "⚠️ Backend check failed"
+            curl -f "${{ secrets.BACKEND_URL_STG }}/api/public/companies" && echo "✅ Backend OK" || echo "⚠️ Backend check failed"
           else
             echo "❌ BACKEND_URL secret not found or empty"
           fi
-          
+
           echo "🔍 Frontend health check skipped (handled by Netlify)"
           echo "✅ Frontend auto-deploys via Netlify"
 
       - name: Success notification
         run: |
           echo "🎉 Backend deployment completed!"
-          echo "🔗 Backend: ${{ secrets.BACKEND_URL }}"
-          echo "🔗 Frontend: Auto-deployed via Netlify" 
+          echo "🔗 Backend: ${{ secrets.BACKEND_URL_STG }}"
+          echo "🔗 Frontend: Auto-deployed via Netlify"
