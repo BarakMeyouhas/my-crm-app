@@ -7,12 +7,14 @@ import { BehaviorSubject, of, throwError } from 'rxjs';
 import { DashboardComponent } from './dashboard.component';
 import { AuthService } from '../services/auth.service';
 import { ServiceRequestService } from '../services/service-request.service';
+import { UserService } from '../services/user.service';
 
 describe('DashboardComponent', () => {
   let component: DashboardComponent;
   let fixture: ComponentFixture<DashboardComponent>;
   let authService: jasmine.SpyObj<AuthService>;
   let serviceRequestService: jasmine.SpyObj<ServiceRequestService>;
+  let userService: jasmine.SpyObj<UserService>;
   let httpMock: HttpTestingController;
 
   const mockUser = {
@@ -72,14 +74,34 @@ describe('DashboardComponent', () => {
     }
   ];
 
-  const mockUsers = [
-    { id: 1, email: 'user1@example.com', role: 'Admin' },
-    { id: 2, email: 'user2@example.com', role: 'Employee' }
+  const mockCompanyEmployees = [
+    { 
+      id: 1, 
+      firstName: 'John', 
+      lastName: 'Doe', 
+      email: 'john@example.com', 
+      role: 'Admin',
+      isActive: true,
+      createdAt: new Date().toISOString(),
+      company: { id: 1, name: 'Test Company' },
+      _count: { createdServiceRequests: 5 }
+    },
+    { 
+      id: 2, 
+      firstName: 'Jane', 
+      lastName: 'Smith', 
+      email: 'jane@example.com', 
+      role: 'Employee',
+      isActive: true,
+      createdAt: new Date().toISOString(),
+      company: { id: 1, name: 'Test Company' },
+      _count: { createdServiceRequests: 3 }
+    }
   ];
 
   beforeEach(async () => {
     const authServiceSpy = jasmine.createSpyObj('AuthService', [
-      'fetchUserProfile', 'getAllUsers'
+      'fetchUserProfile'
     ], {
       currentUser: new BehaviorSubject(mockUser)
     });
@@ -88,12 +110,17 @@ describe('DashboardComponent', () => {
       'getServiceRequestsByCompany'
     ]);
 
+    const userServiceSpy = jasmine.createSpyObj('UserService', [
+      'getCompanyUsers'
+    ]);
+
     await TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, MatTooltipModule, MatButtonModule],
       declarations: [ DashboardComponent ],
       providers: [
         { provide: AuthService, useValue: authServiceSpy },
-        { provide: ServiceRequestService, useValue: serviceRequestServiceSpy }
+        { provide: ServiceRequestService, useValue: serviceRequestServiceSpy },
+        { provide: UserService, useValue: userServiceSpy }
       ]
     })
     .compileComponents();
@@ -102,12 +129,13 @@ describe('DashboardComponent', () => {
     component = fixture.componentInstance;
     authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
     serviceRequestService = TestBed.inject(ServiceRequestService) as jasmine.SpyObj<ServiceRequestService>;
+    userService = TestBed.inject(UserService) as jasmine.SpyObj<UserService>;
     httpMock = TestBed.inject(HttpTestingController);
     
     // Set up default return values
     authService.fetchUserProfile.and.returnValue(of(mockUser));
     serviceRequestService.getServiceRequestsByCompany.and.returnValue(of(mockServiceRequests));
-    authService.getAllUsers.and.returnValue(of(mockUsers));
+    userService.getCompanyUsers.and.returnValue(of(mockCompanyEmployees));
 
     // Mock console methods to reduce noise in tests
     spyOn(console, 'log').and.stub();
@@ -150,12 +178,13 @@ describe('DashboardComponent', () => {
       
       expect(authService.fetchUserProfile).toHaveBeenCalled();
       expect(serviceRequestService.getServiceRequestsByCompany).toHaveBeenCalledWith(mockUser.companyId);
-      expect(authService.getAllUsers).toHaveBeenCalled();
+      expect(userService.getCompanyUsers).toHaveBeenCalledWith(mockUser.companyId);
     });
 
     it('should handle user profile fetch error', () => {
       authService.fetchUserProfile.and.returnValue(throwError(() => new Error('Profile fetch failed')));
       serviceRequestService.getServiceRequestsByCompany.and.returnValue(of([]));
+      userService.getCompanyUsers.and.returnValue(of([]));
 
       component.ngOnInit();
       
@@ -166,11 +195,22 @@ describe('DashboardComponent', () => {
     it('should handle service requests fetch error', () => {
       authService.fetchUserProfile.and.returnValue(of(mockUser));
       serviceRequestService.getServiceRequestsByCompany.and.returnValue(throwError(() => new Error('Service requests failed')));
+      userService.getCompanyUsers.and.returnValue(of([]));
 
       component.ngOnInit();
       
       // Don't spy on console.error since it's already stubbed in beforeEach
       expect(serviceRequestService.getServiceRequestsByCompany).toHaveBeenCalled();
+    });
+
+    it('should handle company employees fetch error', () => {
+      authService.fetchUserProfile.and.returnValue(of(mockUser));
+      serviceRequestService.getServiceRequestsByCompany.and.returnValue(of([]));
+      userService.getCompanyUsers.and.returnValue(throwError(() => new Error('Company employees fetch failed')));
+
+      component.ngOnInit();
+      
+      expect(userService.getCompanyUsers).toHaveBeenCalledWith(mockUser.companyId);
     });
   });
 
@@ -469,6 +509,31 @@ describe('DashboardComponent', () => {
       component.ngOnInit();
       
       expect(component.user.companyName).toBe('Test Company');
+    });
+  });
+
+  describe('Company Employees', () => {
+    it('should fetch and store company employees', () => {
+      component.ngOnInit();
+      
+      expect(userService.getCompanyUsers).toHaveBeenCalledWith(mockUser.companyId);
+      expect(component.companyEmployees).toEqual(mockCompanyEmployees);
+    });
+
+    it('should handle empty company employees', () => {
+      userService.getCompanyUsers.and.returnValue(of([]));
+      component.ngOnInit();
+      
+      expect(component.companyEmployees).toEqual([]);
+    });
+
+    it('should not fetch employees if no company ID', () => {
+      const userWithoutCompany = { ...mockUser, companyId: null };
+      (authService.currentUser as BehaviorSubject<any>).next(userWithoutCompany);
+      
+      component.ngOnInit();
+      
+      expect(userService.getCompanyUsers).not.toHaveBeenCalled();
     });
   });
 
