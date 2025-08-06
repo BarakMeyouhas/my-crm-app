@@ -1,0 +1,15 @@
+{
+  "snapshot": "POPULATED_FROM_SETTINGS",
+  "install": "npm install && cd frontend && npm install && cd ../backend && npm install",
+  "start": "echo 'Environment ready'",
+  "terminals": [
+    {
+      "name": "Angular Dev Server",
+      "command": "cd frontend && npm start"
+    },
+    {
+      "name": "Backend Server",
+      "command": "cd backend && npm start"
+    }
+  ]
+}
