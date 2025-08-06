@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from "@angular/core";
 import { AuthService } from "app/services/auth.service";
 import { ServiceRequestService } from "../services/service-request.service";
+import { UserService, User } from "../services/user.service";
 import { Chart, ChartConfiguration, ChartData, registerables } from 'chart.js';
 
 // Register all Chart.js components
@@ -39,68 +40,104 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     CRITICAL: 0
   };
 
-  constructor(private authService: AuthService, private serviceRequestService: ServiceRequestService) {}
+  constructor(
+    private authService: AuthService, 
+    private serviceRequestService: ServiceRequestService,
+    private userService: UserService
+  ) {}
 
   users: any[] = [];
+  companyEmployees: User[] = [];
 
 
 
   ngOnInit() {
+    console.log('🔄 Dashboard component initializing...');
+    
     // Fetch user profile first to ensure user data is available
     this.authService.fetchUserProfile().subscribe({
       next: () => {
+        console.log('✅ User profile fetched successfully');
         this.authService.currentUser.subscribe((user) => {
           if (user) {
+            console.log('👤 Current user data:', user);
             this.user = user;
             this.userName = user.firstName ? user.firstName + (user.lastName ? ' ' + user.lastName : '') : (user.name || '');
             this.companyName = user.companyName || '';
+            console.log('🏢 Company ID:', user.companyId);
+            console.log('👤 User name:', this.userName);
+            console.log('🏢 Company name:', this.companyName);
+            
+            // Fetch company employees
+            if (user.companyId) {
+              console.log('🔍 Fetching employees for company ID:', user.companyId);
+              this.userService.getCompanyUsers(user.companyId).subscribe({
+                next: (employees) => {
+                  console.log('✅ Company employees fetched:', employees);
+                  console.log('📊 Number of employees:', employees.length);
+                  this.companyEmployees = employees;
+                },
+                error: (err) => {
+                  console.error('❌ Failed to load company employees:', err);
+                }
+              });
+            } else {
+              console.warn('⚠️ No company ID found for user');
+            }
+            
             // Fetch service requests for this company only
             this.serviceRequestService.getServiceRequestsByCompany(user.companyId).subscribe({
               next: (requests) => {
+                console.log('✅ Service requests fetched:', requests.length);
                 this.serviceRequests = requests;
                 this.totalServiceRequests = requests.length;
                 this.latestServiceRequestTitle = requests.length > 0 ? requests[0].title : '';
                 
-                // Debug: Log the first service request to check urgency field
-                if (requests.length > 0) {
-                  console.log('First service request sample:', requests[0]);
-                  console.log('Urgency field present:', 'urgency' in requests[0]);
-                  console.log('Urgency value:', requests[0].urgency);
-                }
-                
                 this.calculateStatusStats();
-                this.calculateTrendsData(); // Call calculateTrendsData here
-                this.calculateUrgencyStats(); // Call calculateUrgencyStats here
-                // Create chart after view is initialized
+                this.calculateTrendsData();
+                this.calculateUrgencyStats();
+                
                 setTimeout(() => {
                   this.createServiceRequestChart();
-                  this.createTrendsChart(); // Call createTrendsChart here
-                  this.createUrgencyChart(); // Call createUrgencyChart here
+                  this.createTrendsChart();
+                  this.createUrgencyChart();
                 }, 100);
               },
               error: (err) => {
-                console.error('Error fetching service requests:', err);
+                console.error('❌ Error fetching service requests:', err);
               }
             });
+          } else {
+            console.warn('⚠️ No user data available');
           }
         });
       },
       error: (err) => {
-        console.error('Error fetching user profile:', err);
+        console.error('❌ Error fetching user profile:', err);
       }
     });
     
-    this.authService.getAllUsers().subscribe({
-    next: (data) => {
-      this.users = data;
-      console.log('Users:', this.users); // חשוב לבדוק מה חוזר
-    },
-    error: (err) => console.error('Failed to load users', err),
-  });
+    // Remove the duplicate getAllUsers call as it's not needed
   }
 
   ngAfterViewInit() {
     // Chart will be created after data is loaded
+    console.log('🎯 Dashboard view initialized');
+    console.log('👥 Company employees in template:', this.companyEmployees);
+    
+    // Debug: Check if we need to manually fetch employees
+    if (this.companyEmployees.length === 0 && this.user?.companyId) {
+      console.log('🔍 Manually fetching employees for debugging...');
+      this.userService.getCompanyUsers(this.user.companyId).subscribe({
+        next: (employees) => {
+          console.log('✅ Manual fetch - Company employees:', employees);
+          this.companyEmployees = employees;
+        },
+        error: (err) => {
+          console.error('❌ Manual fetch - Failed to load company employees:', err);
+        }
+      });
+    }
   }
 
   calculateStatusStats() {
@@ -118,8 +155,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         this.statusStats[request.status]++;
       }
     });
-    
-    console.log('Status Stats:', this.statusStats);
   }
 
   calculateTrendsData() {
@@ -148,8 +183,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         }
       }
     });
-    
-    console.log('Trends Data:', this.trendsData);
   }
 
   calculateUrgencyStats() {
@@ -161,26 +194,15 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       CRITICAL: 0
     };
 
-    console.log('Service Requests for urgency calculation:', this.serviceRequests);
-
     // Count requests by urgency
     this.serviceRequests.forEach(request => {
-      console.log('Processing request:', request.title, 'Urgency:', request.urgency);
       if (this.urgencyStats.hasOwnProperty(request.urgency)) {
         this.urgencyStats[request.urgency]++;
-      } else {
-        console.warn('Unknown urgency level:', request.urgency, 'for request:', request.title);
       }
     });
-    
-    console.log('Urgency Stats:', this.urgencyStats);
   }
 
   createServiceRequestChart() {
-    console.log('Creating service request chart...');
-    console.log('Chart canvas:', this.chartCanvas);
-    console.log('Chart canvas native element:', this.chartCanvas?.nativeElement);
-    
     if (this.chartCanvas && this.chartCanvas.nativeElement) {
       // Destroy existing chart if it exists
       if (this.serviceRequestChart) {
@@ -188,7 +210,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       }
 
       const ctx = this.chartCanvas.nativeElement.getContext('2d');
-      console.log('Canvas context:', ctx);
       
       // Use actual data or fallback to sample data for testing
       let data = [
@@ -200,7 +221,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       
       // If all values are 0, use sample data for testing
       if (data.every(val => val === 0)) {
-        console.log('No data available, using sample data for testing');
         data = [5, 3, 8, 1]; // Sample data: Pending, In Progress, Completed, Cancelled
       }
       
@@ -226,8 +246,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
           }
         ]
       };
-
-      console.log('Chart data:', chartData);
 
       const config: ChartConfiguration<'bar'> = {
         type: 'bar',
@@ -260,12 +278,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
       try {
         this.serviceRequestChart = new Chart(ctx, config);
-        console.log('Chart created successfully:', this.serviceRequestChart);
       } catch (error) {
-        console.error('Error creating chart:', error);
+        console.error('Error creating service request chart:', error);
       }
-    } else {
-      console.error('Chart canvas not found');
     }
   }
 
@@ -561,3 +576,4 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }
   }
 }
+

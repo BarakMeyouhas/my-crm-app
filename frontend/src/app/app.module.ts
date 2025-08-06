@@ -20,6 +20,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select'; // אם יש Select
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { UserService } from './services/user.service';
 
 @NgModule({
   imports: [
@@ -46,7 +47,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     ClientListComponent,
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    UserService
   ],
   bootstrap: [AppComponent]
 })

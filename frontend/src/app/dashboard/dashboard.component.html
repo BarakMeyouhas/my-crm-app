@@ -611,40 +611,37 @@
         <div class="card">
           <div class="card-header card-header-warning">
             <h4 class="card-title">Employees Stats</h4>
-            <p class="card-category">New employees on 15th September, 2016</p>
+            <p class="card-category">Company employees and their details</p>
           </div>
-          <div class="card-body table-responsive">
+          <div class="card-body table-responsive employee-stats-table">
             <table class="table table-hover">
               <thead class="text-warning">
                 <th>ID</th>
                 <th>Name</th>
-                <th>Salary</th>
-                <th>Country</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Service Requests</th>
+                <th>Status</th>
               </thead>
               <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>Dakota Rice</td>
-                  <td>$36,738</td>
-                  <td>Niger</td>
+                <tr *ngFor="let employee of companyEmployees">
+                  <td>{{ employee.id }}</td>
+                  <td>{{ employee.firstName }} {{ employee.lastName }}</td>
+                  <td>{{ employee.email }}</td>
+                  <td>
+                    <span class="badge badge-info">{{ employee.role }}</span>
+                  </td>
+                  <td>
+                    <span class="badge badge-primary">{{ employee._count?.createdServiceRequests || 0 }}</span>
+                  </td>
+                  <td>
+                    <span class="badge" [ngClass]="employee.isActive ? 'badge-success' : 'badge-danger'">
+                      {{ employee.isActive ? 'Active' : 'Inactive' }}
+                    </span>
+                  </td>
                 </tr>
-                <tr>
-                  <td>2</td>
-                  <td>Minerva Hooper</td>
-                  <td>$23,789</td>
-                  <td>Curaçao</td>
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td>Sage Rodriguez</td>
-                  <td>$56,142</td>
-                  <td>Netherlands</td>
-                </tr>
-                <tr>
-                  <td>4</td>
-                  <td>Philip Chaney</td>
-                  <td>$38,735</td>
-                  <td>Korea, South</td>
+                <tr *ngIf="companyEmployees.length === 0">
+                  <td colspan="6" class="text-center">No employees found</td>
                 </tr>
               </tbody>
             </table>
