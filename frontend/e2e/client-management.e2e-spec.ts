@@ -13,7 +13,7 @@ describe('Client Management E2E Tests', () => {
     // Check if backend is accessible
     try {
       const response = await new Promise<{ statusCode: number }>((resolve, reject) => {
-        http.get(`${backendUrl}/api/clients`, (res) => {
+        http.get(`${baseUrl}/api/clients`, (res) => {
           resolve({ statusCode: res.statusCode || 0 });
         }).on('error', reject);
       });

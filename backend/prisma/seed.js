@@ -226,6 +226,119 @@ async function main() {
       },
     });
 
+    // Create additional users with different roles for each company
+    const additionalUsers = [
+      {
+        firstName: "Sarah",
+        lastName: "Johnson",
+        email: `sarah.johnson${i + 1}@${company.contactEmail.split("@")[1]}`,
+        role: "Manager",
+      },
+      {
+        firstName: "Michael",
+        lastName: "Chen",
+        email: `michael.chen${i + 1}@${company.contactEmail.split("@")[1]}`,
+        role: "Manager",
+      },
+      {
+        firstName: "Emily",
+        lastName: "Davis",
+        email: `emily.davis${i + 1}@${company.contactEmail.split("@")[1]}`,
+        role: "Employee",
+      },
+      {
+        firstName: "David",
+        lastName: "Wilson",
+        email: `david.wilson${i + 1}@${company.contactEmail.split("@")[1]}`,
+        role: "Employee",
+      },
+      {
+        firstName: "Lisa",
+        lastName: "Brown",
+        email: `lisa.brown${i + 1}@${company.contactEmail.split("@")[1]}`,
+        role: "Employee",
+      },
+      {
+        firstName: "James",
+        lastName: "Taylor",
+        email: `james.taylor${i + 1}@${company.contactEmail.split("@")[1]}`,
+        role: "Manager",
+      },
+      {
+        firstName: "Amanda",
+        lastName: "Garcia",
+        email: `amanda.garcia${i + 1}@${company.contactEmail.split("@")[1]}`,
+        role: "Employee",
+      },
+      {
+        firstName: "Robert",
+        lastName: "Martinez",
+        email: `robert.martinez${i + 1}@${company.contactEmail.split("@")[1]}`,
+        role: "Employee",
+      },
+      {
+        firstName: "Jennifer",
+        lastName: "Anderson",
+        email: `jennifer.anderson${i + 1}@${company.contactEmail.split("@")[1]}`,
+        role: "Manager",
+      },
+      {
+        firstName: "Christopher",
+        lastName: "Thompson",
+        email: `christopher.thompson${i + 1}@${company.contactEmail.split("@")[1]}`,
+        role: "Employee",
+      },
+      {
+        firstName: "Jessica",
+        lastName: "White",
+        email: `jessica.white${i + 1}@${company.contactEmail.split("@")[1]}`,
+        role: "Employee",
+      },
+      {
+        firstName: "Daniel",
+        lastName: "Harris",
+        email: `daniel.harris${i + 1}@${company.contactEmail.split("@")[1]}`,
+        role: "Employee",
+      },
+      {
+        firstName: "Nicole",
+        lastName: "Clark",
+        email: `nicole.clark${i + 1}@${company.contactEmail.split("@")[1]}`,
+        role: "Manager",
+      },
+      {
+        firstName: "Kevin",
+        lastName: "Lewis",
+        email: `kevin.lewis${i + 1}@${company.contactEmail.split("@")[1]}`,
+        role: "Employee",
+      },
+      {
+        firstName: "Rachel",
+        lastName: "Robinson",
+        email: `rachel.robinson${i + 1}@${company.contactEmail.split("@")[1]}`,
+        role: "Employee",
+      }
+    ];
+
+    // Create all additional users for this company
+    const createdUsers = [adminUser];
+    for (const userData of additionalUsers) {
+      const user = await prisma.user.create({
+        data: {
+          companyId: createdCompany.id,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          email: userData.email,
+          passwordHash: passwordHash, // Same password for all users
+          role: userData.role,
+          // isActive and createdAt are defaulted
+        },
+      });
+      createdUsers.push(user);
+    }
+
+    console.log(`✅ Created ${createdUsers.length} users for ${company.name}`);
+
     // Create a ServiceRequest for this company, created by the admin user
     await prisma.serviceRequest.create({
       data: {
@@ -349,12 +462,17 @@ async function main() {
       }
     ];
 
-    for (const request of moreRequests) {
+    // Create service requests with different users as creators
+    for (let j = 0; j < moreRequests.length; j++) {
+      const request = moreRequests[j];
+      // Distribute requests among different users (cycling through the created users)
+      const creatorUser = createdUsers[j % createdUsers.length];
+      
       await prisma.serviceRequest.create({
         data: {
           ...request,
           companyId: createdCompany.id,
-          createdById: adminUser.id,
+          createdById: creatorUser.id,
         },
       });
     }

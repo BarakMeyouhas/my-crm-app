@@ -2,9 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const { PrismaClient } = require("@prisma/client");
-require("dotenv").config({
-  path: `.env.${process.env.NODE_ENV || "development"}`,
-});
+require("dotenv").config();
 const { authenticateToken, authorizeRoles } = require("./middleware/auth"); // ✅ שים לב לשורה הזו
 
 const app = express();
@@ -14,7 +12,6 @@ app.use(express.json());
 // Initialize Prisma client
 const prisma = new PrismaClient();
 console.log("🔄 Prisma client initialized with latest schema");
-console.log("🔄 Environment:", process.env.NODE_ENV || "development");
 
 // Force Prisma client regeneration for free tier
 const { execSync } = require("child_process");
@@ -43,11 +40,9 @@ app.post("/api/auth/register", async (req, res) => {
 
     // Find company by ID
     const companyId = parseInt(company.companyId, 10);
-    console.log("Register: companyId from request:", companyId);
     const existingCompany = await prisma.company.findUnique({
       where: { id: companyId },
     });
-    console.log("Register: existingCompany found:", existingCompany);
 
     if (!existingCompany) {
       return res.status(400).json({ message: "Company not found", companyId });
@@ -174,6 +169,9 @@ app.get("/api/profile", authenticateToken, async (req, res) => {
 const authRoutes = require("./routes/auth");
 app.use("/api/admin", authenticateToken, authorizeRoles("Admin"), authRoutes);
 
+// Auth routes for general use (without admin restriction)
+app.use("/api/auth", authenticateToken, authRoutes);
+
 // Health check endpoint to verify Prisma client
 app.get("/api/health", async (req, res) => {
   try {
@@ -195,22 +193,6 @@ app.get("/api/health", async (req, res) => {
       urgencySupport: "unknown",
     });
   }
-});
-
-app.get("/ip", async (req, res) => {
-  const https = require("https");
-  https
-    .get("https://api.ipify.org?format=json", (apiRes) => {
-      let data = "";
-      apiRes.on("data", (chunk) => (data += chunk));
-      apiRes.on("end", () => {
-        const ip = JSON.parse(data).ip;
-        res.send(`Public IP: ${ip}`);
-      });
-    })
-    .on("error", (err) => {
-      res.status(500).send("Error getting IP");
-    });
 });
 
 // Start server only if not in test environment
