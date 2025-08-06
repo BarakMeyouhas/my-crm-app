@@ -88,6 +88,7 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
+              "extractCss": true,
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
@@ -107,6 +108,9 @@
             },
             "development": {
               "browserTarget": "material-dashboard-angular:build:development"
+            },
+            "staging": {
+              "browserTarget": "frontend:build:staging"
             }
           },
           "defaultConfiguration": "development"
