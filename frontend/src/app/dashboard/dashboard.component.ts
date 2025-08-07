@@ -39,6 +39,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     HIGH: 0,
     CRITICAL: 0
   };
+  
+  // New properties for enhanced greeting
+  greeting: string = '';
+  currentDate: string = '';
+  pendingRequestsCount: number = 0;
 
   constructor(
     private authService: AuthService, 
@@ -53,6 +58,15 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     console.log('🔄 Dashboard component initializing...');
+    
+    // Set greeting and date
+    this.updateGreeting();
+    this.updateCurrentDate();
+    
+    // Update greeting every minute
+    setInterval(() => {
+      this.updateGreeting();
+    }, 60000);
     
     // Fetch user profile first to ensure user data is available
     this.authService.fetchUserProfile().subscribe({
@@ -92,6 +106,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
                 this.serviceRequests = requests;
                 this.totalServiceRequests = requests.length;
                 this.latestServiceRequestTitle = requests.length > 0 ? requests[0].title : '';
+                
+                // Calculate pending requests count for the greeting
+                this.pendingRequestsCount = requests.filter(req => req.status === 'PENDING').length;
                 
                 this.calculateStatusStats();
                 this.calculateTrendsData();
@@ -574,6 +591,30 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     } else {
       console.error('Urgency chart canvas not found');
     }
+  }
+  
+  // New method to get time-based greeting
+  updateGreeting() {
+    const hour = new Date().getHours();
+    
+    if (hour < 12) {
+      this.greeting = 'Good morning';
+    } else if (hour < 17) {
+      this.greeting = 'Good afternoon';
+    } else {
+      this.greeting = 'Good evening';
+    }
+  }
+  
+  // New method to format current date
+  updateCurrentDate() {
+    const options: Intl.DateTimeFormatOptions = { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    };
+    this.currentDate = new Date().toLocaleDateString('en-US', options);
   }
 }
 
