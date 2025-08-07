@@ -52,6 +52,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
 
   ngOnInit() {
+    console.log('Dashboard loaded');
     console.log('🔄 Dashboard component initializing...');
     
     // Fetch user profile first to ensure user data is available
