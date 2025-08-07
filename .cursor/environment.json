@@ -1,5 +1,5 @@
 {
-  "snapshot": "POPULATED_FROM_SETTINGS",
+  "snapshot": "snapshot-20250807-922f3d08-9838-4b5e-afdf-428507d26100",
   "install": "npm install && cd frontend && npm install && cd ../backend && npm install",
   "start": "echo 'Environment ready'",
   "terminals": [
