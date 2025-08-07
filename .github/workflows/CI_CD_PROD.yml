@@ -3,8 +3,7 @@ name: CI_CD_PROD
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
+  
 
 jobs:
   backend:
