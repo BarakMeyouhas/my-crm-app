@@ -20,6 +20,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   user: any;
   userName: string = '';
   companyName: string = '';
+  timeBasedGreeting: string = '';
+  currentDate: string = '';
   serviceRequests: any[] = [];
   totalServiceRequests: number = 0;
   latestServiceRequestTitle: string = '';
@@ -53,6 +55,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     console.log('🔄 Dashboard component initializing...');
+    
+    // Set time-based greeting and date
+    this.setTimeBasedGreeting();
     
     // Fetch user profile first to ensure user data is available
     this.authService.fetchUserProfile().subscribe({
@@ -138,6 +143,30 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         }
       });
     }
+  }
+
+  setTimeBasedGreeting() {
+    const now = new Date();
+    const hour = now.getHours();
+    
+    if (hour < 12) {
+      this.timeBasedGreeting = 'Good morning';
+    } else if (hour < 18) {
+      this.timeBasedGreeting = 'Good afternoon';
+    } else {
+      this.timeBasedGreeting = 'Good evening';
+    }
+    
+    // Format current date
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    
+    const dayName = days[now.getDay()];
+    const monthName = months[now.getMonth()];
+    const date = now.getDate();
+    const year = now.getFullYear();
+    
+    this.currentDate = `${dayName}, ${monthName} ${date}, ${year}`;
   }
 
   calculateStatusStats() {
