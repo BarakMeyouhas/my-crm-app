@@ -1,7 +1,43 @@
 <div class="main-content">
   <div class="dashboard-welcome" *ngIf="userName && companyName">
-    <h2>Welcome, {{ userName }} from {{ companyName }}!</h2>
-    <p>Here you can manage your company's data and services.</p>
+    <div class="welcome-header">
+      <h1 class="greeting-title">{{ timeBasedGreeting }}, {{ userName }}! 👋</h1>
+      <p class="date-display">{{ currentDate }}</p>
+    </div>
+    <div class="welcome-content">
+      <p class="company-info">Welcome back to your <strong>{{ companyName }}</strong> dashboard</p>
+      <p class="welcome-message">Here's everything you need to manage your company's services and track progress. Let's make today productive!</p>
+    </div>
+    <div class="quick-stats">
+      <div class="stat-item">
+        <i class="material-icons">assignment</i>
+        <div class="stat-content">
+          <span class="stat-number">{{ totalServiceRequests }}</span>
+          <span class="stat-label">Total Requests</span>
+        </div>
+      </div>
+      <div class="stat-item">
+        <i class="material-icons">people</i>
+        <div class="stat-content">
+          <span class="stat-number">{{ companyEmployees.length }}</span>
+          <span class="stat-label">Team Members</span>
+        </div>
+      </div>
+      <div class="stat-item">
+        <i class="material-icons">trending_up</i>
+        <div class="stat-content">
+          <span class="stat-number">{{ statusStats.COMPLETED }}</span>
+          <span class="stat-label">Completed Tasks</span>
+        </div>
+      </div>
+      <div class="stat-item">
+        <i class="material-icons">schedule</i>
+        <div class="stat-content">
+          <span class="stat-number">{{ statusStats.IN_PROGRESS }}</span>
+          <span class="stat-label">In Progress</span>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="container-fluid">
     <div class="row">
