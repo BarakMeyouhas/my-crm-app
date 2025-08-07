@@ -1,8 +1,66 @@
 <div class="main-content">
-  <div class="dashboard-welcome" *ngIf="userName && companyName">
-    <h2>Welcome, {{ userName }} from {{ companyName }}!</h2>
-    <p>Here you can manage your company's data and services.</p>
+  <div class="dashboard-welcome-section" *ngIf="userName">
+    <div class="welcome-gradient-bg">
+      <div class="welcome-content">
+        <div class="welcome-header">
+          <h1 class="welcome-greeting">{{ greeting }}, {{ userName }}! 👋</h1>
+          <p class="welcome-date">{{ currentDate }}</p>
+        </div>
+        
+        <div class="welcome-message">
+          <p class="company-info" *ngIf="companyName">
+            <i class="material-icons">business</i>
+            Welcome back to {{ companyName }}'s dashboard
+          </p>
+          <p class="welcome-subtitle">
+            We're here to help you manage your services efficiently and effectively.
+          </p>
+        </div>
+        
+        <div class="quick-stats-row">
+          <div class="quick-stat" *ngIf="pendingRequestsCount > 0">
+            <div class="stat-icon pending">
+              <i class="material-icons">pending_actions</i>
+            </div>
+            <div class="stat-content">
+              <span class="stat-number">{{ pendingRequestsCount }}</span>
+              <span class="stat-label">Pending Requests</span>
+            </div>
+          </div>
+          
+          <div class="quick-stat">
+            <div class="stat-icon total">
+              <i class="material-icons">assignment</i>
+            </div>
+            <div class="stat-content">
+              <span class="stat-number">{{ totalServiceRequests }}</span>
+              <span class="stat-label">Total Requests</span>
+            </div>
+          </div>
+          
+          <div class="quick-stat">
+            <div class="stat-icon employees">
+              <i class="material-icons">groups</i>
+            </div>
+            <div class="stat-content">
+              <span class="stat-number">{{ companyEmployees.length }}</span>
+              <span class="stat-label">Team Members</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="welcome-tips">
+          <p class="tip-header">💡 Quick Tips:</p>
+          <ul class="tips-list">
+            <li>Check the urgency chart below to prioritize critical service requests</li>
+            <li>Monitor your team's performance in the Employees Stats section</li>
+            <li>Use the trends chart to track your progress over time</li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
+  
   <div class="container-fluid">
     <div class="row">
       <div class="col-lg-3 col-md-6 col-sm-6">
