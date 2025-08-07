@@ -82,6 +82,9 @@ app.post("/api/auth/login", async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
       where: { email },
+      include: {
+        company: true
+      }
     });
     console.log("Login: user found:", user);
 
@@ -97,7 +100,7 @@ app.post("/api/auth/login", async (req, res) => {
 
     // צור טוקן
     const token = jwt.sign(
-      { userId: user.id, email: user.email, role: user.role },
+      { userId: user.id, email: user.email, role: user.role, companyId: user.companyId },
       process.env.JWT_SECRET || "defaultsecret", // תקבע ב־.env
       { expiresIn: "1h" }
     );

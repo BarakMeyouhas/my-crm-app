@@ -60,12 +60,12 @@ export const AdminLayoutRoutes: Routes = [
     canActivate: [AuthGuard]
   },
       { 
-        path: "service-request", 
+        path: "create-service-request", 
         component: ServiceRequestComponent,
         canActivate: [AuthGuard]
       },
   { 
-    path: "table-list", 
+    path: "service-request-list", 
     component: TableListComponent,
     canActivate: [AuthGuard]
   },
